@@ -96,11 +96,22 @@ Demo:
 
 ## Task 5 - Controlling Parallax Servos:
 
-Our final task before assembling our robot was to use the PWM signal we generated in the previous task to drive and control a Parallax Continuous Rotation Servo. We did this using the Arduino Servo.h library and writing the following code to attach our servo to a PWM capable pin and output the analog voltage of the potentiometer setup through this pin to control the speed and direction of the servo:
+Our final task before assembling our robot was to use the PWM signal we generated in the previous task to drive and control a Parallax Continuous Rotation Servo. We did this using the Arduino Servo.h library. First we set up the servo and the serial monitor.
 
 ```cpp
-{% include_relative code/ServoPot/ServoPot.ino %}
+#include <Servo.h>
+#define PIN_NUMBER 3
+
+Servo myservo;  // create servo object to control a servo
+int potIPT = A0;
+
+void setup() {
+  myservo.attach(PIN_NUMBER);
+  Serial.begin(9600);
+}
 ```
+
+We then output the analog voltage of the potentiometer setup through the digital pin, as in Task 4, to control the speed and direction of the servo, with the only difference being that the range of voltage values for the servo was from 0 to 180 instead of 0 to 255.
 
 Demo:
 <iframe width="560" height="315" src="https://www.youtube.com/embed/89UeEeVpefA" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
