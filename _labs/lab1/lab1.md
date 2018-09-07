@@ -49,7 +49,7 @@ Combining the setups of Tasks 2 & 3, we designed the following circuit which all
 
 *Circuit Diagram needed*
 
-The LED could only be connected to one of the 7(?) digital pins which could output a PWN signal, which was required to simulate the effect of an analog voltage. The code we wrote for this task is shown below:
+The LED could only be connected to one of the six digital pins which could output a PWM signal, which was required to simulate the effect of an analog voltage. The code we wrote for this task is shown below:
 
 ```cpp
 {% include_relative code/PotLed/PotLed.ino %}
