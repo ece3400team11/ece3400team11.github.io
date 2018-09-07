@@ -174,7 +174,7 @@ void moveLeft() {
 }
 ```
 
-Using these three funcitons in the following order would make the robot drive autnomously in a figure eight pattern:
+Using these three funcitons in the following order would make the robot drive autonomously in a figure eight pattern:
 
 ```cpp
 void loop() {
