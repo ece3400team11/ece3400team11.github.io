@@ -141,10 +141,61 @@ Finally, we attached the ball bearing wheel to the front of the robot.
 
 ## Task 7 - Driving the Robot Autonomously:
 
-Once the robot was built, we wrote following code for the robot to autonomously drive in a figure eight pattern:
+Once the robot was built, we wrote code for the robot to autonomously drive in a figure eight pattern.
+
+The 2 servos and digital output pins were set up as in the previous tasks and connected using the attach function:
 
 ```cpp
-{% include_relative code/Robot/Robot.ino %}
+void setup() {
+  leftWheel.attach(LEFT_WHEEL_PIN);
+  rightWheel.attach(RIGHT_WHEEL_PIN);
+}
+```
+
+To control the movements of the robot, we had 3 basic functions: moveForward, moveRight, and moveLeft. The moveForward function worked by turning both wheels in the same direction at the same speed. The moveRight function worked by turning the left wheel forward while at the same time turning the right wheel backwards in order to pivot the robot and make it turn right. The moveLeft function worked in the same way but with the directions reversed.
+
+```cpp
+void moveForward() {
+  leftWheel.write(FORWARD_POS);
+  rightWheel.write(FORWARD_POS);
+  delay(straightTime);
+}
+
+void moveRight() {
+  leftWheel.write(FORWARD_POS);
+  rightWheel.write(BACKWARD_POS);
+  delay(rightTime);
+}
+
+void moveLeft() {
+  leftWheel.write(BACKWARD_POS);
+  rightWheel.write(FORWARD_POS);
+  delay(leftTime);
+}
+```
+
+Using these three funcitons in the following order would make the robot drive autnomously in a figure eight pattern:
+
+```cpp
+void loop() {
+  moveStop();     //stops both wheels
+  moveForward();
+  moveLeft();
+  moveForward();
+  moveRight();
+  moveForward();
+  moveRight();
+  moveForward();
+  moveRight();
+  moveForward();
+  moveRight();
+  moveForward();
+  moveLeft();
+  moveForward();
+  moveLeft();
+  moveForward();
+  moveLeft();
+}
 ```
 
 The first time we tested the robot, it became apparent that one of our servos was spinning much faster than the other; so much faster that the robot was practically impossible to control.
