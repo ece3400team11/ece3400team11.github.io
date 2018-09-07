@@ -13,3 +13,5 @@ Junior, ECE and CS Double Major, Business Minor.
 Junior, ECE Major, CS Minor.
 
 ## Vignesh Nandakumar
+
+Junior, ECE Major, CS Minor.
