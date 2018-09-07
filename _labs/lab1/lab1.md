@@ -18,14 +18,14 @@ void setup() {
 }
 ```
 
-We then turned the LED on and off by setting it to high and low respectively.
+We then turned the LED on and off by setting it to high and low respectively:
 
 ```cpp
 void loop() {
-  digitalWrite(PIN_NUMBER, HIGH);   // turn the LED on (HIGH is the voltage level)
-  delay(1000);                       // wait for a second
-  digitalWrite(PIN_NUMBER, LOW);    // turn the LED off by making the voltage LOW
-  delay(1000);                       // wait for a second
+  digitalWrite(PIN_NUMBER, HIGH);   
+  delay(1000);                       // waits for a second
+  digitalWrite(PIN_NUMBER, LOW);    
+  delay(1000);                       
 }
 ```
 
@@ -37,8 +37,10 @@ Our next task was to modify the code for task one to blink an external LED. We d
 
 ![Image](images/blink.png)
 
+All we did in the code for this task was to change our Pin Number from the on-chip LED to the pin that we connected to the external LED: 
+
 ```cpp
-{% include_relative code/Blink_simple/Blink_simple.ino %}
+#define LED_PIN 0
 ```
 
 The resistor was used to prevent sourcing too much current through the pin in case of a short circuit, which would burn out both the Arduino and the external LED.
