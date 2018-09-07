@@ -6,3 +6,5 @@ collections:
     output: true
   miscs:
     output: true
+plugins:
+  - jemoji
