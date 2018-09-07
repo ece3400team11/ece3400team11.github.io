@@ -78,7 +78,7 @@ void loop() {
 
 Combining the setups of Tasks 2 & 3, we designed the following circuit which allowed us to use the analog signal input from the potentiometer to control the brightness of the external LED:
 
-*Circuit Diagram needed*
+![Image](images/task4.png)
 
 The LED could only be connected to one of the 7(?) digital pins which could output a PWN signal, which was required to simulate the effect of an analog voltage. The code we wrote for this task is shown below:
 
