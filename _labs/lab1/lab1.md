@@ -120,9 +120,9 @@ The first time we tested the robot, it became apparent that one of our servos wa
 We performed a series of tasks in order to identify the problem. First, we swapped the pins for our two servos. This would check to see if the issue was in the software rather than in the hardware. After switching the pins had no effect, we decided to try a third servo. The third servo was much closer to the speed we were expecting, so we switched out the super fast servo. After this switch, we were able to get out robot to drive in straight lines and in a proper figure eight pattern.
 
 Demo:
-<iframe width="992" height="558" src="https://www.youtube.com/embed/GhzqjIfTxn0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/GhzqjIfTxn0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
 
 ## Bloopers :sweat_smile:
 
-<iframe width="992" height="558" src="https://www.youtube.com/embed/d9uHi5ukqcA" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/d9uHi5ukqcA" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
 
