@@ -8,17 +8,32 @@ title:  "Lab1"
 In Lab 1, we had to construct several simple circuits using multiple external components and the Arduino Uno microcontroller. With the Arduino microcontroller and the Arduino IDE, we constructed several simple Arduino programs, which culminated with us building our first robot and having it drive autonomously in a figure eight pattern.
 
 ## Task 1 - Blinking the Internal LED:
-The first task was to use the arduino to blink an internal LED. The on-chip LED is hard-wired to pin 13 which we can control using the following code:
+The first task was to use the arduino to blink an internal LED. The on-chip LED is hard-wired to pin 13 which we set up as an ouput using the following code:
 
 ```cpp
-{% include_relative code/Blink_simple/Blink_simple.ino %}
+#define PIN_NUMBER LED_BUILTIN
+
+void setup() {
+  pinMode(PIN_NUMBER, OUTPUT);
+}
+```
+
+We then turned the LED on and off by setting it to high and low respectively.
+
+```cpp
+void loop() {
+  digitalWrite(PIN_NUMBER, HIGH);   // turn the LED on (HIGH is the voltage level)
+  delay(1000);                       // wait for a second
+  digitalWrite(PIN_NUMBER, LOW);    // turn the LED off by making the voltage LOW
+  delay(1000);                       // wait for a second
+}
 ```
 
 Demo:
 <iframe width="560" height="315" src="https://www.youtube.com/embed/FUZXOQbeATo" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
 
 ## Task 2 - Blinking an External LED:
-Our next task was to modify the code for task one to blink an external LED. We did this by connecting an external LED to a digital pin through a resistor as shown in the diagram below and modified the pin number in the code as follows:
+Our next task was to modify the code for task one to blink an external LED. We did this by connecting an external LED to a digital pin through a resistor as shown in the diagram below:
 
 ![Image](images/blink.png)
 
@@ -49,7 +64,7 @@ Combining the setups of Tasks 2 & 3, we designed the following circuit which all
 
 *Circuit Diagram needed*
 
-The LED could only be connected to one of the six digital pins which could output a PWM signal, which was required to simulate the effect of an analog voltage. The code we wrote for this task is shown below:
+The LED could only be connected to one of the 7(?) digital pins which could output a PWN signal, which was required to simulate the effect of an analog voltage. The code we wrote for this task is shown below:
 
 ```cpp
 {% include_relative code/PotLed/PotLed.ino %}
