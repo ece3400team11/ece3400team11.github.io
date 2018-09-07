@@ -52,7 +52,7 @@ Demo:
 
 Our third task was to detect changes in the resistance value of a potentiometer through an analog input pin and print the value to the serial monitor. This was accomplished by setting up a voltage divider circuit as shown below and connection the output of the circuit to an analog pin:
 
-*Circuit Diagram needed*
+![Image](images/task3.png)
 
 We then used the following code to set A0 as our analog pin and setup the serial monitor:
 
@@ -78,7 +78,7 @@ void loop() {
 
 Combining the setups of Tasks 2 & 3, we designed the following circuit which allowed us to use the analog signal input from the potentiometer to control the brightness of the external LED:
 
-*Circuit Diagram needed*
+![Image](images/task4.png)
 
 The LED could only be connected to one of the 6 digital pins which could output a PWN signal, which was required to simulate the effect of an analog voltage. The digital pin was set up as an output exactly as in Tasks 1 & 2. Inside the loop, we used the analogWrite function to output the analog voltage to the digital pin:
 
