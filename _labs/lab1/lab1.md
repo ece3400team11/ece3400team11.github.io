@@ -52,7 +52,7 @@ Demo:
 
 Our third task was to detect changes in the resistance value of a potentiometer through an analog input pin and print the value to the serial monitor. This was accomplished by setting up a voltage divider circuit as shown below and connection the output of the circuit to an analog pin:
 
-*Circuit Diagram needed*
+![Image](images/task3.png)
 
 We then used the following code to read the analog value of the of the pin and output it to the serial monitor every half second:
 
