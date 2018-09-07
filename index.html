@@ -4,11 +4,11 @@ layout: default
 
 <div class="divider">
   <div class="divider-section">
-    {% capture wwa %}{% include_relative wwa.md %}{% endcapture %}
-    {{ wwa | markdownify }}
-  </div>
-  <div class="divider-section">
       {% capture wwwo %}{% include_relative wwwo.md %}{% endcapture %}
       {{ wwwo | markdownify }}
+  </div>
+  <div class="divider-section">
+    {% capture wwa %}{% include_relative wwa.md %}{% endcapture %}
+    {{ wwa | markdownify }}
   </div>
 </div>

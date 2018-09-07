@@ -1,11 +1,11 @@
 @import "fonts";
 
-$text_width: 500px;
+$text_width: 600px;
 
 body {
   background-color: #fafafa;
   padding: 26px;
-  font: 14px/1.5 "Noto Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font: 16px/1.5 "Noto Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
   color: #404040;
   font-weight:400;
 }
@@ -40,11 +40,16 @@ a:hover {
   border: 1px solid lightgray;
   border-radius: 2px;
   text-align: left;
-  background-color: rgba(255,255,255,0.5);
+  background-color: rgba(252,252,252,1);
   padding: 4px 12px;
   margin: 0 8px 20px; 
 }
 
 img, iframe {
+  width: $text_width;
   max-width: $text_width;
+}
+
+code {
+  font-size: 14px;
 }
