@@ -40,7 +40,7 @@ Our next task was to modify the code for task one to blink an external LED. We d
 All we did in the code for this task was to change our Pin Number from the on-chip LED to the pin that we connected to the external LED: 
 
 ```cpp
-#define LED_PIN 0
+#define PIN_NUMBER 0
 ```
 
 The resistor was used to prevent sourcing too much current through the pin in case of a short circuit, which would burn out both the Arduino and the external LED.
@@ -54,10 +54,24 @@ Our third task was to detect changes in the resistance value of a potentiometer 
 
 ![Image](images/task3.png)
 
-We then used the following code to read the analog value of the of the pin and output it to the serial monitor every half second:
+We then used the following code to set A0 as our analog pin and setup the serial monitor:
 
 ```cpp
-{% include_relative code/PotRead/PotRead.ino %}
+int potIPT = A0;
+
+void setup() {
+  Serial.begin(9600);   
+}
+```
+
+Using the analogRead function, we were able to read the voltage value from the analog pin and output that value to the serial monitor every half second:
+
+```cpp
+void loop() {
+  int val = analogRead(potIPT);  // read the input
+  Serial.println(val);           // print to serial monitor
+  delay(500);                    // wait half a second
+}
 ```
 
 ## Task 4 - Outputting an Analog Signal:
