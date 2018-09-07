@@ -22,7 +22,8 @@
   http://www.arduino.cc/en/Tutorial/Blink
 */
 
-#define PIN_NUMBER 1
+#define PIN_NUMBER 0
+//#define PIN_NUMBER 1
 //#define PIN_NUMBER 2
 //#define PIN_NUMBER 3
 //#define PIN_NUMBER 4
