@@ -36,6 +36,9 @@ layout: blank
 	<script src="assets/js/respond.min.js"></script>
 	<![endif]-->
 
+	<link rel="stylesheet" href="/assets/css/arduino-light.css">
+	<script src="/assets/js/highlight.pack.js"></script>
+
 	</head>
 	<body>
 	
@@ -60,6 +63,8 @@ layout: blank
 	<!-- Main -->
 	<script src="assets/js/main.js"></script>
 	<div class="fh5co-loader"></div>
+
+	<script>hljs.initHighlightingOnLoad();</script>
 	
 	<div id="page">
 	<nav class="fh5co-nav" role="navigation">
@@ -200,12 +205,14 @@ layout: blank
 					</div>
 				{% endfor %}
 				{% for milestone in site.milestones %}
-					<div class="col-md-3 col-sm-6 labs-milestones animate-box" data-animate-effect="fadeIn">
-						<a href="#" data-toggle="modal" data-target="#lab1"><img src="{{ milestone.preview }}" class="img-responsive">
-							<h3>{{ milestone.title }}</h3>
-							<span>{{ milestone.subtitle }}</span>
-						</a>
-					</div>
+					{% if milestone.status != "disabled" %}
+						<div class="col-md-3 col-sm-6 labs-milestones animate-box" data-animate-effect="fadeIn">
+							<a href="#" data-toggle="modal" data-target="#{{ milestone.title | replace: " ", "_"}}"><img src="{{ milestone.preview }}" class="img-responsive">
+								<h3>{{ milestone.title }}</h3>
+								<span>{{ milestone.subtitle }}</span>
+							</a>
+						</div>
+					{% endif %}
 				{% endfor %}
 			</div>
 		</div>
@@ -221,34 +228,16 @@ layout: blank
 			</div>
 
 			<div class="row bs-wizard animate-box" style="border-bottom:0;">
-                
-				<div class="col-xs-3 bs-wizard-step active">
-					<div class="text-center bs-wizard-stepnum"><h4>Milestone 1</h4></div>
-					<div class="progress"><div class="progress-bar"></div></div>
-					<a href="#" class="bs-wizard-dot"></a>
-					<div class="bs-wizard-info text-center"><p>Follow Lines</p></div>
-				</div>
 
-				<div class="col-xs-3 bs-wizard-step disabled"><!-- complete -->
-					<div class="text-center bs-wizard-stepnum"><h4>Milestone 2</h4></div>
-					<div class="progress"><div class="progress-bar"></div></div>
-					<a href="#" class="bs-wizard-dot"></a>
-					<div class="bs-wizard-info text-center"><p>IDK What to Call this Yet</p></div>
-				</div>
+				{% for milestone in site.milestones %}
+					<div class="col-xs-3 bs-wizard-step {{ milestone.status }}">
+						<div class="text-center bs-wizard-stepnum"><h4>{{ milestone.title }}</h4></div>
+						<div class="progress"><div class="progress-bar"></div></div>
+						<a href="#" class="bs-wizard-dot"></a>
+						<div class="bs-wizard-info text-center"><p>{{ milestone.subtitle }}</p></div>
+					</div>
+				{% endfor %}
 
-				<div class="col-xs-3 bs-wizard-step disabled"><!-- complete -->
-					<div class="text-center bs-wizard-stepnum"><h4>Milestone 3</h4></div>
-					<div class="progress"><div class="progress-bar"></div></div>
-					<a href="#" class="bs-wizard-dot"></a>
-					<div class="bs-wizard-info text-center"><p>?????</p></div>
-				</div>
-
-				<div class="col-xs-3 bs-wizard-step disabled"><!-- active -->
-					<div class="text-center bs-wizard-stepnum"><h4>Milestone 4</h4></div>
-					<div class="progress"><div class="progress-bar"></div></div>
-					<a href="#" class="bs-wizard-dot"></a>
-					<div class="bs-wizard-info text-center"><p>Profit</p></div>
-				</div>
 			</div>
 		</div>
 	</div>
@@ -264,50 +253,19 @@ layout: blank
 				<div class="col-md-10 col-md-offset-1">
 					<div class="row animate-box">
 						<div class="owl-carousel owl-carousel-fullwidth">
-							<div class="item">
-								<div class="testimony-slide active text-center">
-									<figure>
-										<img src="assets/images/person_1.jpg" alt="user">
-									</figure>
-									<span>Daniel Weber</span>
-									<blockquote>
-										<p>Junior, CS Major, ECE Minor.</p>
-									</blockquote>
+							{% for member in site.data.team %}
+								<div class="item">
+									<div class="testimony-slide active text-center">
+										<figure>
+											<img src="{{ member.image }}" alt="user">
+										</figure>
+										<span>{{ member.name }}</span>
+										<blockquote>
+											<p>{{ member.about }}</p>
+										</blockquote>
+									</div>
 								</div>
-							</div>
-							<div class="item">
-								<div class="testimony-slide active text-center">
-									<figure>
-										<img src="assets/images/person_2.jpg" alt="user">
-									</figure>
-									<span>Adam Wojciechowski</span>
-									<blockquote>
-										<p>Junior, ECE and CS Double Major.</p>
-									</blockquote>
-								</div>
-							</div>
-							<div class="item">
-								<div class="testimony-slide active text-center">
-									<figure>
-										<img src="assets/images/person_3.jpg" alt="user">
-									</figure>
-									<span>Shivansh Gupta</a></span>
-									<blockquote>
-										<p>Junior, ECE Major, CS Minor.</p>
-									</blockquote>
-								</div>
-							</div>
-							<div class="item">
-								<div class="testimony-slide active text-center">
-									<figure>
-										<img src="assets/images/person_3.jpg" alt="user">
-									</figure>
-									<span>Vignesh Nandakumar</a></span>
-									<blockquote>
-										<p>Junior, ECE Major, CS Minor.</p>
-									</blockquote>
-								</div>
-							</div>
+							{% endfor %}
 						</div>
 					</div>
 				</div>
@@ -329,12 +287,10 @@ layout: blank
 	</footer>
 	</div>
 	
-	
 
 	<div class="gototop js-top">
 		<a href="#" class="js-gotop"><i class="icon-arrow-up"></i></a>
 	</div>
-
 
 
 	<!--CONTRACT-->
@@ -351,38 +307,38 @@ layout: blank
 
 	{% for lab in site.labs %}
 		<div class="modal fade" id="{{ lab.title | replace: " ", "_"}}">
-				<div class="modal-dialog">
-					<div class="modal-content">
-						<div class="modal_body">
-							{{ lab.output }}
-						</div>
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal_body">
+						{{ lab.output }}
 					</div>
 				</div>
 			</div>
+		</div>
 	{% endfor %}
 
 	{% for milestone in site.milestones %}
 		<div class="modal fade" id="{{ milestone.title | replace: " ", "_"}}">
-				<div class="modal-dialog">
-					<div class="modal-content">
-						<div class="modal_body">
-							{{ milestone.output }}
-						</div>
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal_body">
+						{{ milestone.output }}
 					</div>
 				</div>
 			</div>
+		</div>
 	{% endfor %}
 
 	{% for minute in site.minutes %}
 		<div class="modal fade" id="{{ minute.title | replace: " ", "_"}}">
-				<div class="modal-dialog">
-					<div class="modal-content">
-						<div class="modal_body">
-							{{ minute.output }}
-						</div>
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal_body">
+						{{ minute.output }}
 					</div>
 				</div>
 			</div>
+		</div>
 	{% endfor %}
 	
 	</body>

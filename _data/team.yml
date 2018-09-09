@@ -1,0 +1,15 @@
+- name: Daniel Weber
+  about: Junior, CS Major, ECE Minor.
+  image: assets/images/person_1.jpg
+
+- name: Adam Wojciechowski
+  about: Junior, ECE and CS Double Major.
+  image: assets/images/person_2.jpg
+
+- name: Shivansh Gupta
+  about: Junior, ECE Major, CS Minor.
+  image: assets/images/person_3.jpg
+
+- name: Vignesh Nandakumar
+  about: Junior, CS Major, ECE Minor.
+  image: assets/images/person_3.jpg
