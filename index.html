@@ -10,17 +10,6 @@ layout: blank
 	<title>ECE 3400 Team 11</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 
-  	<!-- Facebook and Twitter integration -->
-	<meta property="og:title" content=""/>
-	<meta property="og:image" content=""/>
-	<meta property="og:url" content=""/>
-	<meta property="og:site_name" content=""/>
-	<meta property="og:description" content=""/>
-	<meta name="twitter:title" content="" />
-	<meta name="twitter:image" content="" />
-	<meta name="twitter:url" content="" />
-	<meta name="twitter:card" content="" />
-
 	<link href="https://fonts.googleapis.com/css?family=Work+Sans:300,400,500,700,800" rel="stylesheet">
 	
 	<!-- Animate.css -->
@@ -196,60 +185,28 @@ layout: blank
 			<div class="row animate-box">
 				<div class="col-md-8 col-md-offset-2 text-center fh5co-heading">
 					<h2>Labs and Milestones</h2>
-					<p>Click any of the following links to see what we were up to in each of our 4 labs and 4 milestones.</p>
+					<p>Click any of the following links to see what we were up to in each of our labs and milestones.</p>
 				</div>
 			</div>
 		</div>
 		<div class="container-fluid proj-bottom">
 			<div class="row">
-				<div class="col-md-3 col-sm-6 labs-milestones animate-box" data-animate-effect="fadeIn">
-					<a href="#" data-toggle="modal" data-target="#lab1"><img src="assets/images/project-1.jpg" alt="Free HTML5 Website Template by FreeHTML5.co" class="img-responsive">
-						<h3>Lab 1</h3>
-						<span>Microcontrollers</span>
-					</a>
-				</div>
-				<div class="col-md-3 col-sm-6 labs-milestones animate-box" data-animate-effect="fadeIn">
-					<a href="#" data-toggle="modal" data-target="#lab2"><img src="assets/images/project-2.jpg" alt="Free HTML5 Website Template by FreeHTML5.co" class="img-responsive">
-						<h3>Lab 2</h3>
-						<span>Analog Circuitry and FFT</span>
-					</a>
-				</div>
-				<div class="col-md-3 col-sm-6 labs-milestones animate-box" data-animate-effect="fadeIn">
-					<a href="#" data-toggle="modal" data-target="#lab3"><img src="assets/images/project-3.jpg" alt="Free HTML5 Website Template by FreeHTML5.co" class="img-responsive">
-						<h3>Lab 3</h3>
-						<span>Wireless Communication</span>
-					</a>
-				</div>
-				<div class="col-md-3 col-sm-6 labs-milestones animate-box" data-animate-effect="fadeIn">
-					<a href="#" data-toggle="modal" data-target="#lab4"><img src="assets/images/project-9.jpg" alt="Free HTML5 Website Template by FreeHTML5.co" class="img-responsive">
-						<h3>Lab 4</h3>
-						<span>FPGA / Vision</span>
-					</a>
-				</div>
-				<div class="col-md-3 col-sm-6 labs-milestones animate-box" data-animate-effect="fadeIn">
-					<a href="#"><img src="assets/images/project-1.jpg" alt="Free HTML5 Website Template by FreeHTML5.co" class="img-responsive">
-						<h3>Milestone 1</h3>
-						<span>View Course</span>
-					</a>
-				</div>
-				<div class="col-md-3 col-sm-6 labs-milestones animate-box" data-animate-effect="fadeIn">
-					<a href="#"><img src="assets/images/project-2.jpg" alt="Free HTML5 Website Template by FreeHTML5.co" class="img-responsive">
-						<h3>Milestone 2</h3>
-						<span>View Course</span>
-					</a>
-				</div>
-				<div class="col-md-3 col-sm-6 labs-milestones animate-box" data-animate-effect="fadeIn">
-					<a href="#"><img src="assets/images/project-3.jpg" alt="Free HTML5 Website Template by FreeHTML5.co" class="img-responsive">
-						<h3>Milestone 3</h3>
-						<span>View Course</span>
-					</a>
-				</div>
-				<div class="col-md-3 col-sm-6 labs-milestones animate-box" data-animate-effect="fadeIn">
-					<a href="#"><img src="assets/images/project-9.jpg" alt="Free HTML5 Website Template by FreeHTML5.co" class="img-responsive">
-						<h3>Milestone 4</h3>
-						<span>View Course</span>
-					</a>
-				</div>
+				{% for lab in site.labs %}
+					<div class="col-md-3 col-sm-6 labs-milestones animate-box" data-animate-effect="fadeIn">
+						<a href="#" data-toggle="modal" data-target="#{{ lab.title | replace: " ", "_"}}"><img src="{{ lab.preview }}" class="img-responsive">
+							<h3>{{ lab.title }}</h3>
+							<span>{{ lab.subtitle }}</span>
+						</a>
+					</div>
+				{% endfor %}
+				{% for milestone in site.milestones %}
+					<div class="col-md-3 col-sm-6 labs-milestones animate-box" data-animate-effect="fadeIn">
+						<a href="#" data-toggle="modal" data-target="#lab1"><img src="{{ milestone.preview }}" class="img-responsive">
+							<h3>{{ milestone.title }}</h3>
+							<span>{{ milestone.subtitle }}</span>
+						</a>
+					</div>
+				{% endfor %}
 			</div>
 		</div>
 	</div>
@@ -384,75 +341,50 @@ layout: blank
 	<div class="modal fade" id="contract">
 		<div class="modal-dialog">
 			<div class="modal-content">
-				<div class="modal-header">
-					<h1>Team Contract</h1>
-				</div>
 				<div class="modal_body">
-					<p>implement me</p>
+					{% capture contract %}{% include_relative teamContract.md %}{% endcapture %}
+					{{ contract | markdownify }}
 				</div>
 			</div>
 		</div>
 	</div>
 
-
-	<!--LAB 1-->
-	<div class="modal fade" id="lab1">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h1>Lab 1: Microcontrollers</h1>
-				</div>
-				<div class="modal_body">
-					render markdown here
+	{% for lab in site.labs %}
+		<div class="modal fade" id="{{ lab.title | replace: " ", "_"}}">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal_body">
+							{{ lab.output }}
+						</div>
+					</div>
 				</div>
 			</div>
-		</div>
-	</div>
+	{% endfor %}
 
-
-	<!--LAB 2-->
-	<div class="modal fade" id="lab2">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h1>Lab 2: Analog Circuitry and FFT</h1>
-				</div>
-				<div class="modal_body">
-					<p>implement me</p>
+	{% for milestone in site.milestones %}
+		<div class="modal fade" id="{{ milestone.title | replace: " ", "_"}}">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal_body">
+							{{ milestone.output }}
+						</div>
+					</div>
 				</div>
 			</div>
-		</div>
-	</div>
+	{% endfor %}
 
-
-	<!--LAB 3-->
-	<div class="modal fade" id="lab3">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h1>Lab 3: Wireless Communication</h1>
-				</div>
-				<div class="modal_body">
-					<p>implement me</p>
+	{% for minute in site.minutes %}
+		<div class="modal fade" id="{{ minute.title | replace: " ", "_"}}">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal_body">
+							{{ minute.output }}
+						</div>
+					</div>
 				</div>
 			</div>
-		</div>
-	</div>
-
-
-	<!--LAB 4-->
-	<div class="modal fade" id="lab4">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h1>Lab 4: FPGA / Vision</h1>
-				</div>
-				<div class="modal_body">
-					<p>implement me</p>
-				</div>
-			</div>
-		</div>
-	</div>
+	{% endfor %}
+	
 	</body>
 
 </html>

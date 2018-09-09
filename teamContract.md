@@ -1,9 +1,4 @@
----
-layout: subpage
-title:  "Team Contract"
----
-
-# TEAM CONTRACT
+# Team Contract
 
 ECE 3400, Semester #FA18 Team # 11
 

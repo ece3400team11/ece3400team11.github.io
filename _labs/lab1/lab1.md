@@ -1,9 +1,11 @@
 ---
 layout: blank
 title:  "Lab 1"
+subtitle: "Microcontrollers"
+preview: "assets/images/project-1.jpg"
 ---
 
-# Lab 1
+# Lab 1: Microcontrollers
 
 In Lab 1, we had to construct several simple circuits using multiple external components and the Arduino Uno microcontroller. With the Arduino microcontroller and the Arduino IDE, we constructed several simple Arduino programs, which culminated with us building our first robot and having it drive autonomously in a figure eight pattern.
 
