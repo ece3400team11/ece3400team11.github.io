@@ -37,7 +37,7 @@ Demo:
 ## Task 2 - Blinking an External LED:
 Our next task was to modify the code for task one to blink an external LED. We did this by connecting an external LED to a digital pin through a resistor as shown in the diagram below:
 
-![Image]({{images/blink.png | relative_url}})
+![Image](labs/lab1/images/blink.png)
 
 All we did in the code for this task was to change our Pin Number from the on-chip LED to the pin that we connected to the external LED: 
 
@@ -54,7 +54,7 @@ Demo:
 
 Our third task was to detect changes in the resistance value of a potentiometer through an analog input pin and print the value to the serial monitor. This was accomplished by setting up a voltage divider circuit as shown below and connection the output of the circuit to an analog pin:
 
-![Image]({{ images/task3.png | relative_url}})
+![Image](labs/lab1/images/task3.png)
 
 We then used the following code to set A0 as our analog pin and setup the serial monitor:
 
@@ -80,7 +80,7 @@ void loop() {
 
 Combining the setups of Tasks 2 & 3, we designed the following circuit which allowed us to use the analog signal input from the potentiometer to control the brightness of the external LED:
 
-![Image]({{ images/task4.png | relative_url}})
+![Image](labs/lab1/images/task4.png)
 
 The LED could only be connected to one of the 6 digital pins which could output a PWN signal, which was required to simulate the effect of an analog voltage. The digital pin was set up as an output exactly as in Tasks 1 & 2. Inside the loop, we used the analogWrite function to output the analog voltage to the digital pin:
 
