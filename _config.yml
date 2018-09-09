@@ -1,10 +1,7 @@
 title: ECE 3400 Team 11
 collections:
-  labs:
-    output: true
-  milestones:
-    output: true
-  miscs:
-    output: true
+  - labs
+  - milestones
+  - minutes
 plugins:
   - jemoji

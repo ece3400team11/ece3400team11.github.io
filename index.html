@@ -1,14 +1,458 @@
 ---
-layout: default
+layout: blank
 ---
 
-<div class="divider">
-  <div class="divider-section">
-      {% capture wwwo %}{% include_relative wwwo.md %}{% endcapture %}
-      {{ wwwo | markdownify }}
-  </div>
-  <div class="divider-section">
-    {% capture wwa %}{% include_relative wwa.md %}{% endcapture %}
-    {{ wwa | markdownify }}
-  </div>
-</div>
+<!DOCTYPE HTML>
+<html>
+	<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>ECE 3400 Team 11</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+  	<!-- Facebook and Twitter integration -->
+	<meta property="og:title" content=""/>
+	<meta property="og:image" content=""/>
+	<meta property="og:url" content=""/>
+	<meta property="og:site_name" content=""/>
+	<meta property="og:description" content=""/>
+	<meta name="twitter:title" content="" />
+	<meta name="twitter:image" content="" />
+	<meta name="twitter:url" content="" />
+	<meta name="twitter:card" content="" />
+
+	<link href="https://fonts.googleapis.com/css?family=Work+Sans:300,400,500,700,800" rel="stylesheet">
+	
+	<!-- Animate.css -->
+	<link rel="stylesheet" href="assets/css/animate.css">
+	<!-- Icomoon Icon Fonts-->
+	<link rel="stylesheet" href="assets/css/icomoon.css">
+	<!-- Bootstrap  -->
+	<link rel="stylesheet" href="assets/css/bootstrap.css">
+
+	<!-- Magnific Popup -->
+	<link rel="stylesheet" href="assets/css/magnific-popup.css">
+
+	<!-- Owl Carousel  -->
+	<link rel="stylesheet" href="assets/css/owl.carousel.min.css">
+	<link rel="stylesheet" href="assets/css/owl.theme.default.min.css">
+
+	<!-- Theme style  -->
+	<link rel="stylesheet" href="assets/css/theme.css">
+
+	<!-- Modernizr JS -->
+	<script src="assets/js/modernizr-2.6.2.min.js"></script>
+	<!-- FOR IE9 below -->
+	<!--[if lt IE 9]>
+	<script src="assets/js/respond.min.js"></script>
+	<![endif]-->
+
+	</head>
+	<body>
+	
+
+	<!-- jQuery -->
+	<script src="assets/js/jquery.min.js"></script>
+	<!-- jQuery Easing -->
+	<script src="assets/js/jquery.easing.1.3.js"></script>
+	<!-- Bootstrap -->
+	<script src="assets/js/bootstrap.min.js"></script>
+	<!-- Waypoints -->
+	<script src="assets/js/jquery.waypoints.min.js"></script>
+	<!-- Stellar Parallax -->
+	<script src="assets/js/jquery.stellar.min.js"></script>
+	<!-- Carousel -->
+	<script src="assets/js/owl.carousel.min.js"></script>
+	<!-- countTo -->
+	<script src="assets/js/jquery.countTo.js"></script>
+	<!-- Magnific Popup -->
+	<script src="assets/js/jquery.magnific-popup.min.js"></script>
+	<script src="assets/js/magnific-popup-options.js"></script>
+	<!-- Main -->
+	<script src="assets/js/main.js"></script>
+	<div class="fh5co-loader"></div>
+	
+	<div id="page">
+	<nav class="fh5co-nav" role="navigation">
+		<div class="top-menu">
+			<div class="container">
+				<div class="row">
+					<div class="col-xs-2">
+						<div id="fh5co-logo"><a href="index.html">Team 11</a></div>
+					</div>
+					<div class="col-xs-10 text-right menu-1">
+						<ul>
+							<li class="active"><a href="index.html">Home</a></li>
+							<li class="has-dropdown">
+								<a href="#labs-milestones">Labs</a>
+								<ul class="dropdown">
+									{% for lab in site.labs %}
+										<li><a href="#" data-toggle="modal" data-target="#{{ lab.title | replace: " ", "_"}}">{{ lab.title }}</a></li>
+									{% endfor %}
+								</ul>
+							</li>
+							<li class="has-dropdown">
+								<a href="#labs-milestones">Milestones</a>
+								<ul class="dropdown">
+									{% for milestone in site.milestones %}
+										<li><a href="#" data-toggle="modal" data-target="#{{ milestone.title | replace: " ", "_"}}">{{ milestone.title }}</a></li>
+									{% endfor %}
+								</ul>
+							</li>
+							<li class="has-dropdown">
+									<a href="#labs-milestones">Minutes</a>
+									<ul class="dropdown">
+										{% for minute in site.minutes %}
+											<li><a href="#" data-toggle="modal" data-target="#{{ minute.title | replace: " ", "_"}}">{{ minute.title }}</a></li>
+										{% endfor %}
+									</ul>
+							</li>
+							<li><a href="#about">About Us</a></li>
+							<li><a href="#" data-toggle="modal" data-target="#contract">Contract</a></li>
+							<li><a href="https://github.com/ece3400team11/ece3400team11.github.io">Repository</a></li>
+						</ul>
+					</div>
+				</div>
+				
+			</div>
+		</div>
+	</nav>
+
+	<header id="fh5co-header" class="fh5co-cover" role="banner" style="background-image:url(assets/images/img_bg_1.jpg);" data-stellar-background-ratio="0.5">
+		<div class="overlay"></div>
+		<div class="container">
+			<div class="row">
+				<div class="col-md-8 col-md-offset-2 text-center">
+					<div class="display-t">
+						<div class="display-tc animate-box" data-animate-effect="fadeIn">
+							<h1>We Can Put Whatever We Want Here</h1>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</header>
+	<!--Maybe put this back for photos later
+	<div id="fh5co-explore" class="fh5co-bg-section">
+		<div class="container">
+			<div class="row animate-box">
+				<div class="col-md-6 col-md-offset-3 text-center fh5co-heading">
+					<h2>Take A Course</h2>
+					<p>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts. </p>
+				</div>
+			</div>
+		</div>		
+		<div class="fh5co-explore fh5co-explore1">
+			<div class="container">
+				<div class="row">
+					<div class="col-md-8 col-md-push-5 animate-box">
+						<img class="img-responsive" src="assets/images/work_1.png" alt="work">
+					</div>
+					<div class="col-md-4 col-md-pull-8 animate-box">
+						<div class="mt">
+							<h3>We Want You To Learn English</h3>
+							<p>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
+							<ul class="list-nav">
+								<li><i class="icon-check2"></i>Far far away, behind the word</li>
+								<li><i class="icon-check2"></i>There live the blind texts</li>
+								<li><i class="icon-check2"></i>Separated they live in bookmarksgrove</li>
+							</ul>
+							<p><a class="btn btn-primary btn-lg popup-vimeo btn-video" href="https://vimeo.com/channels/staffpicks/93951774"><i class="icon-play"></i> Watch Video</a></p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="fh5co-explore">
+			<div class="container">
+				<div class="row">
+					<div class="col-md-8 col-md-pull-1 animate-box">
+						<img class="img-responsive" src="assets/images/work_1.png" alt="work">
+					</div>
+					<div class="col-md-4 animate-box">
+						<div class="mt">
+							<div>
+								<h4><i class="icon-user"></i>Real Project For Real Solutions</h4>
+								<p>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia. </p>
+							</div>
+							<div>
+								<h4><i class="icon-video2"></i>Real Project For Real Solutions</h4>
+								<p>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts. </p>
+							</div>
+							<div>
+								<h4><i class="icon-shield"></i>Real Project For Real Solutions</h4>
+								<p>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia. </p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	-->
+	<div id="labs-milestones">
+		<div class="container">
+			<div class="row animate-box">
+				<div class="col-md-8 col-md-offset-2 text-center fh5co-heading">
+					<h2>Labs and Milestones</h2>
+					<p>Click any of the following links to see what we were up to in each of our 4 labs and 4 milestones.</p>
+				</div>
+			</div>
+		</div>
+		<div class="container-fluid proj-bottom">
+			<div class="row">
+				<div class="col-md-3 col-sm-6 labs-milestones animate-box" data-animate-effect="fadeIn">
+					<a href="#" data-toggle="modal" data-target="#lab1"><img src="assets/images/project-1.jpg" alt="Free HTML5 Website Template by FreeHTML5.co" class="img-responsive">
+						<h3>Lab 1</h3>
+						<span>Microcontrollers</span>
+					</a>
+				</div>
+				<div class="col-md-3 col-sm-6 labs-milestones animate-box" data-animate-effect="fadeIn">
+					<a href="#" data-toggle="modal" data-target="#lab2"><img src="assets/images/project-2.jpg" alt="Free HTML5 Website Template by FreeHTML5.co" class="img-responsive">
+						<h3>Lab 2</h3>
+						<span>Analog Circuitry and FFT</span>
+					</a>
+				</div>
+				<div class="col-md-3 col-sm-6 labs-milestones animate-box" data-animate-effect="fadeIn">
+					<a href="#" data-toggle="modal" data-target="#lab3"><img src="assets/images/project-3.jpg" alt="Free HTML5 Website Template by FreeHTML5.co" class="img-responsive">
+						<h3>Lab 3</h3>
+						<span>Wireless Communication</span>
+					</a>
+				</div>
+				<div class="col-md-3 col-sm-6 labs-milestones animate-box" data-animate-effect="fadeIn">
+					<a href="#" data-toggle="modal" data-target="#lab4"><img src="assets/images/project-9.jpg" alt="Free HTML5 Website Template by FreeHTML5.co" class="img-responsive">
+						<h3>Lab 4</h3>
+						<span>FPGA / Vision</span>
+					</a>
+				</div>
+				<div class="col-md-3 col-sm-6 labs-milestones animate-box" data-animate-effect="fadeIn">
+					<a href="#"><img src="assets/images/project-1.jpg" alt="Free HTML5 Website Template by FreeHTML5.co" class="img-responsive">
+						<h3>Milestone 1</h3>
+						<span>View Course</span>
+					</a>
+				</div>
+				<div class="col-md-3 col-sm-6 labs-milestones animate-box" data-animate-effect="fadeIn">
+					<a href="#"><img src="assets/images/project-2.jpg" alt="Free HTML5 Website Template by FreeHTML5.co" class="img-responsive">
+						<h3>Milestone 2</h3>
+						<span>View Course</span>
+					</a>
+				</div>
+				<div class="col-md-3 col-sm-6 labs-milestones animate-box" data-animate-effect="fadeIn">
+					<a href="#"><img src="assets/images/project-3.jpg" alt="Free HTML5 Website Template by FreeHTML5.co" class="img-responsive">
+						<h3>Milestone 3</h3>
+						<span>View Course</span>
+					</a>
+				</div>
+				<div class="col-md-3 col-sm-6 labs-milestones animate-box" data-animate-effect="fadeIn">
+					<a href="#"><img src="assets/images/project-9.jpg" alt="Free HTML5 Website Template by FreeHTML5.co" class="img-responsive">
+						<h3>Milestone 4</h3>
+						<span>View Course</span>
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div id="fh5co-steps">
+		<div class="container">
+			<div class="row animate-box">
+				<div class="col-md-8 col-md-offset-2 text-center fh5co-heading">
+					<h2>Track our Progress</h2>
+					<p>See where we currently are on the road to total robot domination.</p>
+				</div>
+			</div>
+
+			<div class="row bs-wizard animate-box" style="border-bottom:0;">
+                
+				<div class="col-xs-3 bs-wizard-step active">
+					<div class="text-center bs-wizard-stepnum"><h4>Milestone 1</h4></div>
+					<div class="progress"><div class="progress-bar"></div></div>
+					<a href="#" class="bs-wizard-dot"></a>
+					<div class="bs-wizard-info text-center"><p>Follow Lines</p></div>
+				</div>
+
+				<div class="col-xs-3 bs-wizard-step disabled"><!-- complete -->
+					<div class="text-center bs-wizard-stepnum"><h4>Milestone 2</h4></div>
+					<div class="progress"><div class="progress-bar"></div></div>
+					<a href="#" class="bs-wizard-dot"></a>
+					<div class="bs-wizard-info text-center"><p>IDK What to Call this Yet</p></div>
+				</div>
+
+				<div class="col-xs-3 bs-wizard-step disabled"><!-- complete -->
+					<div class="text-center bs-wizard-stepnum"><h4>Milestone 3</h4></div>
+					<div class="progress"><div class="progress-bar"></div></div>
+					<a href="#" class="bs-wizard-dot"></a>
+					<div class="bs-wizard-info text-center"><p>?????</p></div>
+				</div>
+
+				<div class="col-xs-3 bs-wizard-step disabled"><!-- active -->
+					<div class="text-center bs-wizard-stepnum"><h4>Milestone 4</h4></div>
+					<div class="progress"><div class="progress-bar"></div></div>
+					<a href="#" class="bs-wizard-dot"></a>
+					<div class="bs-wizard-info text-center"><p>Profit</p></div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div id="about" class="fh5co-bg-section">
+		<div class="container">
+			<div class="row animate-box">
+				<div class="col-md-6 col-md-offset-3 text-center fh5co-heading">
+					<h2>Meet the Team</h2>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-10 col-md-offset-1">
+					<div class="row animate-box">
+						<div class="owl-carousel owl-carousel-fullwidth">
+							<div class="item">
+								<div class="testimony-slide active text-center">
+									<figure>
+										<img src="assets/images/person_1.jpg" alt="user">
+									</figure>
+									<span>Daniel Weber</span>
+									<blockquote>
+										<p>Junior, CS Major, ECE Minor.</p>
+									</blockquote>
+								</div>
+							</div>
+							<div class="item">
+								<div class="testimony-slide active text-center">
+									<figure>
+										<img src="assets/images/person_2.jpg" alt="user">
+									</figure>
+									<span>Adam Wojciechowski</span>
+									<blockquote>
+										<p>Junior, ECE and CS Double Major.</p>
+									</blockquote>
+								</div>
+							</div>
+							<div class="item">
+								<div class="testimony-slide active text-center">
+									<figure>
+										<img src="assets/images/person_3.jpg" alt="user">
+									</figure>
+									<span>Shivansh Gupta</a></span>
+									<blockquote>
+										<p>Junior, ECE Major, CS Minor.</p>
+									</blockquote>
+								</div>
+							</div>
+							<div class="item">
+								<div class="testimony-slide active text-center">
+									<figure>
+										<img src="assets/images/person_3.jpg" alt="user">
+									</figure>
+									<span>Vignesh Nandakumar</a></span>
+									<blockquote>
+										<p>Junior, ECE Major, CS Minor.</p>
+									</blockquote>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<footer id="fh5co-footer" role="contentinfo">
+		<div class="container">
+			<div class="row copyright">
+				<div class="col-md-12 text-center">
+					<p>
+						<small class="block">&copy; Cornell University</small> 
+					</p>
+				</div>
+			</div>
+
+		</div>
+	</footer>
+	</div>
+	
+	
+
+	<div class="gototop js-top">
+		<a href="#" class="js-gotop"><i class="icon-arrow-up"></i></a>
+	</div>
+
+
+
+	<!--CONTRACT-->
+	<div class="modal fade" id="contract">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h1>Team Contract</h1>
+				</div>
+				<div class="modal_body">
+					<p>implement me</p>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<!--LAB 1-->
+	<div class="modal fade" id="lab1">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h1>Lab 1: Microcontrollers</h1>
+				</div>
+				<div class="modal_body">
+					render markdown here
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<!--LAB 2-->
+	<div class="modal fade" id="lab2">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h1>Lab 2: Analog Circuitry and FFT</h1>
+				</div>
+				<div class="modal_body">
+					<p>implement me</p>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<!--LAB 3-->
+	<div class="modal fade" id="lab3">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h1>Lab 3: Wireless Communication</h1>
+				</div>
+				<div class="modal_body">
+					<p>implement me</p>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<!--LAB 4-->
+	<div class="modal fade" id="lab4">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h1>Lab 4: FPGA / Vision</h1>
+				</div>
+				<div class="modal_body">
+					<p>implement me</p>
+				</div>
+			</div>
+		</div>
+	</div>
+	</body>
+
+</html>
