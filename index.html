@@ -1,7 +1,3 @@
----
-layout: blank
----
-<!--New Branch?-->
 <!DOCTYPE HTML>
 <html>
 	<head>
@@ -9,99 +5,117 @@ layout: blank
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<title>ECE 3400 Team 11</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="Free HTML5 Website Template by freehtml5.co" />
+	<meta name="keywords" content="free website templates, free html5, free template, free bootstrap, free website template, html5, css3, mobile first, responsive" />
+	<meta name="author" content="freehtml5.co" />
+
+	<!-- 
+	//////////////////////////////////////////////////////
+
+	FREE HTML5 TEMPLATE 
+	DESIGNED & DEVELOPED by FreeHTML5.co
+		
+	Website: 		http://freehtml5.co/
+	Email: 			info@freehtml5.co
+	Twitter: 		http://twitter.com/fh5co
+	Facebook: 		https://www.facebook.com/fh5co
+
+	//////////////////////////////////////////////////////
+	 -->
+
+  	<!-- Facebook and Twitter integration -->
+	<meta property="og:title" content=""/>
+	<meta property="og:image" content=""/>
+	<meta property="og:url" content=""/>
+	<meta property="og:site_name" content=""/>
+	<meta property="og:description" content=""/>
+	<meta name="twitter:title" content="" />
+	<meta name="twitter:image" content="" />
+	<meta name="twitter:url" content="" />
+	<meta name="twitter:card" content="" />
 
 	<link href="https://fonts.googleapis.com/css?family=Work+Sans:300,400,500,700,800" rel="stylesheet">
 	
 	<!-- Animate.css -->
-	<link rel="stylesheet" href="assets/css/animate.css">
+	<link rel="stylesheet" href="css/animate.css">
 	<!-- Icomoon Icon Fonts-->
-	<link rel="stylesheet" href="assets/css/icomoon.css">
+	<link rel="stylesheet" href="css/icomoon.css">
 	<!-- Bootstrap  -->
-	<link rel="stylesheet" href="assets/css/bootstrap.css">
+	<link rel="stylesheet" href="css/bootstrap.css">
 
 	<!-- Magnific Popup -->
-	<link rel="stylesheet" href="assets/css/magnific-popup.css">
+	<link rel="stylesheet" href="css/magnific-popup.css">
 
 	<!-- Owl Carousel  -->
-	<link rel="stylesheet" href="assets/css/owl.carousel.min.css">
-	<link rel="stylesheet" href="assets/css/owl.theme.default.min.css">
+	<link rel="stylesheet" href="css/owl.carousel.min.css">
+	<link rel="stylesheet" href="css/owl.theme.default.min.css">
 
 	<!-- Theme style  -->
-	<link rel="stylesheet" href="assets/css/theme.css">
+	<link rel="stylesheet" href="css/style.css">
 
 	<!-- Modernizr JS -->
-	<script src="assets/js/modernizr-2.6.2.min.js"></script>
+	<script src="js/modernizr-2.6.2.min.js"></script>
 	<!-- FOR IE9 below -->
 	<!--[if lt IE 9]>
-	<script src="assets/js/respond.min.js"></script>
+	<script src="js/respond.min.js"></script>
 	<![endif]-->
-
-	<link rel="stylesheet" href="/assets/css/arduino-light.css">
-	<script src="/assets/js/highlight.pack.js"></script>
 
 	</head>
 	<body>
 	
 
 	<!-- jQuery -->
-	<script src="assets/js/jquery.min.js"></script>
+	<script src="js/jquery.min.js"></script>
 	<!-- jQuery Easing -->
-	<script src="assets/js/jquery.easing.1.3.js"></script>
+	<script src="js/jquery.easing.1.3.js"></script>
 	<!-- Bootstrap -->
-	<script src="assets/js/bootstrap.min.js"></script>
+	<script src="js/bootstrap.min.js"></script>
 	<!-- Waypoints -->
-	<script src="assets/js/jquery.waypoints.min.js"></script>
+	<script src="js/jquery.waypoints.min.js"></script>
 	<!-- Stellar Parallax -->
-	<script src="assets/js/jquery.stellar.min.js"></script>
+	<script src="js/jquery.stellar.min.js"></script>
 	<!-- Carousel -->
-	<script src="assets/js/owl.carousel.min.js"></script>
+	<script src="js/owl.carousel.min.js"></script>
 	<!-- countTo -->
-	<script src="assets/js/jquery.countTo.js"></script>
+	<script src="js/jquery.countTo.js"></script>
 	<!-- Magnific Popup -->
-	<script src="assets/js/jquery.magnific-popup.min.js"></script>
-	<script src="assets/js/magnific-popup-options.js"></script>
+	<script src="js/jquery.magnific-popup.min.js"></script>
+	<script src="js/magnific-popup-options.js"></script>
 	<!-- Main -->
-	<script src="assets/js/main.js"></script>
+	<script src="js/main.js"></script>
 	<div class="fh5co-loader"></div>
-
-	<script>hljs.initHighlightingOnLoad();</script>
 	
 	<div id="page">
 	<nav class="fh5co-nav" role="navigation">
 		<div class="top-menu">
 			<div class="container">
 				<div class="row">
-					<div class="col-xs-2">
-						<div id="fh5co-logo"><a href="index.html">Team 11</a></div>
+					<div class="col-xs-1">
+						<div id="fh5co-logo"><a href="index.html">Name<span>.</span></a></div>
 					</div>
-					<div class="col-xs-10 text-right menu-1">
+					<div class="col-xs-11 text-right menu-1">
 						<ul>
 							<li class="active"><a href="index.html">Home</a></li>
 							<li class="has-dropdown">
 								<a href="#labs-milestones">Labs</a>
 								<ul class="dropdown">
-									{% for lab in site.labs %}
-										<li><a href="#" data-toggle="modal" data-target="#{{ lab.title | replace: " ", "_"}}">{{ lab.title }}</a></li>
-									{% endfor %}
-								</ul>
-							</li>
-							<li class="has-dropdown">
-								<a href="#labs-milestones">Milestones</a>
-								<ul class="dropdown">
-									{% for milestone in site.milestones %}
-										<li><a href="#" data-toggle="modal" data-target="#{{ milestone.title | replace: " ", "_"}}">{{ milestone.title }}</a></li>
-									{% endfor %}
-								</ul>
-							</li>
-							<li class="has-dropdown">
-									<a href="#labs-milestones">Minutes</a>
-									<ul class="dropdown">
-										{% for minute in site.minutes %}
-											<li><a href="#" data-toggle="modal" data-target="#{{ minute.title | replace: " ", "_"}}">{{ minute.title }}</a></li>
-										{% endfor %}
+										<li><a href="#" data-toggle="modal" data-target="#lab1">Lab 1</a></li>
+										<li><a href="#" data-toggle="modal" data-target="#lab2">Lab 2</a></li>
+										<li><a href="#" data-toggle="modal" data-target="#lab3">Lab 3</a></li>
+										<li><a href="#" data-toggle="modal" data-target="#lab4">Lab 4</a></li>
 									</ul>
 							</li>
+							<li class="has-dropdown">
+									<a href="#labs-milestones">Milestones</a>
+									<ul class="dropdown">
+											<li><a href="#">Milestone 1</a></li>
+											<li><a href="#">Milestone 2</a></li>
+											<li><a href="#">Milestone 3</a></li>
+											<li><a href="#">Milestone 4</a></li>
+										</ul>
+								</li>
 							<li><a href="#about">About Us</a></li>
+							<li><a href="blog.html">Minutes</a></li>
 							<li><a href="#" data-toggle="modal" data-target="#contract">Contract</a></li>
 							<li><a href="https://github.com/ece3400team11/ece3400team11.github.io">Repository</a></li>
 						</ul>
@@ -112,7 +126,7 @@ layout: blank
 		</div>
 	</nav>
 
-	<header id="fh5co-header" class="fh5co-cover" role="banner" style="background-image:url(assets/images/img_bg_1.jpg);" data-stellar-background-ratio="0.5">
+	<header id="fh5co-header" class="fh5co-cover" role="banner" style="background-image:url(images/img_bg_1.jpg);" data-stellar-background-ratio="0.5">
 		<div class="overlay"></div>
 		<div class="container">
 			<div class="row">
@@ -140,7 +154,7 @@ layout: blank
 			<div class="container">
 				<div class="row">
 					<div class="col-md-8 col-md-push-5 animate-box">
-						<img class="img-responsive" src="assets/images/work_1.png" alt="work">
+						<img class="img-responsive" src="images/work_1.png" alt="work">
 					</div>
 					<div class="col-md-4 col-md-pull-8 animate-box">
 						<div class="mt">
@@ -162,7 +176,7 @@ layout: blank
 			<div class="container">
 				<div class="row">
 					<div class="col-md-8 col-md-pull-1 animate-box">
-						<img class="img-responsive" src="assets/images/work_1.png" alt="work">
+						<img class="img-responsive" src="images/work_1.png" alt="work">
 					</div>
 					<div class="col-md-4 animate-box">
 						<div class="mt">
@@ -190,30 +204,60 @@ layout: blank
 			<div class="row animate-box">
 				<div class="col-md-8 col-md-offset-2 text-center fh5co-heading">
 					<h2>Labs and Milestones</h2>
-					<p>Click any of the following links to see what we were up to in each of our labs and milestones.</p>
+					<p>Click any of the following links to see what we were up to in each of our 4 labs and 4 milestones.</p>
 				</div>
 			</div>
 		</div>
 		<div class="container-fluid proj-bottom">
 			<div class="row">
-				{% for lab in site.labs %}
-					<div class="col-md-3 col-sm-6 labs-milestones animate-box" data-animate-effect="fadeIn">
-						<a href="#" data-toggle="modal" data-target="#{{ lab.title | replace: " ", "_"}}"><img src="{{ lab.preview }}" class="img-responsive">
-							<h3>{{ lab.title }}</h3>
-							<span>{{ lab.subtitle }}</span>
-						</a>
-					</div>
-				{% endfor %}
-				{% for milestone in site.milestones %}
-					{% if milestone.status != "disabled" %}
-						<div class="col-md-3 col-sm-6 labs-milestones animate-box" data-animate-effect="fadeIn">
-							<a href="#" data-toggle="modal" data-target="#{{ milestone.title | replace: " ", "_"}}"><img src="{{ milestone.preview }}" class="img-responsive">
-								<h3>{{ milestone.title }}</h3>
-								<span>{{ milestone.subtitle }}</span>
-							</a>
-						</div>
-					{% endif %}
-				{% endfor %}
+				<div class="col-md-3 col-sm-6 labs-milestones animate-box" data-animate-effect="fadeIn">
+					<a href="#" data-toggle="modal" data-target="#lab1"><img src="images/project-1.jpg" alt="Free HTML5 Website Template by FreeHTML5.co" class="img-responsive">
+						<h3>Lab 1</h3>
+						<span>Microcontrollers</span>
+					</a>
+				</div>
+				<div class="col-md-3 col-sm-6 labs-milestones animate-box" data-animate-effect="fadeIn">
+					<a href="#" data-toggle="modal" data-target="#lab2"><img src="images/project-2.jpg" alt="Free HTML5 Website Template by FreeHTML5.co" class="img-responsive">
+						<h3>Lab 2</h3>
+						<span>Analog Circuitry and FFT</span>
+					</a>
+				</div>
+				<div class="col-md-3 col-sm-6 labs-milestones animate-box" data-animate-effect="fadeIn">
+					<a href="#" data-toggle="modal" data-target="#lab3"><img src="images/project-3.jpg" alt="Free HTML5 Website Template by FreeHTML5.co" class="img-responsive">
+						<h3>Lab 3</h3>
+						<span>Wireless Communication</span>
+					</a>
+				</div>
+				<div class="col-md-3 col-sm-6 labs-milestones animate-box" data-animate-effect="fadeIn">
+					<a href="#" data-toggle="modal" data-target="#lab4"><img src="images/project-9.jpg" alt="Free HTML5 Website Template by FreeHTML5.co" class="img-responsive">
+						<h3>Lab 4</h3>
+						<span>FPGA / Vision</span>
+					</a>
+				</div>
+				<div class="col-md-3 col-sm-6 labs-milestones animate-box" data-animate-effect="fadeIn">
+					<a href="#"><img src="images/project-1.jpg" alt="Free HTML5 Website Template by FreeHTML5.co" class="img-responsive">
+						<h3>Milestone 1</h3>
+						<span>View Course</span>
+					</a>
+				</div>
+				<div class="col-md-3 col-sm-6 labs-milestones animate-box" data-animate-effect="fadeIn">
+					<a href="#"><img src="images/project-2.jpg" alt="Free HTML5 Website Template by FreeHTML5.co" class="img-responsive">
+						<h3>Milestone 2</h3>
+						<span>View Course</span>
+					</a>
+				</div>
+				<div class="col-md-3 col-sm-6 labs-milestones animate-box" data-animate-effect="fadeIn">
+					<a href="#"><img src="images/project-3.jpg" alt="Free HTML5 Website Template by FreeHTML5.co" class="img-responsive">
+						<h3>Milestone 3</h3>
+						<span>View Course</span>
+					</a>
+				</div>
+				<div class="col-md-3 col-sm-6 labs-milestones animate-box" data-animate-effect="fadeIn">
+					<a href="#"><img src="images/project-9.jpg" alt="Free HTML5 Website Template by FreeHTML5.co" class="img-responsive">
+						<h3>Milestone 4</h3>
+						<span>View Course</span>
+					</a>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -228,16 +272,34 @@ layout: blank
 			</div>
 
 			<div class="row bs-wizard animate-box" style="border-bottom:0;">
+                
+				<div class="col-xs-3 bs-wizard-step active">
+					<div class="text-center bs-wizard-stepnum"><h4>Milestone 1</h4></div>
+					<div class="progress"><div class="progress-bar"></div></div>
+					<a href="#" class="bs-wizard-dot"></a>
+					<div class="bs-wizard-info text-center"><p>Follow Lines</p></div>
+				</div>
 
-				{% for milestone in site.milestones %}
-					<div class="col-xs-3 bs-wizard-step {{ milestone.status }}">
-						<div class="text-center bs-wizard-stepnum"><h4>{{ milestone.title }}</h4></div>
-						<div class="progress"><div class="progress-bar"></div></div>
-						<a href="#" class="bs-wizard-dot"></a>
-						<div class="bs-wizard-info text-center"><p>{{ milestone.subtitle }}</p></div>
-					</div>
-				{% endfor %}
+				<div class="col-xs-3 bs-wizard-step disabled"><!-- complete -->
+					<div class="text-center bs-wizard-stepnum"><h4>Milestone 2</h4></div>
+					<div class="progress"><div class="progress-bar"></div></div>
+					<a href="#" class="bs-wizard-dot"></a>
+					<div class="bs-wizard-info text-center"><p>IDK What to Call this Yet</p></div>
+				</div>
 
+				<div class="col-xs-3 bs-wizard-step disabled"><!-- complete -->
+					<div class="text-center bs-wizard-stepnum"><h4>Milestone 3</h4></div>
+					<div class="progress"><div class="progress-bar"></div></div>
+					<a href="#" class="bs-wizard-dot"></a>
+					<div class="bs-wizard-info text-center"><p>?????</p></div>
+				</div>
+
+				<div class="col-xs-3 bs-wizard-step disabled"><!-- active -->
+					<div class="text-center bs-wizard-stepnum"><h4>Milestone 4</h4></div>
+					<div class="progress"><div class="progress-bar"></div></div>
+					<a href="#" class="bs-wizard-dot"></a>
+					<div class="bs-wizard-info text-center"><p>Profit</p></div>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -253,19 +315,50 @@ layout: blank
 				<div class="col-md-10 col-md-offset-1">
 					<div class="row animate-box">
 						<div class="owl-carousel owl-carousel-fullwidth">
-							{% for member in site.data.team %}
-								<div class="item">
-									<div class="testimony-slide active text-center">
-										<figure>
-											<img src="{{ member.image }}" alt="user">
-										</figure>
-										<span>{{ member.name }}</span>
-										<blockquote>
-											<p>{{ member.about }}</p>
-										</blockquote>
-									</div>
+							<div class="item">
+								<div class="testimony-slide active text-center">
+									<figure>
+										<img src="images/person_1.jpg" alt="user">
+									</figure>
+									<span>Daniel Weber</span>
+									<blockquote>
+										<p>Junior, CS Major, ECE Minor.</p>
+									</blockquote>
 								</div>
-							{% endfor %}
+							</div>
+							<div class="item">
+								<div class="testimony-slide active text-center">
+									<figure>
+										<img src="images/person_2.jpg" alt="user">
+									</figure>
+									<span>Adam Wojciechowski</span>
+									<blockquote>
+										<p>Junior, ECE and CS Double Major.</p>
+									</blockquote>
+								</div>
+							</div>
+							<div class="item">
+								<div class="testimony-slide active text-center">
+									<figure>
+										<img src="images/person_3.jpg" alt="user">
+									</figure>
+									<span>Shivansh Gupta</a></span>
+									<blockquote>
+										<p>Junior, ECE Major, CS Minor.</p>
+									</blockquote>
+								</div>
+							</div>
+							<div class="item">
+								<div class="testimony-slide active text-center">
+									<figure>
+										<img src="images/person_3.jpg" alt="user">
+									</figure>
+									<span>Vignesh Nandakumar</a></span>
+									<blockquote>
+										<p>Junior, ECE Major, CS Minor.</p>
+									</blockquote>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -279,6 +372,7 @@ layout: blank
 				<div class="col-md-12 text-center">
 					<p>
 						<small class="block">&copy; Cornell University</small> 
+						<small class="block">Designed by <a href="http://freehtml5.co/" target="_blank">FreeHTML5.co</a></small>
 					</p>
 				</div>
 			</div>
@@ -287,60 +381,445 @@ layout: blank
 	</footer>
 	</div>
 	
+	
 
 	<div class="gototop js-top">
 		<a href="#" class="js-gotop"><i class="icon-arrow-up"></i></a>
 	</div>
 
 
+
 	<!--CONTRACT-->
 	<div class="modal fade" id="contract">
 		<div class="modal-dialog">
 			<div class="modal-content">
+				<div class="modal-header">
+					<h1>Team Contract</h1>
+				</div>
 				<div class="modal_body">
-					{% capture contract %}{% include_relative teamContract.md %}{% endcapture %}
-					{{ contract | markdownify }}
+					<p>
+						ECE 3400, Semester FA18 Team 11
+						<br><br>
+						Team Members: Daniel Weber, Adam Wojciechowski, Shivansh Gupta, Vignesh Nandakumar
+					</p>
+					<h2>Team Procedures</h2>
+					<ol>
+						<li>Team meetings will be in Upson Hall 142 on Fridays from 11:15 - 12:05</li>
+						<li>Slack will be the primary mode of communication</li>
+						<li>Decisions will be made by consensus</li>
+						<li>We will rotate meeting roles every week based on who the team leader is that week. 
+							We will have a record keeper, agenda setter, and a meeting coordinator. The agenda 
+							will be written and disseminated over Slack the night before the team meeting</li>
+						<li>The record keeper will rotate every meeting. They will type the minutes during the 
+							meeting and disseminate them via Slack afterwards</li>
+					</ol>
+					<h2>Team Expectations</h2>
+					<h3>Work Quality:</h3>
+					<ol>
+						<li>Project standards (What is a realistic level of quality for team presentations, 
+							collaborative writing, individual research, preparation of drafts, peer reviews, etc.?): 
+							Information quality will be prioritized over visual quality for team meeting presentations. 
+							Every document uploaded to the website will be reviewed by every member of the team to ensure 
+							high quality. If a member chooses to do any individual research, their findings should be 
+							reported to the rest of the group if it could be of use to others.</li>
+					</ol>
+					<h2>Strategies to Fulfill These Standards</h2>
+					<h3>Team Participation:</h3>
+					<ol>
+						<li>
+							Strategies to ensure cooperation and equal distribution of tasks:
+							<ul>
+								<li>The team leader will be in charge of distributing tasks to the rest of the team</li>
+								<li>If there are any issues with team cooperation, the team leader will step in to resolve the conflict</li>
+							</ul>
+						</li>
+						<li>
+							Strategies for encouraging/including ideas from all team members (team maintenance):
+							<ul>
+								<li>During meetings, we have brainstorming sessions. Every team member will be expected to provide at least one idea.</li>
+								<li>The member in charge of the minutes will document every idea mentioned to make sure all ideas are acknowledged.</li>
+								<li>If multiple ideas are presented for the same problem, the team will delegate and reach a consensus.</li>
+							</ul>
+						</li>
+						<li>
+							Strategies for keeping on task (task maintenance):
+							<ul>
+								<li>There will be milestones assigned for every task that have their own deadlines to help team members stay on target.</li>
+								<li>The team leader will be in charge of communicating with the rest of the team and making sure everyone is meeting their deadlines</li>
+							</ul>
+						</li>
+						<li>
+							Preferences for leadership (informal, formal, individual, shared):
+							<ul>
+								<li>The leadership roles will be individual, but not permanent. The roles will change after every major milestone in the project.</li>
+							</ul>
+						</li>
+					</ol>
+					<h3>Personal Accountability:</h3>
+					<ol>
+						<li>
+							Expected individual attendance, punctuality, and participation at all team meetings:
+							<ul>
+								<li>Every member is expected to attend every team meeting. If a member is unable to attend, they must let the team know at least 24 hours before the meeting, barring extreme circumstances</li>
+								<li>Every member is expected to be punctual. Try to show up at least 5 minutes before the meeting starts. If a team member knows they will be late, let the rest of the team know at least an hour before the meeting.</li>
+							</ul>
+						</li>
+						<li>
+							Expected level of responsibility for fulfilling team assignments, timelines, and deadlines:
+							<ul>
+								<li>Every team member should be primarily responsible for the tasks given to them. If someone needs additional help, they can ask other members.</li>
+								<li>Every team member will be responsible for meeting their deadlines. This is important because other team members may be dependent on the completion of your tasks.</li>
+							</ul>
+						</li>
+						<li>
+							Expected level of communication with other team members:
+							<ul>
+								<li>If a question is addressed to the entire team that requires everyone to answer, team members should try to answer within 4 hours.</li>
+								<li>When a task is completed, the team member in charge of that task should notify the rest of the team and, if applicable, make their work available to the rest of the team.</li>
+							</ul>
+						</li>
+						<li>
+							Expected level of commitment to team decisions and tasks:
+							<ul>
+								<li>If there is a decision that affects the entire team, everyone on the team should know about it and will be allowed to have a say.</li>
+								<li>Tasks will be evenly distributed between team members.</li>
+								<li>Every team member is expected to contribute 6-10 hours per week to the project. This will most likely go up near the end of the semester.</li>
+							</ul>
+						</li>
+					</ol>
+					<h3>Consequences for Failing to Follow Procedures and Fulfill Expectations</h3>
+					<ol>
+						<li>
+							Describe, as a group, you would handle infractions of any of the obligations of this team contract:
+							<ul>
+								<li>For the first infraction, the team member will receive a warning from the team leader. The team member in violation must acknowledge that they violated the team contract.</li>
+								<li>For the second infraction, the team member will be publicly shamed on the website.</li>
+							</ul>
+						</li>
+						<li>
+							Describe what your team will do if the infractions continue:
+							<ul>
+								<li>If infractions continue (member misses 3 meetings without excuse, fails to complete their tasks, etc.), the team member in violation will be removed from the website.</li>
+							</ul>
+						</li>
+					</ol>
+					<h2>Team Leadership</h2>
+					<p>
+						Every person on the team will have to take the role as a leader. The role of the leader will be to organize meetings and make sure that everything is submitted in a timely manner. 
+						Please note here who will be responsible when:
+						<br><br>
+						Week 1-4 (Start-up, Lab 1, Milestone 1): Shivansh
+						<br><br>
+						Week 5-8 (Lab 2, Lab 3, Milestone 2): Vignesh
+						<br><br>
+						Week 9-12 (Lab 4, Milestone 3): Adam
+						<br><br>
+						Week 13-16 (Milestone 4, competition, final report): Daniel
+					</p>
+					<ol type="a">
+						<li>I participated in formulating the standards, roles, and procedures as stated in this contract.</li>
+						<li>I understand that I am obligated to abide by these terms and conditions.</li>
+						<li>I understand that if I do not abide by these terms and conditions, I will suffer the consequences as stated in this contract.</li>
+					</ol>
+					<ol>
+						<li>Adam Wojciechowski date: 8/31/2018</li>
+						<li>Vignesh Nandakumar date: 8/31/2018</li>
+						<li>Shivansh Gupta date: 8/31/2018</li>
+						<li>Daniel Weber date: 8/31/2018</li>
+					</ol>
 				</div>
 			</div>
 		</div>
 	</div>
 
-	{% for lab in site.labs %}
-		<div class="modal fade" id="{{ lab.title | replace: " ", "_"}}">
-			<div class="modal-dialog">
-				<div class="modal-content">
-					<div class="modal_body">
-						{{ lab.output }}
-					</div>
-				</div>
-			</div>
-		</div>
-	{% endfor %}
 
-	{% for milestone in site.milestones %}
-		<div class="modal fade" id="{{ milestone.title | replace: " ", "_"}}">
-			<div class="modal-dialog">
-				<div class="modal-content">
-					<div class="modal_body">
-						{{ milestone.output }}
-					</div>
+	<!--LAB 1-->
+	<div class="modal fade" id="lab1">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h1>Lab 1: Microcontrollers</h1>
 				</div>
-			</div>
-		</div>
-	{% endfor %}
+				<div class="modal_body">
+					<p>
+						In Lab 1, we had to construct several simple circuits using multiple external components 
+						and the Arduino Uno microcontroller. With the Arduino microcontroller and the Arduino IDE, 
+						we constructed several simple Arduino programs, which culminated with us building our first 
+						robot and having it drive autonomously in a figure eight pattern.
+					</p>
+					<h2>Task 1 - Blinking the Internal LED:</h2>
+					<p>
+						The first task was to use the arduino to blink an internal LED. The on-chip LED is 
+						hard-wired to pin 13 which we set up as an ouput using the following code:
+					</p>
+					<pre><code>
+#define PIN_NUMBER LED_BUILTIN
+						
+void setup() {
+	pinMode(PIN_NUMBER, OUTPUT);
+}
+					</code></pre>
+					<p>
+						We then turned the LED on and off by setting it to high and low respectively:
+					</p>
+					<pre><code>
+void loop() {
+	digitalWrite(PIN_NUMBER, HIGH);   
+	delay(1000);                       // waits for a second
+	digitalWrite(PIN_NUMBER, LOW);    
+	delay(1000);                       
+}
+					</code></pre>
+					<iframe width="540" height="304" src="https://www.youtube.com/embed/FUZXOQbeATo" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+					<h2>Task 2 - Blinking an External LED:</h2>
+					<p>
+						Our next task was to modify the code for task one to blink an external LED. We did this by 
+						connecting an external LED to a digital pin through a resistor as shown in the diagram below:
+					</p>
+					<figure>
+						<img src="images/lab1task2.png" style="width:100%;">
+					</figure>
+					<p>
+						All we did in the code for this task was to change our Pin Number from the on-chip LED to 
+						the pin that we connected to the external LED:
+					</p>
+					<pre><code>
+#define PIN_NUMBER 0
+					</code></pre>
+					<p>
+						The resistor was used to prevent sourcing too much current through the pin in case of a short 
+						circuit, which would burn out both the Arduino and the external LED.
+					</p>
+					<iframe width="540" height="304" src="https://www.youtube.com/embed/RYbxh-uWJU4" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+					<h2>Task 3 - Reading an Analog Input:</h2>
+					<p>
+						Our third task was to detect changes in the resistance value of a potentiometer through an analog 
+						input pin and print the value to the serial monitor. This was accomplished by setting up a voltage 
+						divider circuit as shown below and connection the output of the circuit to an analog pin:
+					</p>
+					<figure>
+						<img src="images/lab1task3.png" style="width:100%;">
+					</figure>
+					<p>
+						We then used the following code to set A0 as our analog pin and setup the serial monitor:
+					</p>
+					<pre><code>
+int potIPT = A0;
 
-	{% for minute in site.minutes %}
-		<div class="modal fade" id="{{ minute.title | replace: " ", "_"}}">
-			<div class="modal-dialog">
-				<div class="modal-content">
-					<div class="modal_body">
-						{{ minute.output }}
-					</div>
-				</div>
-			</div>
-		</div>
-	{% endfor %}
+void setup() {
+	Serial.begin(9600);   
+}
+					</code></pre>
+					<p>
+						Using the analogRead function, we were able to read the voltage value from the analog pin and output 
+						that value to the serial monitor every half second:
+					</p>
+					<pre><code>
+void loop() {
+	int val = analogRead(potIPT);  // read the input
+	Serial.println(val);           // print to serial monitor
+	delay(500);                    // wait half a second
+}
+					</code></pre>
+					<h2>Task 4 - Outputting an Analog Signal</h2>
+					<p>
+						Combining the setups of Tasks 2 & 3, we designed the following circuit which allowed us to 
+						use the analog signal input from the potentiometer to control the brightness of the external LED:
+					</p>
+					<figure>
+						<img src="images/lab1task4.png" style="width:100%;">
+					</figure>
+					<p>
+						The LED could only be connected to one of the 6 digital pins which could output a PWN signal, 
+						which was required to simulate the effect of an analog voltage. The digital pin was set up as 
+						an output exactly as in Tasks 1 & 2. Inside the loop, we used the analogWrite function to output 
+						the analog voltage to the digital pin:
+					</p>
+					<pre><code>
+void loop() {
+	int val = analogRead(potIPT);     // read the input pin
+	analogWrite(PIN_NUMBER, map(val, 0, 1023, 0, 255));
+}
+					</code></pre>
+					<p>
+						The 10-bit ADC (Analog-to-Digital Converter) is able to input analog values from 0 to 1023, however 
+						the LED is only able to input voltage values from 0 to 255, so we used the map function to make sure 
+						that we didnt exceed the voltage limits of the LED.
+					</p>
+					<iframe width="540" height="304" src="https://www.youtube.com/embed/4hCbVb7QNAI" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+					<h2>Task 5 - Controlling Parallax Servos:</h2>
+					<p>
+						Our final task before assembling our robot was to use the PWM signal we generated in the previous task 
+						to drive and control a Parallax Continuous Rotation Servo. We did this using the Arduino Servo.h library. 
+						First we set up the servo and the serial monitor.
+					</p>
+					<pre><code>
+#include &lt;Servo.h&gt;
+#define PIN_NUMBER 3
+
+Servo myservo;  // create servo object to control a servo
+int potIPT = A0;
+
+void setup() {
+	myservo.attach(PIN_NUMBER);
+	Serial.begin(9600);
+}
+					</code></pre>
+					<p>
+						We then output the analog voltage of the potentiometer setup through the digital pin, as in Task 4, 
+						to control the speed and direction of the servo, with the only difference being that the range of voltage 
+						values for the servo was from 0 to 180 instead of 0 to 255.
+					</p>
+					<iframe width="540" height="304" src="https://www.youtube.com/embed/89UeEeVpefA" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+					<h2>Task 6 - Assembling the Robot:</h2>
+					<p>
+						The parts we used to assemble our robot were:
+						<ul>
+							<li>2 Servos</li>
+							<li>2 Servo Mounts</li>
+							<li>2 Wheels</li>
+							<li>1 Baseplate</li>
+							<li>11 Screws</li>
+							<li>11 nuts</li>
+							<li>1 Ball Bearing Wheel</li>
+							<li>1 Arduino</li>
+							<li>1 Rechargeable Battery Pack</li>
+						</ul>
+						The first thing we did was mount the servos to the servo mounts. As there was a shortage of screws and nuts 
+						in the lab, we only used two screws per servo instead of the four there are room for. The robot built in this 
+						lab will not be the same as the final robot, so we just needed enough screws to maintain structural integrity.
+						<br><br>
+						The servos were then mounted to the baseplate, using two screws per mount.
+						<br><br>
+						The wheels were then mounted to the servos. As one of our servos did not have a screw, we used wheels that fit 
+						snug on the servos. This is an issue that we will need to fix when designing later robots.
+						<br><br>
+						Next, we mounted the Arduino on top of the baseplate using two screws.
+						<br><br>
+						Finally, we attached the ball bearing wheel to the front of the robot.
+					</p>
+					<h2>Task 7 - Driving the Robot Autonomously:</h2>
+					<p>
+						Once the robot was built, we wrote code for the robot to autonomously drive in a figure eight pattern. The 2 
+						servos and digital output pins were set up as in the previous tasks and connected using the attach function:
+					</p>
+					<pre><code>
+void setup() {
+	leftWheel.attach(LEFT_WHEEL_PIN);
+	rightWheel.attach(RIGHT_WHEEL_PIN);
+}
+					</code></pre>
+					<p>
+						To control the movements of the robot, we had 3 basic functions: moveForward, moveRight, and moveLeft. The 
+						moveForward function worked by turning both wheels in the same direction at the same speed. The moveRight function 
+						worked by turning the left wheel forward while at the same time turning the right wheel backwards in order to pivot 
+						the robot and make it turn right. The moveLeft function worked in the same way but with the directions reversed.
+					</p>
+					<pre><code>
+void moveForward() {
+	leftWheel.write(FORWARD_POS);
+	rightWheel.write(FORWARD_POS);
+	delay(straightTime);
+}
 	
+void moveRight() {
+	leftWheel.write(FORWARD_POS);
+	rightWheel.write(BACKWARD_POS);
+	delay(rightTime);
+}
+	
+void moveLeft() {
+	leftWheel.write(BACKWARD_POS);
+	rightWheel.write(FORWARD_POS);
+	delay(leftTime);
+}
+					</code></pre>
+					<p>
+						Using these three funcitons in the following order would make the robot drive autonomously in a figure eight pattern:
+					</p>
+					<pre><code>
+void loop() {
+	moveStop();     //stops both wheels
+	moveForward();
+	moveLeft();
+	moveForward();
+	moveRight();
+	moveForward();
+	moveRight();
+	moveForward();
+	moveRight();
+	moveForward();
+	moveRight();
+	moveForward();
+	moveLeft();
+	moveForward();
+	moveLeft();
+	moveForward();
+	moveLeft();
+}
+					</code></pre>
+					<p>
+						The first time we tested the robot, it became apparent that one of our servos was spinning much faster than the other; 
+						so much faster that the robot was practically impossible to control.
+						<br><br>
+						We performed a series of tasks in order to identify the problem. First, we swapped the pins for our two servos. This 
+						would check to see if the issue was in the software rather than in the hardware. After switching the pins had no effect, 
+						we decided to try a third servo. The third servo was much closer to the speed we were expecting, so we switched out the 
+						super fast servo. After this switch, we were able to get out robot to drive in straight lines and in a proper figure eight pattern.
+					</p>
+					<iframe width="540" height="304" src="https://www.youtube.com/embed/GhzqjIfTxn0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+					<h2>Blooper</h2>
+					<iframe width="540" height="304" src="https://www.youtube.com/embed/d9uHi5ukqcA" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<!--LAB 2-->
+	<div class="modal fade" id="lab2">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h1>Lab 2: Analog Circuitry and FFT</h1>
+				</div>
+				<div class="modal_body">
+					<p>implement me</p>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<!--LAB 3-->
+	<div class="modal fade" id="lab3">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h1>Lab 3: Wireless Communication</h1>
+				</div>
+				<div class="modal_body">
+					<p>implement me</p>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<!--LAB 4-->
+	<div class="modal fade" id="lab4">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h1>Lab 4: FPGA / Vision</h1>
+				</div>
+				<div class="modal_body">
+					<p>implement me</p>
+				</div>
+			</div>
+		</div>
+	</div>
 	</body>
 
 </html>
+
