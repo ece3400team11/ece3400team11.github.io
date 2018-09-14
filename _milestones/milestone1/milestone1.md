@@ -108,6 +108,54 @@ Demo:
 
 ## Task 3 - Traversing the Grid in a Figure Eight Pattern:
 
+Now that the robot was able to follow a straight line, we set about programming it to autonomously traverse a grid in a figure eight pattern.
+
+The algorithm for this movement was generally the same as the one for following a straight line, with the only difference being the behaviour of the robot when it encountered an intersection. On reaching an intersection, the robot would first need to move forward a little bit to center itself over the intersection (since the line sensors are placed a little ahead of the wheels). The amount of time we needed the robot to move forward to center itself perfectly was determined by trial and error. We then needed the robot to turn left or right, which we did using the code we had written for a similar task in Lab 1. However, since we were now powering more stuff off the Arduino, each individual component received less power so turn took a lot longer than it had done previously.
+
+```cpp
+void turnLeft() {
+  //Moves both wheels in opposite directions for  an empirically determined amount of time
+  leftWheel.write(BACKWARD_LEFT);
+  rightWheel.write(FORWARD_RIGHT);
+  delay(LEFT_TIME);
+}
+
+void loop() {
+
+  if (SENSOR_LEFT_READING < 400 && SENSOR_RIGHT_READING < 400) {
+    leftWheel.write(FORWARD_LEFT);
+    rightWheel.write(FORWARD_RIGHT);
+    delay(400); //For the robot to center itself on the intersection
+    turnLeft();
+  } else {
+ ...
+```
+
+Once we got the turns working well, all that remained was to string together the correct sequence of turns for the robot to perform a figure eight. This was done quite simply by creating a function which utilised a counter to chain together the turns required.
+
+```cpp
+void fig8() {
+  if (counter%8 == 0) turnLeft();
+  if (counter%8 == 1) turnLeft();
+  if (counter%8 == 2) turnLeft();
+  if (counter%8 == 3) turnLeft();
+  if (counter%8 == 4) turnRight();
+  if (counter%8 == 5) turnRight();
+  if (counter%8 == 6) turnRight();
+  if (counter%8 == 7) turnRight(); 
+}
+
+void loop() {
+
+  if (SENSOR_LEFT_READING < 400 && SENSOR_RIGHT_READING < 400) {
+    leftWheel.write(FORWARD_LEFT);
+    rightWheel.write(FORWARD_RIGHT);
+    delay(400); //For the robot to center itself on the intersection
+    fig8();
+    counter++;
+  } else {
+ ...
+```
 
 Demo:
 
