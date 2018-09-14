@@ -14,7 +14,7 @@ For Milestone 1, we had to take the robot we built in the previous lab and give 
 
 After some trial and error, we decided to attach the line sensors to the front of our robot rather than the rear. We decided on using only 2 line sensors since we found that this was a sufficient number of line sensors to keep the robot relatively well oriented while also saving pins for later in the project. We first soldered male pin heads to the sensors so we could easily attach and remove wires between the sensors and the Arduino. Then we attached the sensors using a couple nuts and some extenders to the bottom of our base plate, making sure to position them pointing slightly inwards to keep them as close to the robot’s center of rotation as possible, as this makes the turning of the robot easier.
 
-![Image](milestone1/images/Line_Sensors.png)
+![Image](milestone1/images/Robot.jpg)
 
 We chose to space out our sensors a little wider than the line so the robot has some flexibility and does not need to correct itself too often.
 
