@@ -12,32 +12,30 @@
 #include <Servo.h>
 #define LEFT_WHEEL_PIN 4
 #define RIGHT_WHEEL_PIN 5
-#define SENSOR0_PIN 2
-#define SENSOR1_PIN 3
-#define SPEED_LEFT 1
-#define SPEED_RIGHT 179
+#define SENSOR_LEFT_PIN 2
+#define SENSOR_RIGHT_PIN 3
 
+#define FORWARD_LEFT 0
+#define BACKWARD_LEFT 180
+#define FORWARD_RIGHT 180
+#define BACKWARD_LEFT 0
 #define STOP_POS 90
-// WRT left wheel
-#define FORWARD_POS 180
-#define BACKWARD_POS 0
 
-int rightTime = 1000;
-int leftTime = 1000;
+#define RIGHT_TIME = 1000;
+#define LEFT_TIME = 1000;
+
 
 // These variables are marked 'volatile' to inform the compiler that they can change
 // at any time (as they are set by hardware interrupts).
-volatile long SENSOR0_TIMER;
-volatile long SENSOR1_TIMER;
+volatile long SENSOR_LEFT_TIMER;
+volatile long SENSOR_RIGHT_TIMER;
 
 Servo leftWheel;
 Servo rightWheel;
 int counter = 0;
 
-
-// Consider smoothing this value with your favorite smoothing technique (exponential moving average?)
-volatile int SENSOR0_READING;
-volatile int SENSOR1_READING;
+volatile int SENSOR_LEFT_READING; 
+volatile int SENSOR_RIGHT_READING;
 
 // A digital write is required to trigger a sensor reading.
 void setup_sensor(int pin, long *sensor_timer) {
@@ -47,29 +45,32 @@ void setup_sensor(int pin, long *sensor_timer) {
   pinMode(pin, INPUT);
 }
 
-void SENSOR0_ISR() {
+void SENSOR_LEFT_ISR() {
   // The sensor light reading is inversely proportional to the time taken
   // for the pin to fall from high to low. Lower values mean lighter colors.
-  SENSOR0_READING = micros() - SENSOR0_TIMER;
+  SENSOR_LEFT_READING = micros() - SENSOR_LEFT_TIMER;
   // Reset the sensor for another reading
-  setup_sensor(SENSOR0_PIN, &SENSOR0_TIMER);
+  setup_sensor(SENSOR_LEFT_PIN, &SENSOR_LEFT_TIMER);
 }
 
-void SENSOR1_ISR() {
-  SENSOR1_READING = micros() - SENSOR1_TIMER;
-  setup_sensor(SENSOR1_PIN, &SENSOR1_TIMER);
+void SENSOR_RIGHT_ISR() {
+  // The sensor light reading is inversely proportional to the time taken
+  // for the pin to fall from high to low. Lower values mean lighter colors.
+  SENSOR_RIGHT_READING = micros() - SENSOR_RIGHT_TIMER;
+  // Reset the sensor for another reading
+  setup_sensor(SENSOR_RIGHT_PIN, &SENSOR_RIGHT_TIMER);
 }
 
 void setup() {
   Serial.begin(9600);
 
   // Tell the compiler which pin to associate with which ISR
-  attachInterrupt(digitalPinToInterrupt(SENSOR0_PIN), SENSOR0_ISR, LOW);
-  attachInterrupt(digitalPinToInterrupt(SENSOR1_PIN), SENSOR1_ISR, LOW);
+  attachInterrupt(digitalPinToInterrupt(SENSOR_LEFT_PIN), SENSOR_LEFT_ISR, LOW);
+  attachInterrupt(digitalPinToInterrupt(SENSOR_RIGHT_PIN), SENSOR_RIGHT_ISR, LOW);
 
   // Setup the sensors
-  setup_sensor(SENSOR0_PIN, &SENSOR0_TIMER);
-  setup_sensor(SENSOR1_PIN, &SENSOR1_TIMER);
+  setup_sensor(SENSOR_LEFT_PIN, &SENSOR_LEFT_TIMER);
+  setup_sensor(SENSOR_RIGHT_PIN, &SENSOR_RIGHT_TIMER);
 
   // Setup the servos
   leftWheel.attach(LEFT_WHEEL_PIN);
@@ -78,51 +79,49 @@ void setup() {
   delay(2000);
 }
 
-void moveRight() {
-  // turn right
-  leftWheel.write(FORWARD_POS);
-  rightWheel.write(FORWARD_POS);
-  delay(rightTime);
+void turnRight() {
+  //Moves both wheels in opposite directions for an empirically determined amount of time
+  leftWheel.write(FORWARD_LEFT);
+  rightWheel.write(BACKWARD_RIGHT);
+  delay(RIGHT_TIME);
 }
 
-void moveLeft() {
-  // turn left
-  leftWheel.write(BACKWARD_POS);
-  rightWheel.write(BACKWARD_POS);
-  delay(leftTime);
+void turnLeft() {
+  //Moves both wheels in opposite directions for  an empirically determined amount of time
+  leftWheel.write(BACKWARD_LEFT);
+  rightWheel.write(FORWARD_RIGHT);
+  delay(LEFT_TIME);
 }
 
+//Hardcoded turns required for a figure eight pattern
 void fig8() {
-  if (counter%8 == 0) moveLeft();
-  if (counter%8 == 1) moveLeft();
-  if (counter%8 == 2) moveLeft();
-  if (counter%8 == 3) moveLeft();
-  if (counter%8 == 4) moveRight();
-  if (counter%8 == 5) moveRight();
-  if (counter%8 == 6) moveRight();
-  if (counter%8 == 7) moveRight(); 
+  if (counter%8 == 0) turnLeft();
+  if (counter%8 == 1) turnLeft();
+  if (counter%8 == 2) turnLeft();
+  if (counter%8 == 3) turnLeft();
+  if (counter%8 == 4) turnRight();
+  if (counter%8 == 5) turnRight();
+  if (counter%8 == 6) turnRight();
+  if (counter%8 == 7) turnRight(); 
 }
 
 void loop() {
-  // These delays are purely for ease of reading.
-  /*Serial.println("Sensor 0");
-  Serial.println(SENSOR0_READING);
-  delay(500);
-  Serial.println("Sensor 1");
-  Serial.println(SENSOR1_READING);
-  delay(500);*/
-  
-  if (SENSOR0_READING < 400 && SENSOR1_READING < 400) {
-    leftWheel.write(SPEED_LEFT);
-    rightWheel.write(SPEED_RIGHT);
-    delay(400);
+  //Centers and turns the robot in the appropriate direction if both line sensors
+  //see a white line (come to an intersection)
+  if (SENSOR_LEFT_READING < 400 && SENSOR_RIGHT_READING < 400) {
+    leftWheel.write(FORWARD_LEFT);
+    rightWheel.write(FORWARD_RIGHT);
+    delay(400); //For the robot to center itself on the intersection
     fig8();
     counter++;
+   
   } else {
-    if (SENSOR0_READING < 400) leftWheel.write(90);
-    else leftWheel.write(SPEED_LEFT);
-  
-    if (SENSOR1_READING < 400) rightWheel.write(90);
-    else rightWheel.write(SPEED_RIGHT);
+    //Stops left wheel to correct the robot if left line sensor sees the white line
+    if (SENSOR_LEFT_READING < 400) leftWheel.write(STOP_POS);
+    else leftWheel.write(FORWARD)LEFT);
+    
+    //Stops right wheel to correct the robot if right line sensor sees the white line
+    if (SENSOR_RIGHT_READING < 400) rightWheel.write(STOP_POS);
+    else rightWheel.write(FORWARD_RIGHT);
   }
 }
