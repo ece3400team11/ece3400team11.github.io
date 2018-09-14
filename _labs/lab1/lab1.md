@@ -211,3 +211,6 @@ Demo:
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/d9uHi5ukqcA" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
 
+## Full lab code
+
+You can find the full that we used for the lab [here](https://github.com/ece3400team11/ece3400team11.github.io/tree/master/_labs/lab1/code)
