@@ -105,6 +105,7 @@ As you can see in the code above, if both of the line sensors see the white line
 
 Demo:
 
+<iframe width="560" height="315" src="https://www.youtube.com/embed/rWixVOVaqlE" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
 
 ## Task 3 - Traversing the Grid in a Figure Eight Pattern:
 
