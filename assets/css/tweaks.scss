@@ -1,0 +1,31 @@
+---
+---
+
+$text_width: 600px;
+$padded_text_width: 660px;
+
+.modal-dialog {
+  width: $padded_text_width;
+}
+
+.modal_body {
+  width: $text_width;
+
+  img, iframe {
+    width: $text_width;
+    max-width: $text_width;
+  }
+  
+  code {
+    font-size: 14px;
+  }
+
+  pre {
+    padding: 5px;
+  }
+  
+  .emoji {
+    width: 24px;
+    height: 24px;
+  }
+}

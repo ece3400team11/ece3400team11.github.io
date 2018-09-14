@@ -2,7 +2,7 @@
 layout: blank
 title:  "Lab 1"
 subtitle: "Microcontrollers"
-preview: "assets/images/project-1.jpg"
+preview: "assets/images/lab1_img.png"
 ---
 
 # Lab 1: Microcontrollers

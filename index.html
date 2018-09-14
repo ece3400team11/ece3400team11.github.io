@@ -35,8 +35,12 @@ layout: blank
 	<script src="assets/js/respond.min.js"></script>
 	<![endif]-->
 
+	<!-- Code style -->
 	<link rel="stylesheet" href="/assets/css/arduino-light.css">
 	<script src="/assets/js/highlight.pack.js"></script>
+
+	<!-- style tweaks -->
+	<link rel="stylesheet" href="/assets/css/tweaks.css">
 
 	</head>
 	<body>
@@ -88,7 +92,9 @@ layout: blank
 								<a href="#labs-milestones">Milestones</a>
 								<ul class="dropdown">
 									{% for milestone in site.milestones %}
-										<li><a href="#" data-toggle="modal" data-target="#{{ milestone.title | replace: " ", "_"}}">{{ milestone.title }}</a></li>
+										{% if milestone.status != "disabled" %}
+											<li><a href="#" data-toggle="modal" data-target="#{{ milestone.title | replace: " ", "_"}}">{{ milestone.title }}</a></li>
+										{% endif %}
 									{% endfor %}
 								</ul>
 							</li>
@@ -111,14 +117,14 @@ layout: blank
 		</div>
 	</nav>
 
-	<header id="fh5co-header" class="fh5co-cover" role="banner" style="background-image:url(assets/images/img_bg_1.jpg);" data-stellar-background-ratio="0.5">
+	<header id="fh5co-header" class="fh5co-cover" role="banner" style="background-image:url(assets/images/header.png);" data-stellar-background-ratio="0.5">
 		<div class="overlay"></div>
 		<div class="container">
 			<div class="row">
 				<div class="col-md-8 col-md-offset-2 text-center">
 					<div class="display-t">
 						<div class="display-tc animate-box" data-animate-effect="fadeIn">
-							<h1>We Can Put Whatever We Want Here</h1>
+							<h1>We'll probably come up with a team name eventually.</h1>
 						</div>
 					</div>
 				</div>
@@ -277,7 +283,7 @@ layout: blank
 			<div class="row copyright">
 				<div class="col-md-12 text-center">
 					<p>
-						<small class="block">&copy; Cornell University</small> 
+						<small class="block">&copy; Cornell University 2018</small> 
 					</p>
 				</div>
 			</div>
@@ -305,7 +311,7 @@ layout: blank
 	</div>
 
 	{% for lab in site.labs %}
-		<div class="modal fade" id="{{ lab.title | replace: " ", "_"}}">
+		<div class="modal fade" id="{{ lab.title | replace: " ", "_"}}" tabindex="-1">
 			<div class="modal-dialog">
 				<div class="modal-content">
 					<div class="modal_body">
