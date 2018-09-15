@@ -160,6 +160,8 @@ void loop() {
 
 Demo:
 
+<iframe width="560" height="315" src="https://www.youtube.com/embed/88HikrzoLMU" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+
 ## Future Improvements:
 
 Our algorithm works fine right now, but we have several ideas for how to improve the robot’s ability to traverse the grid. 
