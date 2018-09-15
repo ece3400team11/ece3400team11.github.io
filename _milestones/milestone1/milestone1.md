@@ -2,7 +2,7 @@
 layout: blank
 title:  "Milestone 1"
 subtitle: "Line Following"
-status: "active" # disabled, active, complete
+status: "complete" # disabled, active, complete
 preview: "assets/images/milestone1.jpg"
 ---
 
