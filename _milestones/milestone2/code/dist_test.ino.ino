@@ -1,5 +1,7 @@
-int lightSensor = A0;
-int dist = 0;
+int nearSensor = A0;
+int farSensor = A5;
+int nearDist = 0;
+int farDist = 0;
 
 void setup() {
   // setup serial at 9600 baud
@@ -8,8 +10,12 @@ void setup() {
 
 // the loop function runs over and over again forever
 void loop() {
-  dist = analogRead(lightSensor);         // read the input pin
-  Serial.println(dist);             // debug value
+  nearDist = analogRead(nearSensor);         
+  farDist = analogRead(farSensor);
+  Serial.print("Near: ");
+  Serial.print(nearDist);
+  Serial.print(", Far: ");
+  Serial.println(farDist);           
   // wait half a second
   delay(500);
 }
