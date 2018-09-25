@@ -1,4 +1,4 @@
-l = seriallist;
+l = seriallist
 l(3)
 myserialport = serial("/dev/cu.wchusbserial1410", "BaudRate", 9600)
 fopen(myserialport)

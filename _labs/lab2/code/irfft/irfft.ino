@@ -1,24 +1,36 @@
+/*
+fft_adc_serial.pde
+guest openmusiclabs.com 7.7.14
+example sketch for testing the fft library.
+it takes in data on ADC0 (Analog0) and processes them
+with the fft. the data is sent out over the serial
+port at 115.2kb.
+*/
+
 #define LOG_OUT 1 // use the log output function
 #define FFT_N 256 // set to 256 point fft
 
 #include <FFT.h> // include the library
 
 void setup() {
-  // put your setup code here, to run once:
-  Serial.begin(115200);
-  TIMSK0 = 0; // turn off timer0 for lower jitter - delay() and millis() killed
-  ADCSRA = 0xe5; // set the adc to free running mode
+  Serial.begin(9600); // use the serial port
+  TIMSK0 = 0; // turn off timer0 for lower jitter
+  ADCSRA = 0xe6; // set the adc to free running mode
   ADMUX = 0x40; // use adc0
   DIDR0 = 0x01; // turn off the digital input for adc0
+
+  pinMode(7, OUTPUT);
 }
 
+int irBinNum = 84;
+int irThresh = 60;
+
 void loop() {
-  // put your main code here, to run repeatedly:
   while(1) { // reduces jitter
     cli();  // UDRE interrupt slows this way down on arduino1.0
     for (int i = 0 ; i < 512 ; i += 2) { // save 256 samples
       while(!(ADCSRA & 0x10)); // wait for adc to be ready
-      ADCSRA = 0xf5; // restart adc
+      ADCSRA = 0xf6; // restart adc (64 prescalar)
       byte m = ADCL; // fetch adc data
       byte j = ADCH;
       int k = (j << 8) | m; // form into an int
@@ -26,21 +38,17 @@ void loop() {
       k <<= 6; // form into a 16b signed int
       fft_input[i] = k; // put real data into even bins
       fft_input[i+1] = 0; // set odd bins to 0
-    }// window data, then reorder, then run, then take output
+    }
     fft_window(); // window the data for better frequency response
     fft_reorder(); // reorder the data before doing the fft
     fft_run(); // process the data in the fft
     fft_mag_log(); // take the output of the fft
-    sei(); // turn interrupts back on
-    int sum = 0;
-    for(int i = 41; i < 44; i++) {
-      sum += fft_log_out[i];
-    }
-    // 200 cuttoff
-    if (sum > 170) {
-      Serial.println("robot");  
+    sei();
+
+    if (fft_log_out[irBinNum] > irThresh) {
+      digitalWrite(7, HIGH);
     } else {
-      Serial.println("nobody");  
+      digitalWrite(7, LOW);  
     }
   }
 }
