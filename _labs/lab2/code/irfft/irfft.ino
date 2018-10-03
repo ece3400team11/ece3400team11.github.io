@@ -12,25 +12,37 @@ port at 115.2kb.
 
 #include <FFT.h> // include the library
 
+// #define ATMEG
+
 void setup() {
   Serial.begin(9600); // use the serial port
   TIMSK0 = 0; // turn off timer0 for lower jitter
+  #ifdef ATMEG
+  ADCSRA = 0xe5; // set the adc to free running mode
+  #else
   ADCSRA = 0xe6; // set the adc to free running mode
+  #endif
   ADMUX = 0x40; // use adc0
   DIDR0 = 0x01; // turn off the digital input for adc0
 
   pinMode(7, OUTPUT);
 }
 
-int irBinNum = 84;
-int irThresh = 60;
+//int irBinNum = 84;
+//int irThresh = 60;
+int irBinNum = 82;
+int irThresh = 48;
 
 void loop() {
   while(1) { // reduces jitter
     cli();  // UDRE interrupt slows this way down on arduino1.0
     for (int i = 0 ; i < 512 ; i += 2) { // save 256 samples
       while(!(ADCSRA & 0x10)); // wait for adc to be ready
+      #ifdef ATMEG
+      ADCSRA = 0xf5; // restart adc (64 prescalar)
+      #else
       ADCSRA = 0xf6; // restart adc (64 prescalar)
+      #endif
       byte m = ADCL; // fetch adc data
       byte j = ADCH;
       int k = (j << 8) | m; // form into an int

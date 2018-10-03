@@ -5,7 +5,12 @@ fopen(myserialport)
 binNums = [0:127];
 bins = zeros(1,128);
 try
+    while 1
     start = fscanf(myserialport,"%s");
+    if start == "start"
+       break 
+    end
+    end
     for i = 1:128
         bins(i) = fscanf(myserialport,"%d")
     end
