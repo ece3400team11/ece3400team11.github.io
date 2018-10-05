@@ -70,7 +70,7 @@ ADMUX = 0x40; // use adc0
 DIDR0 = 0x01; // turn off the digital input for adc0
 ```
 
-The 7 at the end of the `ADCSRA` corresponds to the ADC clock prescalar, which determines how fast it samples data. This is important to tune so that you get proper frequency resolution for the frequencies that you are interested in.
+The 7 at the end of the `ADCSRA` corresponds to the ADC clock prescalar, which determines how fast it samples data. This is important to tune so that you get proper frequency resolution for the frequencies that you are interested in. For example, we used a prescalar of 7 for the acustic FFT and a prescalar of 6 for the IR fft since the IR signal was at a much higher frequency (therefore we need a higher sampling rate).
 
 We then used some matlab code to read the fft bin data from the arduino and plot the bin number vs. bin amplitude. This allowed us to visually inspect the result of the FFT analysis and figure out the bin number that corresponded with the 6.08K Hz signal and what a reasonable threshold should be to distinguish a signal from background noise. 
 
