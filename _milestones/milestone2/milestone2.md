@@ -2,7 +2,7 @@
 layout: blank
 title:  "Milestone 2"
 subtitle: "Sensors"
-status: "disabled" # disabled, active, complete
+status: "active" # disabled, active, complete
 preview: "assets/images/project-1.jpg"
 ---
 
