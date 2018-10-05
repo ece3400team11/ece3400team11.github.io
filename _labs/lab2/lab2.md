@@ -36,6 +36,7 @@ The final circuit combines the op-amp with the low pass filter:
 ## FFT Software
 
 Finally, we used the FFT library for the Arduino to measure the IR and audio signal from port A0 and generate the amplitudes in the frequency bins using the following code:
+
 ```cpp
 for (int i = 0 ; i < 512 ; i += 2) { // save 256 samples
   while(!(ADCSRA & 0x10)); // wait for adc to be ready
@@ -60,15 +61,18 @@ for (byte i = 0 ; i < FFT_N/2 ; i++) {
 ```
 
 We also added some additional setup code to have more control over how fast the ADC sampled data:
+
 ```cpp
 TIMSK0 = 0; // turn off timer0 for lower jitter
 ADCSRA = 0xe7; // set the adc to free running mode
 ADMUX = 0x40; // use adc0
 DIDR0 = 0x01; // turn off the digital input for adc0
 ```
+
 The 7 at the end of the `ADCSRA` corresponds to the ADC clock prescalar, which determines how fast it samples data. This is important to tune so that you get proper frequency resolution for the frequencies that you are interested in.
 
 We then used some matlab code to read the fft bin data from the arduino and plot the bin number vs. bin amplitude. This allowed us to visually inspect the result of the FFT analysis and figure out the bin number that corresponded with the 6.08K Hz signal and what a reasonable threshold should be to distinguish a signal from background noise. 
+
 ```matlab
 myserialport = serial("/dev/cu.wchusbserial1410", "BaudRate", 9600)
 fopen(myserialport)
@@ -90,6 +94,7 @@ end
 fclose(myserialport)
 plot(binNums, bins)
 ```
+
 We used matlab's `seriallist` to get a list of the ports we were using and figure out which one the arduino was connected to.
 
 We ran the matlab code while the arduino was connected to the IR sensor and got the following plot when no IR hats were nearby:
