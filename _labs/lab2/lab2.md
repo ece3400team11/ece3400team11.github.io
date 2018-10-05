@@ -8,8 +8,20 @@ preview: "assets/images/lab2.png"
 # Lab 2: Analog Circuitry and FFTs
 
 ## Acoustic Harware Construction
+To build the acoustic setup, we first used the diagram given to us in the lab handout to setup the microphone. We then confirmed that the microphone was working by hooking up the oscilloscope to it and then playing a random tone. Originally, we were only measuring a peak-to-peak voltage of about 20 mV which would be too low to read directly on the Arduino. We decided to build an amplifier for our microphone circuit.
 
-The acoustic team...
+We first decided to connect the microphone to an inverting amplifier, but quickly discovered it to not work. Since our initial microphone circuit had a high DC offset, it railed the op-amp and the signal didn’t get amplified. To fix this, we looked into creating an amplifier that had more capacitors to get around are unusual DC offset. We used an LM358P op-amp and initially used the values shown below. However, we had to change a few of the component valued to optimize it for our circuit.
+![Image](labs/lab2/images/og_microphone.jpg)
+![Image](labs/lab2/images/updated_mic.JPG)
+
+To get rid of all the harmonic signals generated from playing a tone, we added a low-pass filter that would only let signals below 700 Hz pass through. We used a 22 KOhm resistor with a 10 nF capacitor to accomplish this. The filter will also be useful in a noisy environment where other frequencies will be present. 
+![Image](labs/lab2/images/lowpass.JPG)
+
+Here is what the waveform looks like when the 660 Hz tone is played.
+![Image](labs/lab2/images/mic_wave.jpg)
+
+In the future, we may want to adjust our microphone amplifier more to get a cleaner output signal so it is easier to read on the arduino. We are also considering the option of using an external chip to do our FFTs so that our Arduino does not need to waste time doing this and can instead work on other important computations.
+
 
 ## IR Harware Construction
 
