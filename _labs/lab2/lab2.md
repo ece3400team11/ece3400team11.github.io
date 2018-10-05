@@ -38,6 +38,7 @@ We then noticed that the voltage in the IR signal could be quite low when the IR
 
 Finally, we used the FFT library for the Arduino to measure the IR signal from port A0 and generate the amplitudes in the frequency bins. 
 <Code snippet>
+
 We then used some matlab code to read the fft bin data from the arduino and plot the bin number vs. bin amplitude. This allowed us to visually inspect the result of the FFT analysis and figure out the bin number that corresponded with the 6.08K Hz signal and what a reasonable threshold should be to distinguish a signal from background noise. 
 <Code snippet>
 
