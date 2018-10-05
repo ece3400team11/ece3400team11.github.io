@@ -42,7 +42,8 @@ Finally, we used the FFT library for the Arduino to measure the IR signal from p
 We then used some matlab code to read the fft bin data from the arduino and plot the bin number vs. bin amplitude. This allowed us to visually inspect the result of the FFT analysis and figure out the bin number that corresponded with the 6.08K Hz signal and what a reasonable threshold should be to distinguish a signal from background noise. 
 <Code snippet>
 
-![Image](labs/lab2/images/6khztriangle.png)
+Here is a video where the red LED shows if the arduino has detected another robot:
+<iframe width="560" height="315" src="https://www.youtube.com/embed/cwhYxnZrcJQ" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
 
 ## Full lab code
 
