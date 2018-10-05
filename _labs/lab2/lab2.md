@@ -39,11 +39,60 @@ We then noticed that the voltage in the IR signal could be quite low when the IR
 
 ### Software
 
-Finally, we used the FFT library for the Arduino to measure the IR signal from port A0 and generate the amplitudes in the frequency bins. 
-<Code snippet>
+Finally, we used the FFT library for the Arduino to measure the IR signal from port A0 and generate the amplitudes in the frequency bins using the following code:
+```cpp
+for (int i = 0 ; i < 512 ; i += 2) { // save 256 samples
+  while(!(ADCSRA & 0x10)); // wait for adc to be ready
+  ADCSRA = 0xf7; // restart adc
+  byte m = ADCL; // fetch adc data
+  byte j = ADCH;
+  int k = (j << 8) | m; // form into an int
+  k -= 0x0200; // form into a signed int
+  k <<= 6; // form into a 16b signed int
+  fft_input[i] = k; // put real data into even bins
+  fft_input[i+1] = 0; // set odd bins to 0
+}
+fft_window(); // window the data for better frequency response
+fft_reorder(); // reorder the data before doing the fft
+fft_run(); // process the data in the fft
+fft_mag_log(); // take the output of the fft
+sei();
+Serial.println("start");
+for (byte i = 0 ; i < FFT_N/2 ; i++) { 
+  Serial.println(fft_log_out[i]); // send out the data
+}
+```
+We also added some additional setup code to have more control over how fast the ADC sampled data:
+```cpp
+TIMSK0 = 0; // turn off timer0 for lower jitter
+ADCSRA = 0xe7; // set the adc to free running mode
+ADMUX = 0x40; // use adc0
+DIDR0 = 0x01; // turn off the digital input for adc0
+```
+The 7 at the end of the `ADCSRA` corresponds to the ADC clock prescalar, which determines how fast it samples data. This is important to tune so that you get proper frequency resolution for the frequencies that you are interested in.
 
 We then used some matlab code to read the fft bin data from the arduino and plot the bin number vs. bin amplitude. This allowed us to visually inspect the result of the FFT analysis and figure out the bin number that corresponded with the 6.08K Hz signal and what a reasonable threshold should be to distinguish a signal from background noise. 
-<Code snippet>
+```matlab
+myserialport = serial("/dev/cu.wchusbserial1410", "BaudRate", 9600)
+fopen(myserialport)
+binNums = [0:127];
+bins = zeros(1,128);
+try
+    while 1
+    start = fscanf(myserialport,"%s");
+    if start == "start"
+       break 
+    end
+    end
+    for i = 1:128
+        bins(i) = fscanf(myserialport,"%d")
+    end
+catch ME
+    warning('error occured');
+end
+fclose(myserialport)
+plot(binNums, bins)
+```
 
 Here is a video where the red LED shows if the arduino has detected another robot:
 <iframe width="560" height="315" src="https://www.youtube.com/embed/cwhYxnZrcJQ" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
