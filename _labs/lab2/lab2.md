@@ -10,7 +10,7 @@ preview: "assets/images/lab2.png"
 ## Acoustic Harware Construction
 To build the acoustic setup, we first used the diagram given to us in the lab handout to setup the microphone. We then confirmed that the microphone was working by hooking up the oscilloscope to it and then playing a random tone. Originally, we were only measuring a peak-to-peak voltage of about 20 mV which would be too low to read directly on the Arduino. We decided to build an amplifier for our microphone circuit.
 
-We first decided to connect the microphone to an inverting amplifier, but quickly discovered it to not work. Since our initial microphone circuit had a high DC offset, it railed the op-amp and the signal didn’t get amplified. To fix this, we looked into creating an amplifier that had more capacitors to get around are unusual DC offset. We used an LM358P op-amp and initially used the values shown below. However, we had to change a few of the component valued to optimize it for our circuit.
+We first decided to connect the microphone to an inverting amplifier, but quickly discovered it to not work. Since our initial microphone circuit had a high DC offset, it railed the op-amp and the signal didn’t get amplified. To fix this, we looked into creating an amplifier that had more capacitors to get around are unusual DC offset. We used an LM358P op-amp and initially used the values shown below. However, we had to change a few of the component values to optimize it for our circuit.
 ![Image](labs/lab2/images/og_microphone.jpg)
 ![Image](labs/lab2/images/updated_mic.JPG)
 
