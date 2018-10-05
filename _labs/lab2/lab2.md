@@ -16,14 +16,22 @@ The acoustic team...
 Here is a picture of the materials we were given:
 ![Image](labs/lab2/images/ir_parts_list.jpg)
 
-We first built the simple series circuit shown in the online lab writeup. We then confirmed that the simple circuit was able to detect other robots by hooking up the IR hat to the power supply and powering it with 9V as specified in the lab writeup. Below is an image from the oscilloscope of the waveform emitted by the IR receiver.
+We first built the simple series circuit shown in the online lab writeup. We then confirmed that the simple circuit was able to detect other robots by hooking up the IR hat to the power supply and powering it with 9V as specified in the lab writeup. Below is an image from the oscilloscope of the waveform emitted by the IR receiver. As you can see from the image below, we were able to verify that the IR hat was indeed outputting a 6.08kHz signal. However, the waveform is definitely not sinusoidal, so we knew there would be plenty of error harmonics.
 ![Image](labs/lab2/images/hatwaveform1.jpg)
 
 After we accomplished this, we decided to add a simple RC low pass filter to our circuit in order to filter out frequencies higher than our sampling rate (which could “look” like the 6.08 KHz signal after performing FFT). We decided to try and set the filter cutoff frequency at about 7 KHz which should let the IR hat signal through but exponentially dampen every frequency higher than that. We ended up using a 1 nF capacitor and a 22 KOhm resistor for the low pass filter. We then verified the filter by analyzing the waveform and FFT response on the oscilloscope.
-<Oscilloscope screen grab of FFT and signal>
 
 We then noticed that the voltage in the IR signal could be quite low when the IR hat was more than a few inches away. Therefore, we decided to build a simple non-inverting op amp with a target gain of around 2. We initially had some difficulties getting the non-inverting op amp to work correctly. We initially used the LF353 in an non inverting configuration but we never saw that amplified signal on the op amp; only a constant voltage at around 4.3 volts (not quite the voltage on the Vcc rail). After trying a few different 353 ICs, we tried switching to the LM358 op amp (which has the same pinout as the 353) and our amplification circuit immediately worked. We are still unsure of why the 353s weren’t working. We decided to use an 12 KOhm resistor as R1 and a 18 KOhm resistor as R2, giving a gain of about 1+18/12 = 2.5. As before, we verified that the op amp was behaving correctly by viewing the output waveform on the oscilloscope.
-<Oscilloscope screen grab of signal and FFT>
+
+We then gathered FFT data from the oscilloscope for when an IR hat was placed near the sensor. As expected, there is a definative fundamental frequency at around 6 kHz and many error harmonics at higher frequencies.
+![Image](labs/lab2/images/hatfft.jpg)
+
+We compared that data with the FFT data for when a decoy was brought close to the sensor and noticed a strong fundamental frequency at around 18 kHz.
+![Image](labs/lab2/images/decoyfft.jpg)
+  
+The final circuit combines the op-amp with the low pass filter:
+![Image](labs/lab2/images/IR_Detector_Circuit.jpg)
+![Image](labs/lab2/images/IR_Detector_Circuit IRL.jpg)
 
 ## FFT Software
 
@@ -50,6 +58,7 @@ for (byte i = 0 ; i < FFT_N/2 ; i++) {
   Serial.println(fft_log_out[i]); // send out the data
 }
 ```
+
 We also added some additional setup code to have more control over how fast the ADC sampled data:
 ```cpp
 TIMSK0 = 0; // turn off timer0 for lower jitter
@@ -82,6 +91,12 @@ fclose(myserialport)
 plot(binNums, bins)
 ```
 We used matlab's `seriallist` to get a list of the ports we were using and figure out which one the arduino was connected to.
+
+We ran the matlab code while the arduino was connected to the IR sensor and got the following plot when no IR hats were nearby:
+![Image](labs/lab2/images/irbgd.png)
+
+We then ran the matlab code with an IR hat a few inches away from the sensor and got the following plot:
+![Image](labs/lab2/images/iropampout.png)
 
 Here is a video of the full IR circuit where the red LED shows if the arduino has detected another robot:
 <iframe width="560" height="315" src="https://www.youtube.com/embed/cwhYxnZrcJQ" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
