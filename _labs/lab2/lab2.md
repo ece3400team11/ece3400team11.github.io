@@ -7,23 +7,11 @@ preview: "assets/images/lab1_img.png"
 
 # Lab 2: Analog Circuitry and FFTs
 
-## Acoustic Team
+## Acoustic Harware Construction
 
 The acoustic team...
 
-### Materials Used
-
-TODO
-
-### Procedure
-
-![Image](labs/lab2/images/660hz.png)
-
-## Optical Team
-
-The optical team...
-
-### Harware Construction
+## IR Harware Construction
 
 Here is a picture of the materials we were given:
 ![Image](labs/lab2/images/ir_parts_list.jpg)
@@ -37,9 +25,9 @@ After we accomplished this, we decided to add a simple RC low pass filter to our
 We then noticed that the voltage in the IR signal could be quite low when the IR hat was more than a few inches away. Therefore, we decided to build a simple non-inverting op amp with a target gain of around 2. We initially had some difficulties getting the non-inverting op amp to work correctly. We initially used the LF353 in an non inverting configuration but we never saw that amplified signal on the op amp; only a constant voltage at around 4.3 volts (not quite the voltage on the Vcc rail). After trying a few different 353 ICs, we tried switching to the LM358 op amp (which has the same pinout as the 353) and our amplification circuit immediately worked. We are still unsure of why the 353s weren’t working. We decided to use an 12 KOhm resistor as R1 and a 18 KOhm resistor as R2, giving a gain of about 1+18/12 = 2.5. As before, we verified that the op amp was behaving correctly by viewing the output waveform on the oscilloscope.
 <Oscilloscope screen grab of signal and FFT>
 
-### Software
+## FFT Software
 
-Finally, we used the FFT library for the Arduino to measure the IR signal from port A0 and generate the amplitudes in the frequency bins using the following code:
+Finally, we used the FFT library for the Arduino to measure the IR and audio signal from port A0 and generate the amplitudes in the frequency bins using the following code:
 ```cpp
 for (int i = 0 ; i < 512 ; i += 2) { // save 256 samples
   while(!(ADCSRA & 0x10)); // wait for adc to be ready
@@ -93,8 +81,9 @@ end
 fclose(myserialport)
 plot(binNums, bins)
 ```
+We used matlab's `seriallist` to get a list of the ports we were using and figure out which one the arduino was connected to.
 
-Here is a video where the red LED shows if the arduino has detected another robot:
+Here is a video of the full IR circuit where the red LED shows if the arduino has detected another robot:
 <iframe width="560" height="315" src="https://www.youtube.com/embed/cwhYxnZrcJQ" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
 
 ## Full lab code
