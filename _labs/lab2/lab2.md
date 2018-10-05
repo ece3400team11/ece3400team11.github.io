@@ -25,8 +25,11 @@ The optical team...
 
 ### Harware Construction
 
-We first built the simple series circuit shown in the online lab writeup. We then confirmed that the simple circuit was able to detect other robots by hooking up the IR hat to the power supply and powering it with 9V as specified in the lab writeup.
-<Oscilloscope screen grab of FFT and signal>
+Here is a picture of the materials we were given:
+![Image](labs/lab2/images/ir_parts_list.jpg)
+
+We first built the simple series circuit shown in the online lab writeup. We then confirmed that the simple circuit was able to detect other robots by hooking up the IR hat to the power supply and powering it with 9V as specified in the lab writeup. Below is an image from the oscilloscope of the waveform emitted by the IR receiver.
+![Image](labs/lab2/images/hatwaveform1.jpg)
 
 After we accomplished this, we decided to add a simple RC low pass filter to our circuit in order to filter out frequencies higher than our sampling rate (which could “look” like the 6.08 KHz signal after performing FFT). We decided to try and set the filter cutoff frequency at about 7 KHz which should let the IR hat signal through but exponentially dampen every frequency higher than that. We ended up using a 1 nF capacitor and a 22 KOhm resistor for the low pass filter. We then verified the filter by analyzing the waveform and FFT response on the oscilloscope.
 <Oscilloscope screen grab of FFT and signal>
