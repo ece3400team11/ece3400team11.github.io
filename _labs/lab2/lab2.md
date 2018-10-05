@@ -104,7 +104,7 @@ We ran the matlab code while the arduino was connected to the IR sensor and got 
 We then ran the matlab code with an IR hat a few inches away from the sensor and got the following plot:
 ![Image](labs/lab2/images/iropampout.png)
 
-Here is a video of the full IR circuit where the red LED shows if the arduino has detected another robot:
+From that plot we were able to determine that the primary bin we should be checking was bin number 84 and that we should set the threshold for detecting another IR hat at about 60. We then incorporated this thresholding with an LED in order to visualize when the arduino detects another robot. Here is a video of the full IR circuit where the red LED shows if the arduino has detected another robot:
 <iframe width="560" height="315" src="https://www.youtube.com/embed/cwhYxnZrcJQ" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
 
 ## Full lab code
