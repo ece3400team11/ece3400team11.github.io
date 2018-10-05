@@ -109,4 +109,4 @@ From that plot we were able to determine that the primary bin we should be check
 
 ## Full lab code
 
-You can find the full that we used for the lab [here](https://github.com/ece3400team11/ece3400team11.github.io/tree/master/_labs/lab2/code)
+You can find the full code that we used in this lab [here](https://github.com/ece3400team11/ece3400team11.github.io/tree/master/_labs/lab2/code)
