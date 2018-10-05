@@ -2,7 +2,7 @@
 layout: blank
 title:  "Lab 2"
 subtitle: "Analog Circuitry and FFTs"
-preview: "assets/images/lab1_img.png"
+preview: "assets/images/lab2.png"
 ---
 
 # Lab 2: Analog Circuitry and FFTs
