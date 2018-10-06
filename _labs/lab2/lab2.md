@@ -10,7 +10,7 @@ preview: "assets/images/lab2.png"
 ## Acoustic Harware Construction
 To build the acoustic setup, we first used the diagram given to us in the lab handout to setup the microphone. We then confirmed that the microphone was working by hooking up the oscilloscope to it and then playing a random tone. Originally, we were only measuring a peak-to-peak voltage of about 20 mV which would be too low to read directly on the Arduino. We decided to build an amplifier for our microphone circuit.
 
-We first decided to connect the microphone to an inverting amplifier, but quickly discovered it to not work. Since our initial microphone circuit had a high DC offset, it railed the op-amp and the signal didn’t get amplified. To fix this, we looked into creating an amplifier that had more capacitors to get around are unusual DC offset. We used an LM358P op-amp and initially used the values shown below. However, we had to change a few of the component valued to optimize it for our circuit.
+We first decided to connect the microphone to an inverting amplifier, but quickly discovered it to not work. Since our initial microphone circuit had a high DC offset, it railed the op-amp and the signal didn’t get amplified. To fix this, we looked into creating an amplifier that had more capacitors to get around are unusual DC offset. We used an LM358P op-amp and initially used the values shown below. However, we had to change a few of the component values to optimize it for our circuit.
 ![Image](labs/lab2/images/og_microphone.jpg)
 ![Image](labs/lab2/images/updated_mic.JPG)
 
@@ -84,7 +84,7 @@ DIDR0 = 0x01; // turn off the digital input for adc0
 
 The 7 at the end of the `ADCSRA` corresponds to the ADC clock prescalar, which determines how fast it samples data. This is important to tune so that you get proper frequency resolution for the frequencies that you are interested in. For example, we used a prescalar of 7 for the acustic FFT and a prescalar of 6 for the IR fft since the IR signal was at a much higher frequency (therefore we need a higher sampling rate).
 
-We then used some matlab code to read the fft bin data from the arduino and plot the bin number vs. bin amplitude. This allowed us to visually inspect the result of the FFT analysis and figure out the bin number that corresponded with the 6.08K Hz signal and what a reasonable threshold should be to distinguish a signal from background noise. 
+We then used some matlab code to read the fft bin data from the arduino and plot the bin number vs. bin amplitude. This allowed us to visually inspect the result of the FFT analysis and figure out the bin number that corresponded with the signal and a reasonable threshold for the bin in order to distinguish the signal from the noise. 
 
 ```matlab
 myserialport = serial("/dev/cu.wchusbserial1410", "BaudRate", 9600)
@@ -118,6 +118,40 @@ We then ran the matlab code with an IR hat a few inches away from the sensor and
 
 From that plot we were able to determine that the primary bin we should be checking was bin number 84 and that we should set the threshold for detecting another IR hat at about 60. We then incorporated this thresholding with an LED in order to visualize when the arduino detects another robot. Here is a video of the full IR circuit where the red LED shows if the arduino has detected another robot:
 <iframe width="560" height="315" src="https://www.youtube.com/embed/cwhYxnZrcJQ" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+
+We then repeated the data gathering procedure for the audio signal and were able to determine that the bin number should be 18 with a threshold of about 180:
+![Image](labs/lab2/images/speaker-low-pass.png)
+
+We then merged the two code bases together by first doing the audio FFT analysis and then once the 660 Hz signal had been identified it would start detecting IR hats. We used a flag to switch between the two modes and run the ADC at different speeds:
+
+```cpp
+if (detectingAudio) {
+  ADCSRA = 0xf7; // restart adc (128 prescalar)
+}
+else {
+  ADCSRA = 0xf5; // restart adc (32 prescalar)
+}
+```
+
+We then added some control code to detect the 660 Hz audio signal on pin A0 and then switch the state of the arduino to detect the IR hat on pin A1:
+
+```cpp
+if (detectingAudio) {
+  if (fft_log_out[micBinNum] > micThresh) {
+    detectingAudio = 0;
+    ADMUX = 0x41; // switch to ADC1
+  }
+} else {
+  if (fft_log_out[irBinNum] > irThresh) {
+    digitalWrite(7, HIGH);
+  } else {
+    digitalWrite(7, LOW);  
+  }
+}
+```
+
+A demo of this code can be seen here:
+
 
 ## Full lab code
 
