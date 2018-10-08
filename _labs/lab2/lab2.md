@@ -152,6 +152,9 @@ if (detectingAudio) {
 
 A demo of this code can be seen here:
 
+<iframe width="560" height="315" src="https://www.youtube.com/embed/-ZqzoNSWgts" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+
+As you can see, the arduino doesn't start detecting the IR hat until the 660 Hz tone has been played.
 
 ## Full lab code
 
