@@ -10,19 +10,19 @@
   */
 
 #include <Servo.h>
-#define LEFT_WHEEL_PIN 4
-#define RIGHT_WHEEL_PIN 5
-#define SENSOR_LEFT_PIN 2
-#define SENSOR_RIGHT_PIN 3
+#define LEFT_WHEEL_PIN 5
+#define RIGHT_WHEEL_PIN 6
+#define SENSOR_LEFT_PIN 3
+#define SENSOR_RIGHT_PIN 2
 
 #define FORWARD_LEFT 0
 #define BACKWARD_LEFT 180
 #define FORWARD_RIGHT 180
-#define BACKWARD_LEFT 0
+#define BACKWARD_RIGHT 0
 #define STOP_POS 90
 
-#define RIGHT_TIME = 1000;
-#define LEFT_TIME = 1000;
+#define RIGHT_TIME 1000
+#define LEFT_TIME 1000
 
 
 // These variables are marked 'volatile' to inform the compiler that they can change
@@ -118,7 +118,7 @@ void loop() {
   } else {
     //Stops left wheel to correct the robot if left line sensor sees the white line
     if (SENSOR_LEFT_READING < 400) leftWheel.write(STOP_POS);
-    else leftWheel.write(FORWARD)LEFT);
+    else leftWheel.write(FORWARD_LEFT);
     
     //Stops right wheel to correct the robot if right line sensor sees the white line
     if (SENSOR_RIGHT_READING < 400) rightWheel.write(STOP_POS);

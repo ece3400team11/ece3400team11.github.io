@@ -12,7 +12,7 @@ port at 115.2kb.
 
 #include <FFT.h> // include the library
 
-// #define ATMEG
+ #define ATMEG
 
 void setup() {
   Serial.begin(9600); // use the serial port

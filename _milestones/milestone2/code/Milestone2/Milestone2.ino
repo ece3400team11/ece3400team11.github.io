@@ -10,19 +10,25 @@
   */
 
 #include <Servo.h>
-#define LEFT_WHEEL_PIN 4
+#define LEFT_WHEEL_PIN 6
 #define RIGHT_WHEEL_PIN 5
-#define SENSOR_LEFT_PIN 2
-#define SENSOR_RIGHT_PIN 3
+#define SENSOR_LEFT_PIN 3
+#define SENSOR_RIGHT_PIN 2
+#define FRONT_IR_SENSOR A0
 
-#define FORWARD_LEFT 0
-#define BACKWARD_LEFT 180
-#define FORWARD_RIGHT 180
-#define BACKWARD_RIGHT 0
+#define FFT_PIN 13
+
+#define FORWARD_LEFT 180
+#define BACKWARD_LEFT 0
+#define FORWARD_RIGHT 0
+#define BACKWARD_RIGHT 180
 #define STOP_POS 90
 
 #define RIGHT_TIME 1000
 #define LEFT_TIME 1000
+
+#define LEFT_SENSOR_THRESH 100
+#define RIGHT_SENSOR_THRESH 100
 
 
 // These variables are marked 'volatile' to inform the compiler that they can change
@@ -34,19 +40,18 @@ Servo leftWheel;
 Servo rightWheel;
 int counter = 0;
 
-volatile int SENSOR_LEFT_READING; 
-volatile int SENSOR_RIGHT_READING;
+volatile long SENSOR_LEFT_READING; 
+volatile long SENSOR_RIGHT_READING;
 
-#define WALL_THRESH 40
-
-#define AHEAD_THRESH 80
+#define WALL_THRESH 300
 
 // A digital write is required to trigger a sensor reading.
 void setup_sensor(int pin, long *sensor_timer) {
-  *sensor_timer = micros();
   pinMode(pin, OUTPUT);
   digitalWrite(pin, HIGH);
+  delayMicroseconds(10);
   pinMode(pin, INPUT);
+  *sensor_timer = micros();
 }
 
 void SENSOR_LEFT_ISR() {
@@ -79,9 +84,13 @@ void setup() {
   // Setup the servos
   leftWheel.attach(LEFT_WHEEL_PIN);
   rightWheel.attach(RIGHT_WHEEL_PIN);
+  leftWheel.write(STOP_POS);
+  rightWheel.write(STOP_POS);
 
   pinMode(A0, INPUT);
   pinMode(A1, INPUT);
+
+  pinMode(FFT_PIN, INPUT);
 
   delay(2000);
 }
@@ -97,34 +106,52 @@ void turnLeft() {
   //Moves both wheels in opposite directions for  an empirically determined amount of time
   leftWheel.write(BACKWARD_LEFT);
   rightWheel.write(FORWARD_RIGHT);
-  delay(LEFT_TIME);
+  //delay(LEFT_TIME);
+  while(SENSOR_LEFT_READING < LEFT_SENSOR_THRESH) {
+    // turn until past center line (may skip this call)
+  }
+  delay(100);
+  while(SENSOR_LEFT_READING > LEFT_SENSOR_THRESH) {
+    // turn until see line
+  }
+  delay(100);
+  while(SENSOR_LEFT_READING < LEFT_SENSOR_THRESH) {
+    // turn until past line
+  }
 }
 
 void loop() {
   //Centers and turns the robot in the appropriate direction if both line sensors
   //see a white line (come to an intersection)
-  if (SENSOR_LEFT_READING < 400 && SENSOR_RIGHT_READING < 400) {
+  if (SENSOR_LEFT_READING < LEFT_SENSOR_THRESH && SENSOR_RIGHT_READING < RIGHT_SENSOR_THRESH) {
     leftWheel.write(FORWARD_LEFT);
     rightWheel.write(FORWARD_RIGHT);
-    delay(400); //For the robot to center itself on the intersection
+    delay(200);
 
     // at intersection, check if wall to the right.
     // if not, turn right
-    if (analogRead(A0) < WALL_THRESH) {
-       turnRight();
+    leftWheel.write(STOP_POS);
+    rightWheel.write(STOP_POS);
+    delay(1000); //For the robot to center itself on the intersection
+    if (analogRead(FRONT_IR_SENSOR) > WALL_THRESH) {
+       turnLeft();
     }
+    leftWheel.write(FORWARD_LEFT);
+    rightWheel.write(FORWARD_RIGHT);
    
   } else {
     //Stops left wheel to correct the robot if left line sensor sees the white line
-    if (SENSOR_LEFT_READING < 400) leftWheel.write(STOP_POS);
+    if (SENSOR_LEFT_READING < LEFT_SENSOR_THRESH) leftWheel.write(STOP_POS);
     else leftWheel.write(FORWARD_LEFT);
     
     //Stops right wheel to correct the robot if right line sensor sees the white line
-    if (SENSOR_RIGHT_READING < 400) rightWheel.write(STOP_POS);
+    if (SENSOR_RIGHT_READING < RIGHT_SENSOR_THRESH) rightWheel.write(STOP_POS);
     else rightWheel.write(FORWARD_RIGHT);
   }
-
-  if (analogRead(A1) < AHEAD_THRESH) {
-    // 
+  // stop while we detect another robot
+  while(digitalRead(FFT_PIN) == HIGH) {
+    leftWheel.write(STOP_POS);
+    rightWheel.write(STOP_POS);
   }
+  //Serial.println(analogRead(FRONT_IR_SENSOR));
 }
