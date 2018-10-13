@@ -4,7 +4,7 @@ const int SOUTH = 1;
 const int WEST  = 0;
 int x;
 int y;
-int dir = SOUTH;
+int dir = EAST;
 
 
 unsigned char maze[3][3] = {

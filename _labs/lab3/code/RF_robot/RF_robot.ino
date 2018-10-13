@@ -4,6 +4,21 @@
 
 RF24 radio(9,10);
 
+const int NORTH = 3;
+const int EAST  = 2;
+const int SOUTH = 1;
+const int WEST  = 0;
+
+unsigned char x=0;
+unsigned char y=0;
+int dir = EAST;
+
+unsigned char maze[3][3] = {
+  {0x90, 0x80, 0xc0},
+  {0x10, 0x00, 0x40},
+  {0x30, 0x20, 0x60}
+};
+
 const uint64_t pipes[2] = { 0x0000000026LL, 0x0000000027LL };
 
 void setup() {
@@ -22,13 +37,54 @@ void setup() {
 //  radio.printDetails();
 }
 
+// advance the robot's position based on its direction
+void adv(){
+  switch(dir){
+      case NORTH:
+        y=y-1;
+        break;
+      case EAST:
+        x=x+1;
+        break;
+      case SOUTH:
+        y=y+1;
+        break;
+      case WEST:
+        x=x-1;
+        break;
+    }
+}
+
+// get the current position's maze data and perform Right hand following
+void follow(){
+  unsigned char curr = maze[y][x];
+  if((bitRead(curr, dir+4)==0) && (bitRead(curr, (dir+1)%4 + 4)==1)){
+    adv();
+  }
+  else if(bitRead(curr, (dir+1)%4 + 4)==0){
+    dir = (dir+1)%4;
+    adv();
+  }
+  else if((bitRead(curr, dir+4)==1) && (bitRead(curr, (dir+1)%4 + 4)==1) && (bitRead(curr, (dir+3)%4 + 4)==0)){
+    dir = (dir+3)%4;
+    adv();
+  }
+}
+
 void loop() {
-  // TODO get current maze information
-  // pack data into payload
+  // get current maze information
+  unsigned char curr = maze[y][x];   // Single byte with walls, treasures
   
   radio.stopListening();
-  // TODO set payload
-  unsigned long payload = millis();
+  
+  // pack data into payload
+  unsigned long payload = 0;
+  payload |= curr;
+  payload = payload << 8;
+  payload |= x;
+  payload = payload << 8;
+  payload |= y;
+  
   bool ok = false;
   while(!ok) {
     ok = radio.write( &payload, sizeof(unsigned long) );
@@ -36,6 +92,9 @@ void loop() {
 
   // optional
   delay(1000);
+
+  // update position based on maze data
+  follow();
   
 
   // optionally wait for an ACK

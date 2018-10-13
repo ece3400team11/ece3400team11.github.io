@@ -17,6 +17,7 @@
 #define FRONT_IR_SENSOR A0
 
 #define FFT_PIN 13
+#define FFT_CTRL_PIN 12
 
 #define FORWARD_LEFT 180
 #define BACKWARD_LEFT 0
@@ -40,13 +41,12 @@ Servo leftWheel;
 Servo rightWheel;
 int counter = 0;
 
+int started = 0;
+
 volatile long SENSOR_LEFT_READING; 
 volatile long SENSOR_RIGHT_READING;
 
-#define WALL_THRESH 200
-
-int state = 0;
-unsigned long recTime = 0;
+#define WALL_THRESH 300
 
 // A digital write is required to trigger a sensor reading.
 void setup_sensor(int pin, long *sensor_timer) {
@@ -73,12 +73,9 @@ void SENSOR_RIGHT_ISR() {
   setup_sensor(SENSOR_RIGHT_PIN, &SENSOR_RIGHT_TIMER);
 }
 
-void detachInterrupts() {
-  detachInterrupt(digitalPinToInterrupt(SENSOR_LEFT_PIN));
-  detachInterrupt(digitalPinToInterrupt(SENSOR_RIGHT_PIN));
-}
+void setup() {
+  Serial.begin(9600);
 
-void attachInterrupts() {
   // Tell the compiler which pin to associate with which ISR
   attachInterrupt(digitalPinToInterrupt(SENSOR_LEFT_PIN), SENSOR_LEFT_ISR, LOW);
   attachInterrupt(digitalPinToInterrupt(SENSOR_RIGHT_PIN), SENSOR_RIGHT_ISR, LOW);
@@ -86,10 +83,6 @@ void attachInterrupts() {
   // Setup the sensors
   setup_sensor(SENSOR_LEFT_PIN, &SENSOR_LEFT_TIMER);
   setup_sensor(SENSOR_RIGHT_PIN, &SENSOR_RIGHT_TIMER);
-}
-
-void setup() {
-  Serial.begin(9600);
 
   // Setup the servos
   leftWheel.attach(LEFT_WHEEL_PIN);
@@ -97,12 +90,14 @@ void setup() {
   leftWheel.write(STOP_POS);
   rightWheel.write(STOP_POS);
 
-  attachInterrupts();
-
   pinMode(A0, INPUT);
   pinMode(A1, INPUT);
 
   pinMode(FFT_PIN, INPUT);
+  pinMode(FFT_CTRL_PIN, OUTPUT);
+
+  // low = 660 detection
+  digitalWrite(FFT_CTRL_PIN, LOW);
 
   delay(2000);
 }
@@ -122,25 +117,43 @@ void turnLeft() {
   while(SENSOR_LEFT_READING < LEFT_SENSOR_THRESH) {
     // turn until past center line (may skip this call)
   }
-  delay(200);
+  delay(100);
   while(SENSOR_LEFT_READING > LEFT_SENSOR_THRESH) {
     // turn until see line
   }
-  delay(200);
+  delay(100);
   while(SENSOR_LEFT_READING < LEFT_SENSOR_THRESH) {
     // turn until past line
   }
 }
 
 void loop() {
-  Serial.println(state);
-  if (state == 0) {
+  if (started == 0) {
+    if (digitalRead(FFT_PIN) == HIGH) {
+      started = 1;  
+      // high = IR detection
+      digitalWrite(FFT_CTRL_PIN, HIGH);
+    }
+  } else {
+    //Centers and turns the robot in the appropriate direction if both line sensors
+    //see a white line (come to an intersection)
     if (SENSOR_LEFT_READING < LEFT_SENSOR_THRESH && SENSOR_RIGHT_READING < RIGHT_SENSOR_THRESH) {
-      Serial.println("here1");
-      state = 1;
-      recTime = millis();
+      leftWheel.write(FORWARD_LEFT);
+      rightWheel.write(FORWARD_RIGHT);
+      delay(200);
+  
+      // at intersection, check if wall to the right.
+      // if not, turn right
+      leftWheel.write(STOP_POS);
+      rightWheel.write(STOP_POS);
+      delay(1000); //For the robot to center itself on the intersection
+      if (analogRead(FRONT_IR_SENSOR) > WALL_THRESH) {
+         turnLeft();
+      }
+      leftWheel.write(FORWARD_LEFT);
+      rightWheel.write(FORWARD_RIGHT);
+     
     } else {
-      Serial.println("here");
       //Stops left wheel to correct the robot if left line sensor sees the white line
       if (SENSOR_LEFT_READING < LEFT_SENSOR_THRESH) leftWheel.write(STOP_POS);
       else leftWheel.write(FORWARD_LEFT);
@@ -150,38 +163,9 @@ void loop() {
       else rightWheel.write(FORWARD_RIGHT);
     }
     // stop while we detect another robot
-    if(digitalRead(FFT_PIN) == HIGH) {
+    while(digitalRead(FFT_PIN) == HIGH) {
       leftWheel.write(STOP_POS);
       rightWheel.write(STOP_POS);
-      detachInterrupts();
-      delay(1000);
-      attachInterrupts();
-    }
-  } else if (state == 1) {
-    leftWheel.write(FORWARD_LEFT);
-    rightWheel.write(FORWARD_RIGHT);
-    if (millis() - recTime > 200) {
-      state = 2;
-      detachInterrupts();
-      recTime = millis();
-    }
-  } else if (state == 2) {
-    // at intersection, check if wall to the right.
-    // if not, turn right
-    leftWheel.write(STOP_POS);
-    rightWheel.write(STOP_POS);
-    if (millis() - recTime > 1000) {
-      attachInterrupts();
-      if (analogRead(FRONT_IR_SENSOR) > WALL_THRESH) {
-         turnLeft();
-      }
-      leftWheel.write(FORWARD_LEFT);
-      rightWheel.write(FORWARD_RIGHT);
-      state = 0;
     } 
   }
-  //Centers and turns the robot in the appropriate direction if both line sensors
-  //see a white line (come to an intersection)
-  
-  //Serial.println(analogRead(FRONT_IR_SENSOR));
 }

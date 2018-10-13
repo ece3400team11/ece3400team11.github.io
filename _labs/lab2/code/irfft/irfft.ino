@@ -12,7 +12,7 @@ port at 115.2kb.
 
 #include <FFT.h> // include the library
 
- #define ATMEG
+#define ATMEG
 
 void setup() {
   Serial.begin(9600); // use the serial port
@@ -28,10 +28,13 @@ void setup() {
   pinMode(7, OUTPUT);
 }
 
-//int irBinNum = 84;
-//int irThresh = 60;
-int irBinNum = 82;
-int irThresh = 48;
+#ifdef ATMEG
+int irBinNum = 81;
+int irThresh = 60;
+#else
+int irBinNum = 84;
+int irThresh = 60;
+#endif
 
 void loop() {
   while(1) { // reduces jitter
