@@ -15,8 +15,7 @@ void setup() {
 
   // optionally, reduce the payload size.  seems to
   // improve reliability
-  //radio.setPayloadSize(8);
-
+  radio.setPayloadSize(4);
   
   // put your setup code here, to run once:
   #ifdef ROBOT
@@ -29,6 +28,8 @@ void setup() {
     radio.openReadingPipe(1,pipes[0]);
     radio.startListening();
   #endif
+
+//  radio.printDetails();
 }
 
 void loop() {
@@ -42,11 +43,12 @@ void loop() {
     unsigned long payload = millis();
     bool ok = false;
     while(!ok) {
-      radio.write( &payload, sizeof(unsigned long) );
+      ok = radio.write( &payload, sizeof(unsigned long) );
     }
 
     // optional
     delay(1000);
+    
   
     // optionally wait for an ACK
 //    radio.startListening();
