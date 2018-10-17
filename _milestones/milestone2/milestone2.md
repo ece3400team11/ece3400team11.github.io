@@ -63,7 +63,7 @@ Detach code snipped
 ```
 
 // Circuit block diagram
-![Image](milestones/milestone2/images/Circiut_Diagram.png)
+![Image](milestones/milestone2/images/Screen_Shot_2018-10-17_at_12.12.21_AM.png)
 
 ## Demo:
 
