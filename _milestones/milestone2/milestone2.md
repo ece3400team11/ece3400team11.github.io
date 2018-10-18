@@ -121,6 +121,8 @@ void loop() {
 }
 ```
 
+After all the integrations, our system is laid out like this:
+
 ![Image](milestones/milestone2/images/block_dgrm.png)
 
 ## Demo:
