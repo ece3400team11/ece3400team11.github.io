@@ -13,14 +13,13 @@ preview: "assets/images/project-1.jpg"
 For Milestone 2, we had to use the IR distance sensors to add wall-detection capability to the robot and successfully circle inside a set of walls using right-hand following. While in the maze the robot will have to avoid other robots so we had to make sure our robot was capable of detecting other robots, and then determining what it needed to do to avoid the robot. Finally, we had to prepare a demonstration that shows the what the robot was “thinking” while navigating the maze and detecting walls or other robots using various LEDs.
 
 
-## Hardware Modifications 
+## Hardware Modifications
 
 For Milestone 2, we had to add another level on top of our current robot so that we could add the circuits from Lab 2 as well as an IR sensor on each side and the front of the robot. The IR sensors were able to detect the presence and distance of a wall in front of or to the side of the robot. These IR wall sensors enabled us to use the right-hand wall following method to navigate the maze.
 
 In order to add another level onto the robot, we first had to disassemble a significant portion of our first level in order to rearrange components for the second level as well as to replace some of our flimsy structures and connections with more solid ones. Once this was done, we attached another base plate on top of our original one using 3D printed beams. The final design has the battery pack strapped to the bottom of the first level base plate, the arduino mounted on top of the first level base plate, and two small breadboards on the second level base plate to handle all the connections.
 
-//insert picture of robot with second frame.
-![Image](milestones/milestone2/images/New_Robot.png)
+![Image](milestones/milestone2/images/m2_4.jpg)
 
 ## Setting up Wall Sensors:
 
@@ -122,16 +121,20 @@ void loop() {
 }
 ```
 
-// Circuit block diagram
-![Image](milestones/_milestone2/milestone2/images/Screen_Shot_2018-10-17_at_12.12.21_AM.png)
+![Image](milestones/_milestone2/milestone2/images/block_dgrm.png)
 
 ## Demo:
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/DNPShllTkOQ" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+
+Here is an image of the final circuit for milestone 2:
+
+![Image](milestones/_milestone2/milestone2/images/m2_1.jpg)
+
+![Image](milestones/_milestone2/milestone2/images/m2_2.jpg)
 
 ## Future Improvements:
 
 One of the improvements we discussed for our final robot was to include multiple/multi-directional IR sensors instead of just the singular one we have currently. This would allow us to not only detect another robot, but also detect which direction it was coming from, thus allowing our robot to avoid other robots even if the robot detection functions of the other robots are not working as it should.
 
 On a similar note, we considered augmenting the short-range IR sensor currently on the front of our robot with another long-range IR sensor. This would enable us to detect walls not only right in front of our robot, but also those a few squares away, thus allowing us to maybe implement a less reactive and more predictive maze exploration algorithm for our final robot.
-
