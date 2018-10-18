@@ -121,7 +121,7 @@ void loop() {
 }
 ```
 
-![Image](milestones/_milestone2/milestone2/images/block_dgrm.png)
+![Image](milestones/milestone2/images/block_dgrm.png)
 
 ## Demo:
 
@@ -129,9 +129,9 @@ void loop() {
 
 Here is an image of the final circuit for milestone 2:
 
-![Image](milestones/_milestone2/milestone2/images/m2_1.jpg)
+![Image](milestones/milestone2/images/m2_1.jpg)
 
-![Image](milestones/_milestone2/milestone2/images/m2_2.jpg)
+![Image](milestones/milestone2/images/m2_2.jpg)
 
 ## Future Improvements:
 
