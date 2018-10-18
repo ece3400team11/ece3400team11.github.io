@@ -24,10 +24,12 @@ In order to add another level onto the robot, we first had to disassemble a sign
 
 ## Setting up Wall Sensors:
 
-The IR wall sensors provided to us consisted of an IR-LED and an angle sensitive detector that simply used angle of reflection of the light from the object to determine its distance from the sensor. These wall sensors output analog values so they were quite simple to set up and read on the Arduino. The code for reading the wall sensors is provided below:
+The IR wall sensors provided to us consisted of an IR-LED and an angle sensitive detector that simply used angle of reflection of the light from the object to determine its distance from the sensor. These wall sensors output analog values so they were quite simple to set up and read on the Arduino. The code for reading the wall sensors involves doing an analog read and checking the value against a threshold
 
 ```cpp
-Insert code for reading wall sensors
+if (analogRead(FRONT_IR_SENSOR) > WALL_THRESH) {
+  ...
+}
 ```
 
 We then had to decide whether to use the short-range or long-range IR sensors for the purposes of wall following. Using some trial and error, we determined that for the distances we would be expecting to be away from the wall, the short-range IR sensor reading was much more accurate and stable than the long-range one, so we decided to use only the short-range IR sensors for the purposes of this milestone.
@@ -39,7 +41,31 @@ Once we determined an appropriate threshold value for the wall sensor to success
 For this milestone we decided to use a simple robot avoidance strategy. If our robot detects another robot, it simply stops and waits for the other robot to pass by. In order to maintain the accuracy and range of the IR Hat detection circuit, we decided that it would be best to continue using software FFT instead of trying to detect the frequency purely in hardware. However, we realized that the FFT library would likely interfere with the servo library and would likely slow down our robot’s navigation due to the extra processing time required to do FFT. Therefore, we decided to offload the FFT calculation onto a separate ATMega328P chip. We programmed this chip with the Arduino as ISP code and calibrated the FFT code to the ATMega328P’s internal clock using the matlab code from lab 2. We then connected a wire between the ATMega chip and our main arduino in order for the ATMega chip to let our main board know if it had detected another robot. We used the same code we used for Lab 2 except that we changed the prescaler and bin number based on the measurements we made from the ATMega.
 
 ```cpp
-Show code differences
+#ifdef ATMEG
+int irBinNum = 81;
+int irThresh = 60;
+#else
+int irBinNum = 84;
+int irThresh = 60;
+#endif
+
+void setup() {
+  #ifdef ATMEG
+  ADCSRA = 0xe5; // set the adc to free running mode
+  #else
+  ADCSRA = 0xe6; // set the adc to free running mode
+  ...
+}
+
+void loop() {
+  ...
+  // turn on LED and potentially send data back to main board
+  if (fft_log_out[irBinNum] > irThresh) {
+    digitalWrite(7, HIGH);
+  } else {
+    digitalWrite(7, LOW);  
+  }
+}
 ```
 
 ## Integrating Line Tracking and Robot Detection:
