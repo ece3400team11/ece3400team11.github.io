@@ -73,19 +73,53 @@ void loop() {
 We started with our line following code from Milestone 2 and added the wall detection and IR Hat detection code to it in order to perform a right hand maze traversal. The wall detection code simply involved doing an analog read and checking the value against a threshold when the robot got to an intersection.  If there was no wall to the right of the robot, it would turn right. Otherwise, if there was a wall in front of the robot and to the right, the robot would turn left.
 
 ```cpp
-Insert code snippet
+if (analogRead(RIGHT_IR_SENSOR) < WALL_THRESH) {
+  // no wall to the right
+  turnRight();
+} else if (analogRead(FRONT_IR_SENSOR) > WALL_THRESH) {
+  // wall to the right and wall in front
+  turnLeft();
+}
 ```
 
 Since we offloaded the IR detection code to the ATMega chip, simply did a digital read of the pin connected to the ATMega on each pass through our main loop and stopped if it was high:
 
 ```cpp
-Insert code snippet
+if(digitalRead(FFT_PIN) == HIGH) {
+  leftWheel.write(STOP_POS);
+  rightWheel.write(STOP_POS);
+}
 ```
 
 One issue that we noticed when making the integrations was that whenever we wanted to stop our servos they would jitter around. We figured out that it likely had something to do with the ISR’s running for the line sensors. We ended up detaching the interrupts whenever we stopped and then reattached them when we started moving again and that seemed to calm the servos down. We are still unsure as to why the ISR’s were affecting the servos.
 
 ```cpp
-Detach code snipped
+void detachInterrupts() {
+  detachInterrupt(digitalPinToInterrupt(SENSOR_LEFT_PIN));
+  detachInterrupt(digitalPinToInterrupt(SENSOR_RIGHT_PIN));
+}
+
+void attachInterrupts() {
+  // Tell the compiler which pin to associate with which ISR
+  attachInterrupt(digitalPinToInterrupt(SENSOR_LEFT_PIN), SENSOR_LEFT_ISR, LOW);
+  attachInterrupt(digitalPinToInterrupt(SENSOR_RIGHT_PIN), SENSOR_RIGHT_ISR, LOW);
+
+  // Setup the sensors
+  setup_sensor(SENSOR_LEFT_PIN, &SENSOR_LEFT_TIMER);
+  setup_sensor(SENSOR_RIGHT_PIN, &SENSOR_RIGHT_TIMER);
+}
+
+...
+
+void loop() {
+  ...
+  leftWheel.write(STOP_POS);
+  rightWheel.write(STOP_POS);
+  detachInterrupts();
+  delay(1000);
+  attachInterrupts();
+  ...
+}
 ```
 
 // Circuit block diagram
