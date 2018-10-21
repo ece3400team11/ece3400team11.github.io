@@ -21,7 +21,17 @@ The robot team was in charge of integrating everything we had been working on up
 
 ### Hardware
 
-TODO
+Before we jumped into the code, we decided to clean up the circuitry on our robot. We had the IR detection on one breadboard and the servos, line sensors, and distance sensors on another breadboard. We decided to move everything to a single breadboard and add the microphone circuit. However, we realized that our microphone circuit had started behaving in unexpected ways and wasn’t giving a reliable signal anymore. 
+
+When probing our old microphone circuit with the oscilloscope, we found that there was some underlying frequency being produced somewhere in the circuit. At first we thought this was due to all the new components added to the robot since the last time the microphone was used, but this issue persisted even after the microphone circuit was separated entirely.
+
+Our original circuit used two op amps for signal amplification. Through probing we found that our first amplification stage was working fine, so we decided to ditch the second stage. To make up for this, we increased the gain of the first stage.
+
+![Image](labs/lab3/images/Mic_circuit_diagram.JPG)
+
+The final circuit was split into 2 sections. The first section contained the IR and microphone circuits, which were connected to the atmega on pins A0 and A1. The second section contained the connections for the 2 servos, 2 line sensors, and 2 short range IR distance sensors. The atmega chip was connected to the main arduino through 2 pins: atmega pin 13 to arduino pin 7 and atmega pin 12 to arduino pin 8.
+
+![Image](labs/lab3/images/20181021_163810.jpg)
 
 ### Software
 
