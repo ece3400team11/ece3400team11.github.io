@@ -143,6 +143,10 @@ Here is a top down view of the maze we were running through:
 
 ![Image](labs/lab3/images/20181021_155327.jpg)
 
+And here is an image of the GUI after the robot had traversed the maze and transmitted the necessary data back to the base station:
+
+![Image](labs/lab3/images/maze.jpg)
+
 ## Full lab code
 
 You can find the full that we used for the lab [here](https://github.com/ece3400team11/ece3400team11.github.io/tree/master/_labs/lab3/code)
