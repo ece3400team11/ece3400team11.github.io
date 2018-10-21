@@ -135,7 +135,7 @@ SENSOR_RIGHT_READING = sum / SENSOR_AVE_SIZE;
 
 ## Demo
 
-Below is a demo of the integration working on a simple maze. The robot successfully starts on a 660 Hz tone, it maps out the 2 by 3 maze and stops whever it detects and IR hat to prevent robot collisions.
+Below is a demo of the robot going through a simple maze. The robot successfully starts on a 660 Hz tone, it maps out the 2 by 3 maze and stops whever it detects and IR hat to prevent robot collisions.
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/3a3IrtT6TUA" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
 
