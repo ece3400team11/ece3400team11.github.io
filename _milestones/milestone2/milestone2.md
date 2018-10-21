@@ -31,13 +31,13 @@ if (analogRead(FRONT_IR_SENSOR) > WALL_THRESH) {
 }
 ```
 
-We then had to decide whether to use the short-range or long-range IR sensors for the purposes of wall following. Using some trial and error, we determined that for the distances we would be expecting to be away from the wall, the short-range IR sensor reading was much more accurate and stable than the long-range one, so we decided to use only the short-range IR sensors for the purposes of this milestone.
+We then had to decide whether to use the short-range or long-range IR sensors for the purposes of wall following. Using some trial and error, we determined that for the distances that were away from the wall the short-range IR sensor reading was much more accurate and stable than the long-range one, so we decided to use only the short-range IR sensors for the purposes of this milestone.
 
 Once we determined an appropriate threshold value for the wall sensor to successfully detect a wall, we could begin working on our Wall Detection algorithm.
 
 ## Detecting other Robots:
 
-For this milestone we decided to use a simple robot avoidance strategy. If our robot detects another robot, it simply stops and waits for the other robot to pass by. In order to maintain the accuracy and range of the IR Hat detection circuit, we decided that it would be best to continue using software FFT instead of trying to detect the frequency purely in hardware. However, we realized that the FFT library would likely interfere with the servo library and would likely slow down our robot’s navigation due to the extra processing time required to do FFT. Therefore, we decided to offload the FFT calculation onto a separate ATMega328P chip. We programmed this chip with the Arduino as ISP code and calibrated the FFT code to the ATMega328P’s internal clock using the matlab code from lab 2. We then connected a wire between the ATMega chip and our main arduino in order for the ATMega chip to let our main board know if it had detected another robot. We used the same code we used for Lab 2 except that we changed the prescaler and bin number based on the measurements we made from the ATMega.
+For this milestone we decided to use a simple robot avoidance strategy. If our robot detects another robot, it simply stops and waits for the other robot to pass by. In order to maintain the accuracy and range of the IR Hat detection circuit, we decided that it would be best to continue using software FFT instead of trying to detect the frequency purely in hardware. However, we realized that the FFT library would likely interfere with the servo library and would slow down our robot’s navigation due to the extra processing time required to do FFT. Therefore, we decided to offload the FFT calculation onto a separate ATMega328P chip. We programmed this chip with the Arduino as ISP code and calibrated the FFT code to the ATMega328P’s internal clock using the MATLAB code from lab 2. We then connected a wire between the ATMega chip and our main arduino in order for the ATMega chip to let our main board know if it had detected another robot. We used the same code we used for Lab 2 except we changed the prescaler and the bin number based on the measurements we made from the ATMega.
 
 ```cpp
 #ifdef ATMEG
@@ -69,7 +69,7 @@ void loop() {
 
 ## Integrating Line Tracking and Robot Detection:
 
-We started with our line following code from Milestone 2 and added the wall detection and IR Hat detection code to it in order to perform a right hand maze traversal. The wall detection code simply involved doing an analog read and checking the value against a threshold when the robot got to an intersection.  If there was no wall to the right of the robot, it would turn right. Otherwise, if there was a wall in front of the robot and to the right, the robot would turn left.
+We started with our line following code from Milestone 2 and added the wall detection and IR Hat detection code to it in order to perform a right hand maze traversal. The wall detection code involved doing an analog read and checking the value against a threshold when the robot got to an intersection. If there was no wall to the right of the robot, it would turn right. Otherwise, if there was a wall in front of the robot and to the right, the robot would turn left.
 
 ```cpp
 if (analogRead(RIGHT_IR_SENSOR) < WALL_THRESH) {
@@ -81,7 +81,7 @@ if (analogRead(RIGHT_IR_SENSOR) < WALL_THRESH) {
 }
 ```
 
-Since we offloaded the IR detection code to the ATMega chip, simply did a digital read of the pin connected to the ATMega on each pass through our main loop and stopped if it was high:
+Since we offloaded the IR detection code to the ATMega chip, only a digital read of the pin connected to the ATMega was required on each pass through our main loop and it was stopped when high:
 
 ```cpp
 if(digitalRead(FFT_PIN) == HIGH) {
@@ -90,7 +90,7 @@ if(digitalRead(FFT_PIN) == HIGH) {
 }
 ```
 
-One issue that we noticed when making the integrations was that whenever we wanted to stop our servos they would jitter around. We figured out that it likely had something to do with the ISR’s running for the line sensors. We ended up detaching the interrupts whenever we stopped and then reattached them when we started moving again and that seemed to calm the servos down. We are still unsure as to why the ISR’s were affecting the servos.
+One issue that we noticed when making the integrations was that whenever we wanted to stop our servos they would jitter around. We figured out that it had something to do with the ISR running for the line sensors. We ended up detaching the interrupts whenever we stopped and then reattached them when we started moving again and that seemed to calm the servos down. We are still unsure as to why the ISR were affecting the servos.
 
 ```cpp
 void detachInterrupts() {
@@ -121,7 +121,9 @@ void loop() {
 }
 ```
 
-![Image](milestones/_milestone2/milestone2/images/block_dgrm.png)
+After all the integrations, our system is laid out like this:
+
+![Image](milestones/milestone2/images/block_dgrm.png)
 
 ## Demo:
 
@@ -129,12 +131,12 @@ void loop() {
 
 Here is an image of the final circuit for milestone 2:
 
-![Image](milestones/_milestone2/milestone2/images/m2_1.jpg)
+![Image](milestones/milestone2/images/m2_1.jpg)
 
-![Image](milestones/_milestone2/milestone2/images/m2_2.jpg)
+![Image](milestones/milestone2/images/m2_2.jpg)
 
 ## Future Improvements:
 
-One of the improvements we discussed for our final robot was to include multiple/multi-directional IR sensors instead of just the singular one we have currently. This would allow us to not only detect another robot, but also detect which direction it was coming from, thus allowing our robot to avoid other robots even if the robot detection functions of the other robots are not working as it should.
+One of the improvements we discussed for our final robot was to include multiple multi-directional IR sensors instead of just the singular one we have currently. This would allow us to not only detect another robot, but also detect which direction it was coming from, thus allowing our robot to avoid other robots even if the robot detection functions of the other robots are not working as it should.
 
-On a similar note, we considered augmenting the short-range IR sensor currently on the front of our robot with another long-range IR sensor. This would enable us to detect walls not only right in front of our robot, but also those a few squares away, thus allowing us to maybe implement a less reactive and more predictive maze exploration algorithm for our final robot.
+On a similar note, we considered augmenting the short-range IR sensor currently on the front of our robot with another long-range IR sensor. This would enable us to detect walls not only right in front of our robot but also those a few squares away, thus allowing us to implement a less reactive and more predictive maze exploration algorithm for our final robot.

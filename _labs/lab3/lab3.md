@@ -11,6 +11,10 @@ preview: "assets/images/lab1_img.png"
 
 The radio team worked on a simulated robot and interfacing with the GUI
 
+Demo video:
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/Y5K-v3xKlyE" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+
 ## Robot Team
 
 The robot team extended the milestone 2 code to start with a 660 Hz tone.
