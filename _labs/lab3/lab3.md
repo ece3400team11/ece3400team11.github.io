@@ -178,3 +178,9 @@ And here is an image of the GUI after the robot had traversed the maze and trans
 ## Full lab code
 
 You can find the full that we used for the lab [here](https://github.com/ece3400team11/ece3400team11.github.io/tree/master/_labs/lab3/code)
+
+## Future Improvements
+
+Currently, we moved all of our circuits on to one breadboard but it would be best if all of our circuits were a PCB so we can avoid having wires falling out. This would also allow us to stack the PCB directly on the arduino.
+
+As for the functionality of the robot, it would be better if there was a third distance sensor on the robot for better maze mapping. This will give a more accurate representation of the maze. On a similar note of accuracy, we plan to get multiple readings from the ATMega so that we can differentiate signals that are useful from those that are just noise (possibly through a debouncing state machine). Finally, we plan on adding a manual start button in case the robot doesn’t start on the 660 Hz tone.
