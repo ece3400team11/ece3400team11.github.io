@@ -100,14 +100,6 @@ layout: blank
 									{% endfor %}
 								</ul>
 							</li>
-							<li class="has-dropdown">
-									<a href="#labs-milestones">Minutes</a>
-									<ul class="dropdown">
-										{% for minute in site.minutes %}
-											<li><a href="#" data-toggle="modal" data-target="#{{ minute.title | replace: " ", "_"}}">{{ minute.title }}</a></li>
-										{% endfor %}
-									</ul>
-							</li>
 							<li><a href="#about">About Us</a></li>
 							<li><a href="#" data-toggle="modal" data-target="#contract">Contract</a></li>
 							<li><a href="https://github.com/ece3400team11/ece3400team11.github.io">Repository</a></li>
@@ -330,18 +322,6 @@ layout: blank
 				<div class="modal-content">
 					<div class="modal_body">
 						{{ milestone.output }}
-					</div>
-				</div>
-			</div>
-		</div>
-	{% endfor %}
-
-	{% for minute in site.minutes %}
-		<div class="modal fade" id="{{ minute.title | replace: " ", "_"}}" tabindex="-1">
-			<div class="modal-dialog">
-				<div class="modal-content">
-					<div class="modal_body">
-						{{ minute.output }}
 					</div>
 				</div>
 			</div>

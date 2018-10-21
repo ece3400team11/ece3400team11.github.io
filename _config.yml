@@ -4,7 +4,5 @@ collections:
     output: true
   milestones:
     output: true
-  minutes:
-    output: true
 plugins:
   - jemoji
