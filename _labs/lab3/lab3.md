@@ -74,7 +74,7 @@ The 2nd state is the main line following code. If one of the line sensors is ove
 
 The turn left and turn right states are almost the same, just in opposite directions. The first turn left state turns the robot to the left until the left line sensor is not on a white line. This state is usually skipped but is necessary in case the robot wasn’t completely centered on the intersection. The second turn left state turns the robot to the left until the left line sensor is back on a line. Then it goes to the third turn left state which turns the robot ot the left until the left line sensor is not on a while line. The robot has now turned 90 degrees and can continue going forward by transitioning back to the 2nd state. There are 3 turn left and 3 turn right states, which brings the total up to 8 states. A diagram of the state machine is given below:
 
-// Insert diagram
+![Image](labs/lab3/images/state_mach.png)
 
 We also made our line sensing code a bit more robust to noise by adding a small ring buffer to store the previous N values. We set N to 4 to get a decent averager. As stated above, the line sensing code comes after the state transition code, so we have to make sure that each transition only relies on a signal line sensor reading. The line sensing code is given below:
 
@@ -138,6 +138,10 @@ SENSOR_RIGHT_READING = sum / SENSOR_AVE_SIZE;
 Below is a demo of the robot going through a simple maze. The robot successfully starts on a 660 Hz tone, it maps out the 2 by 3 maze and stops whever it detects and IR hat to prevent robot collisions.
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/3a3IrtT6TUA" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+
+Here is a top down view of the maze we were running through:
+
+![Image](labs/lab3/images/20181021_155327.jpg)
 
 ## Full lab code
 
