@@ -4,7 +4,7 @@
 
 RF24 radio(9,10);
 
-const uint64_t pipes[2] = { 0x0000000026LL, 0x0000000027LL };
+const uint64_t pipes[2] = { 0x000000001CLL, 0x000000001DLL };
 
 void setup() {
   radio.begin();
@@ -27,7 +27,7 @@ void setup() {
 }
 
 String convert(unsigned char x, unsigned char y, unsigned char curr){
-  String s = String(y)+","+String(x);
+  String s = String(y)+","+String(x)+",north=false";
   if(bitRead(curr,4)==1){s = s + ",west=true";}
   if(bitRead(curr,5)==1){s = s + ",south=true";}
   if(bitRead(curr,6)==1){s = s + ",east=true";}

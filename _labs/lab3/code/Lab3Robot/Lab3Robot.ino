@@ -17,8 +17,8 @@
 #define FRONT_IR_SENSOR A1
 #define RIGHT_IR_SENSOR A0
 
-#define FFT_DATA_PIN 13
-#define FFT_CTRL_PIN 12
+#define FFT_DATA_PIN 7
+#define FFT_CTRL_PIN 8
 
 #define FORWARD_LEFT 180
 #define BACKWARD_LEFT 0
@@ -42,13 +42,35 @@ int rightSenseHead = 0;
 Servo leftWheel;
 Servo rightWheel;
 
-unsigned long SENSOR_LEFT_READING = 0;
-unsigned long SENSOR_RIGHT_READING = 0;
+unsigned long SENSOR_LEFT_READING = 1000;
+unsigned long SENSOR_RIGHT_READING = 1000;
 
-int state = 1;
+int state = 0;
 
 #define FRONT_WALL_THRESH 150
 #define RIGHT_WALL_THRESH 200
+
+#define MAZE_WIDTH 3
+#define MAZE_LENGTH 3
+
+unsigned char maze[MAZE_LENGTH][MAZE_WIDTH];
+
+#include <SPI.h>
+#include "nRF24L01.h"
+#include "RF24.h"
+
+RF24 radio(9,10);
+
+const int NORTH = 3;
+const int EAST  = 2;
+const int SOUTH = 1;
+const int WEST  = 0;
+
+unsigned char x=0;
+unsigned char y=0;
+int dir = EAST;
+
+const uint64_t pipes[2] = { 0x000000001CLL, 0x000000001DLL };
 
 void setup() {
   Serial.begin(9600);
@@ -69,11 +91,60 @@ void setup() {
   digitalWrite(FFT_CTRL_PIN, LOW);
 
   for(int i = 0; i < SENSOR_AVE_SIZE; i++) {
-    leftSenseBuf[i] = LEFT_SENSOR_THRESH+10;
-    rightSenseBuf[i] = RIGHT_SENSOR_THRESH+10;
+    leftSenseBuf[i] = LEFT_SENSOR_THRESH+100;
+    rightSenseBuf[i] = RIGHT_SENSOR_THRESH+100;
   }
 
+  radio.begin();
+
+  radio.setRetries(15,15);
+
+  // optionally, reduce the payload size.  seems to
+  // improve reliability
+  radio.setPayloadSize(4);
+  
+  // put your setup code here, to run once:
+  radio.openWritingPipe(pipes[0]);
+  radio.openReadingPipe(1,pipes[1]);
+
   delay(2000);
+}
+
+// advance the robot's position based on its direction
+void adv(){
+  switch(dir){
+      case NORTH:
+        y=y-1;
+        break;
+      case EAST:
+        x=x+1;
+        break;
+      case SOUTH:
+        y=y+1;
+        break;
+      case WEST:
+        x=x-1;
+        break;
+    }
+}
+
+void sendData() {
+  radio.stopListening();
+
+  unsigned char curr = maze[y][x];
+  
+  // pack data into payload
+  unsigned long payload = 0;
+  payload |= curr;
+  payload = payload << 8;
+  payload |= x;
+  payload = payload << 8;
+  payload |= y;
+  
+  bool ok = false;
+  while(!ok) {
+    ok = radio.write( &payload, sizeof(unsigned long) );
+  }
 }
 
 void loop() {
@@ -93,6 +164,20 @@ void loop() {
       leftWheel.write(FORWARD_LEFT);
       rightWheel.write(FORWARD_RIGHT);
       delay(200);
+
+      // TODO maybe remove
+      leftWheel.write(STOP_POS);
+      rightWheel.write(STOP_POS);
+
+      adv();
+
+      int isFrontWall = analogRead(FRONT_IR_SENSOR) > FRONT_WALL_THRESH;
+      int isRightWall = analogRead(RIGHT_IR_SENSOR) > RIGHT_WALL_THRESH;
+
+      maze[y][x] |= isFrontWall << dir + 4;
+      maze[y][x] |= isRightWall << ((dir+3)%4) + 4;
+
+      sendData();
   
       if (analogRead(RIGHT_IR_SENSOR) < RIGHT_WALL_THRESH) {
         // no wall to the right
@@ -146,10 +231,14 @@ void loop() {
     // turn until past line
     if (SENSOR_RIGHT_READING > RIGHT_SENSOR_THRESH) {
       state = 1;
+      delay(100);
 
       // start going forward again
       leftWheel.write(FORWARD_LEFT);
       rightWheel.write(FORWARD_RIGHT);
+
+      // assume only turn 90 degrees
+      dir = (dir+3)%4;
     }
   }  else if (state == 5) {
     // turn left step 1
@@ -175,6 +264,10 @@ void loop() {
     // turn until past line
     if (SENSOR_LEFT_READING > LEFT_SENSOR_THRESH) {
       state = 1;
+      delay(100);
+
+      // assume only turn 90 degrees
+      dir = (dir+1)%4;
 
       if (analogRead(FRONT_IR_SENSOR) > FRONT_WALL_THRESH) {
         // still wall in front after turning left, dead end, complete 180

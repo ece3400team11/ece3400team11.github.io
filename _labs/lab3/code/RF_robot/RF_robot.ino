@@ -19,7 +19,7 @@ unsigned char maze[3][3] = {
   {0x30, 0x20, 0x60}
 };
 
-const uint64_t pipes[2] = { 0x0000000026LL, 0x0000000027LL };
+const uint64_t pipes[2] = { 0x000000001CLL, 0x000000001DLL };
 
 void setup() {
   radio.begin();
