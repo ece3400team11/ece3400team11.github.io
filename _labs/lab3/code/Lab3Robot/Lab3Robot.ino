@@ -10,11 +10,12 @@
   */
 
 #include <Servo.h>
-#define LEFT_WHEEL_PIN 6
-#define RIGHT_WHEEL_PIN 5
-#define SENSOR_LEFT_PIN 3
-#define SENSOR_RIGHT_PIN 2
-#define FRONT_IR_SENSOR A0
+#define LEFT_WHEEL_PIN 5
+#define RIGHT_WHEEL_PIN 6
+#define SENSOR_LEFT_PIN 2
+#define SENSOR_RIGHT_PIN 3
+#define FRONT_IR_SENSOR A1
+#define RIGHT_IR_SENSOR A0
 
 #define FFT_PIN 13
 #define FFT_CTRL_PIN 12
@@ -106,7 +107,18 @@ void turnRight() {
   //Moves both wheels in opposite directions for an empirically determined amount of time
   leftWheel.write(FORWARD_LEFT);
   rightWheel.write(BACKWARD_RIGHT);
-  delay(RIGHT_TIME);
+//  delay(RIGHT_TIME);
+  while(SENSOR_RIGHT_READING < RIGHT_SENSOR_THRESH) {
+    // turn until past center line (may skip this call)
+  }
+  delay(100);
+  while(SENSOR_RIGHT_READING > RIGHT_SENSOR_THRESH) {
+    // turn until see line
+  }
+  delay(100);
+  while(SENSOR_RIGHT_READING < RIGHT_SENSOR_THRESH) {
+    // turn until past line
+  }
 }
 
 void turnLeft() {
@@ -142,13 +154,12 @@ void loop() {
       rightWheel.write(FORWARD_RIGHT);
       delay(200);
   
-      // at intersection, check if wall to the right.
-      // if not, turn right
-      leftWheel.write(STOP_POS);
-      rightWheel.write(STOP_POS);
-      delay(1000); //For the robot to center itself on the intersection
-      if (analogRead(FRONT_IR_SENSOR) > WALL_THRESH) {
-         turnLeft();
+      if (analogRead(RIGHT_IR_SENSOR) < WALL_THRESH) {
+        // no wall to the right
+        turnRight();
+      } else if (analogRead(FRONT_IR_SENSOR) > WALL_THRESH) {
+        // wall to the right and wall in front
+        turnLeft();
       }
       leftWheel.write(FORWARD_LEFT);
       rightWheel.write(FORWARD_RIGHT);
@@ -166,6 +177,6 @@ void loop() {
     while(digitalRead(FFT_PIN) == HIGH) {
       leftWheel.write(STOP_POS);
       rightWheel.write(STOP_POS);
-    } 
+    }
   }
 }
