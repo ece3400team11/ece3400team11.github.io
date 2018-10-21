@@ -9,7 +9,7 @@ preview: "assets/images/lab1_img.png"
 
 ## Radio Team
 
-The radio team worked on a simulated robot and interfacing with the GUI
+The radio team worked on a simulated robot and interfacing with the GUI.
 
 First, we had to download the radio library and set it up for the Arduino IDE. We then downloaded the GettingStarted sketch and replaced it with the one given to us in the RF24 library. The radios were then connected to the arduino and powered through the DC power supply as our arduinos could not supply enough current. Each radio was given a channel number based on the formula given and then we followed the code from the GettingStarted example. 
 
