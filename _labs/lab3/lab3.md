@@ -11,7 +11,25 @@ preview: "assets/images/lab1_img.png"
 
 The radio team worked on a simulated robot and interfacing with the GUI
 
-Demo video:
+First, we had to download the radio library and set it up for the Arduino IDE. We then downloaded the GettingStarted sketch and replaced it with the one given to us in the RF24 library. The radios were then connected to the arduino and powered through the DC power supply as our arduinos could not supply enough current. Each radio was given a channel number based on the formula given and then we followed the code from the GettingStarted example. 
+
+We had to decide on a data structure to store to store the contents of the maze in. For now, we have decided to implement an unsigned char array to store our data as this gives 8 bits to store information about every square. 4 bits are used to represent wall directions (North, East, South, and West, in that order), two bits for treasure shape (3 possible shapes plus no treasure), one bit for treasure color (red or blue), and one valid bit (has the robot explored this square yet?).
+
+### Robot Simulation
+
+First, we generated a maze similar to the 3x3 example given in the GUI release code using our unsigned char array data structure. Initially, we hard coded the movements of our simulated robot just to make sure the data from the array was being read properly. First, the robot put it’s current coordinates in a string. Based on the 4 wall bits, the robot then appended different messages to a string (ex: 1100 -> “North=true,East=true”) and printed it out via the serial port. The Python GUI code then reads the serial output and updates the GUI appropriately. Here is our code for taking the data received from the robot and generating the serial message:
+
+ADD CODE HERE
+
+Once we verified that this was working, we added a right-hand wall following algorithm to our simulated robot so that it could autonomously run through the entire programmed maze. Here is the code we wrote to achieve this:
+
+ADD CODE HERE
+
+Based on the current walls in front of the simulated robot, the robot would either choose to turn left, right, or continue straight. To verify that the simulated robot was indeed right-hand wall following, we created a square maze and had the robot start on the edge. In theory, the robot should never explore the middle of the maze and that is what we observed.
+
+After we had the simulated robot working on the same arduino as the base station communication, we tested sending the maze information between arduinos using the Nordic RF modules. We decided on a 2 byte data packet. The first byte contained the x and y coordinates of the robot, while the second byte is identical to the data stored in the unsigned char array. We added code to deconstruct and translate the data packet on the base station.
+
+Here is a demo video of the simulation. The arduino connected to the computer is acting as the base station and the other arduino is simulation a robot in a maze:
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/Y5K-v3xKlyE" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
 
