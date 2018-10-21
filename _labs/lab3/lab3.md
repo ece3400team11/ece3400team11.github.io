@@ -19,7 +19,7 @@ We had to decide on a data structure to store to store the contents of the maze 
 
 First, we generated a maze similar to the 3x3 example given in the GUI release code using our unsigned char array data structure. Initially, we hard coded the movements of our simulated robot just to make sure the data from the array was being read properly. First, the robot put it’s current coordinates in a string. Based on the 4 wall bits, the robot then appended different messages to a string (ex: 1100 -> “North=true,East=true”) and printed it out via the serial port. The Python GUI code then reads the serial output and updates the GUI appropriately. Here is our code for taking the data received from the robot and generating the serial message:
 
-ADD CODE HERE
+ADD CODE HEREe
 
 Once we verified that this was working, we added a right-hand wall following algorithm to our simulated robot so that it could autonomously run through the entire programmed maze. Here is the code we wrote to achieve this:
 
