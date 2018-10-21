@@ -17,7 +17,7 @@
 #define FRONT_IR_SENSOR A1
 #define RIGHT_IR_SENSOR A0
 
-#define FFT_PIN 13
+#define FFT_DATA_PIN 13
 #define FFT_CTRL_PIN 12
 
 #define FORWARD_LEFT 180
@@ -29,62 +29,30 @@
 #define RIGHT_TIME 1000
 #define LEFT_TIME 1000
 
-#define LEFT_SENSOR_THRESH 100
-#define RIGHT_SENSOR_THRESH 100
+#define LEFT_SENSOR_THRESH 150
+#define RIGHT_SENSOR_THRESH 150
 
+#define SENSOR_AVE_SIZE 4
 
-// These variables are marked 'volatile' to inform the compiler that they can change
-// at any time (as they are set by hardware interrupts).
-volatile long SENSOR_LEFT_TIMER;
-volatile long SENSOR_RIGHT_TIMER;
+int leftSenseBuf[SENSOR_AVE_SIZE];
+int leftSenseHead = 0;
+int rightSenseBuf[SENSOR_AVE_SIZE];
+int rightSenseHead = 0;
 
 Servo leftWheel;
 Servo rightWheel;
-int counter = 0;
 
-int started = 0;
+unsigned long SENSOR_LEFT_READING = 0;
+unsigned long SENSOR_RIGHT_READING = 0;
 
-volatile long SENSOR_LEFT_READING; 
-volatile long SENSOR_RIGHT_READING;
+int state = 1;
 
-#define WALL_THRESH 300
-
-// A digital write is required to trigger a sensor reading.
-void setup_sensor(int pin, long *sensor_timer) {
-  pinMode(pin, OUTPUT);
-  digitalWrite(pin, HIGH);
-  delayMicroseconds(10);
-  pinMode(pin, INPUT);
-  *sensor_timer = micros();
-}
-
-void SENSOR_LEFT_ISR() {
-  // The sensor light reading is inversely proportional to the time taken
-  // for the pin to fall from high to low. Lower values mean lighter colors.
-  SENSOR_LEFT_READING = micros() - SENSOR_LEFT_TIMER;
-  // Reset the sensor for another reading
-  setup_sensor(SENSOR_LEFT_PIN, &SENSOR_LEFT_TIMER);
-}
-
-void SENSOR_RIGHT_ISR() {
-  // The sensor light reading is inversely proportional to the time taken
-  // for the pin to fall from high to low. Lower values mean lighter colors.
-  SENSOR_RIGHT_READING = micros() - SENSOR_RIGHT_TIMER;
-  // Reset the sensor for another reading
-  setup_sensor(SENSOR_RIGHT_PIN, &SENSOR_RIGHT_TIMER);
-}
+#define FRONT_WALL_THRESH 150
+#define RIGHT_WALL_THRESH 200
 
 void setup() {
   Serial.begin(9600);
-
-  // Tell the compiler which pin to associate with which ISR
-  attachInterrupt(digitalPinToInterrupt(SENSOR_LEFT_PIN), SENSOR_LEFT_ISR, LOW);
-  attachInterrupt(digitalPinToInterrupt(SENSOR_RIGHT_PIN), SENSOR_RIGHT_ISR, LOW);
-
-  // Setup the sensors
-  setup_sensor(SENSOR_LEFT_PIN, &SENSOR_LEFT_TIMER);
-  setup_sensor(SENSOR_RIGHT_PIN, &SENSOR_RIGHT_TIMER);
-
+  
   // Setup the servos
   leftWheel.attach(LEFT_WHEEL_PIN);
   rightWheel.attach(RIGHT_WHEEL_PIN);
@@ -94,76 +62,47 @@ void setup() {
   pinMode(A0, INPUT);
   pinMode(A1, INPUT);
 
-  pinMode(FFT_PIN, INPUT);
+  pinMode(FFT_DATA_PIN, INPUT);
   pinMode(FFT_CTRL_PIN, OUTPUT);
 
   // low = 660 detection
   digitalWrite(FFT_CTRL_PIN, LOW);
 
+  for(int i = 0; i < SENSOR_AVE_SIZE; i++) {
+    leftSenseBuf[i] = LEFT_SENSOR_THRESH+10;
+    rightSenseBuf[i] = RIGHT_SENSOR_THRESH+10;
+  }
+
   delay(2000);
 }
 
-void turnRight() {
-  //Moves both wheels in opposite directions for an empirically determined amount of time
-  leftWheel.write(FORWARD_LEFT);
-  rightWheel.write(BACKWARD_RIGHT);
-//  delay(RIGHT_TIME);
-  while(SENSOR_RIGHT_READING < RIGHT_SENSOR_THRESH) {
-    // turn until past center line (may skip this call)
-  }
-  delay(100);
-  while(SENSOR_RIGHT_READING > RIGHT_SENSOR_THRESH) {
-    // turn until see line
-  }
-  delay(100);
-  while(SENSOR_RIGHT_READING < RIGHT_SENSOR_THRESH) {
-    // turn until past line
-  }
-}
-
-void turnLeft() {
-  //Moves both wheels in opposite directions for  an empirically determined amount of time
-  leftWheel.write(BACKWARD_LEFT);
-  rightWheel.write(FORWARD_RIGHT);
-  //delay(LEFT_TIME);
-  while(SENSOR_LEFT_READING < LEFT_SENSOR_THRESH) {
-    // turn until past center line (may skip this call)
-  }
-  delay(100);
-  while(SENSOR_LEFT_READING > LEFT_SENSOR_THRESH) {
-    // turn until see line
-  }
-  delay(100);
-  while(SENSOR_LEFT_READING < LEFT_SENSOR_THRESH) {
-    // turn until past line
-  }
-}
-
 void loop() {
-  if (started == 0) {
-    if (digitalRead(FFT_PIN) == HIGH) {
-      started = 1;  
+  Serial.println(state);
+//  state = 1;
+  if (state == 0) {
+    if (digitalRead(FFT_DATA_PIN) == HIGH) {
+      state = 1;  
       // high = IR detection
       digitalWrite(FFT_CTRL_PIN, HIGH);
     }
-  } else {
+  } else if (state == 1) {
     //Centers and turns the robot in the appropriate direction if both line sensors
     //see a white line (come to an intersection)
     if (SENSOR_LEFT_READING < LEFT_SENSOR_THRESH && SENSOR_RIGHT_READING < RIGHT_SENSOR_THRESH) {
+      // go forward and center over line
       leftWheel.write(FORWARD_LEFT);
       rightWheel.write(FORWARD_RIGHT);
       delay(200);
   
-      if (analogRead(RIGHT_IR_SENSOR) < WALL_THRESH) {
+      if (analogRead(RIGHT_IR_SENSOR) < RIGHT_WALL_THRESH) {
         // no wall to the right
-        turnRight();
-      } else if (analogRead(FRONT_IR_SENSOR) > WALL_THRESH) {
+        // turn right
+        state = 2;
+      } else if (analogRead(FRONT_IR_SENSOR) > FRONT_WALL_THRESH) {
         // wall to the right and wall in front
-        turnLeft();
+        // turn left
+        state = 5;
       }
-      leftWheel.write(FORWARD_LEFT);
-      rightWheel.write(FORWARD_RIGHT);
-     
     } else {
       //Stops left wheel to correct the robot if left line sensor sees the white line
       if (SENSOR_LEFT_READING < LEFT_SENSOR_THRESH) leftWheel.write(STOP_POS);
@@ -174,9 +113,137 @@ void loop() {
       else rightWheel.write(FORWARD_RIGHT);
     }
     // stop while we detect another robot
-    while(digitalRead(FFT_PIN) == HIGH) {
+    if(digitalRead(FFT_DATA_PIN) == HIGH) {
+//      if (analogRead(FRONT_IR_SENSOR) < FRONT_WALL_THRESH) {
+//        // turn around  
+//        //state = 3;
+//      }
       leftWheel.write(STOP_POS);
       rightWheel.write(STOP_POS);
+      delay(1000);
+    }
+  } else if (state == 2) {
+    // turn right step 1
+    leftWheel.write(FORWARD_LEFT);
+    rightWheel.write(BACKWARD_RIGHT);
+
+    // turn until past center line (may skip this call)
+    if (SENSOR_RIGHT_READING > RIGHT_SENSOR_THRESH) {
+      state = 3;
+      // give a bit of time for measurement to settle
+      delay(100);
+    }
+  } else if (state == 3) {
+    // turn right step 2
+    // turn until see line
+    if (SENSOR_RIGHT_READING < RIGHT_SENSOR_THRESH) {
+      state = 4;
+      // give a bit of time for measurement to settle
+      delay(100); 
+    }
+  } else if (state == 4) {
+    // turn right step 3
+    // turn until past line
+    if (SENSOR_RIGHT_READING > RIGHT_SENSOR_THRESH) {
+      state = 1;
+
+      // start going forward again
+      leftWheel.write(FORWARD_LEFT);
+      rightWheel.write(FORWARD_RIGHT);
+    }
+  }  else if (state == 5) {
+    // turn left step 1
+    leftWheel.write(BACKWARD_LEFT);
+    rightWheel.write(FORWARD_RIGHT);
+
+    // turn until past center line (may skip this call)
+    if (SENSOR_LEFT_READING > LEFT_SENSOR_THRESH) {
+      state = 6;
+      // give a bit of time for measurement to settle
+      delay(100);
+    }    
+  } else if (state == 6) {
+    // turn left step 2
+    // turn until see line
+    if (SENSOR_LEFT_READING < LEFT_SENSOR_THRESH) {
+      state = 7;
+      // give a bit of time for measurement to settle
+      delay(100); 
+    }
+  } else if (state == 7) {
+    // turn left step 3
+    // turn until past line
+    if (SENSOR_LEFT_READING > LEFT_SENSOR_THRESH) {
+      state = 1;
+
+      if (analogRead(FRONT_IR_SENSOR) > FRONT_WALL_THRESH) {
+        // still wall in front after turning left, dead end, complete 180
+        state = 5;
+      } else {
+        // start going forward again
+        leftWheel.write(FORWARD_LEFT);
+        rightWheel.write(FORWARD_RIGHT);
+      }
     }
   }
+
+  // do line sensing
+  pinMode(SENSOR_LEFT_PIN, OUTPUT);
+  pinMode(SENSOR_RIGHT_PIN, OUTPUT);
+  digitalWrite(SENSOR_LEFT_PIN, HIGH);
+  digitalWrite(SENSOR_RIGHT_PIN, HIGH);
+  delayMicroseconds(10);
+  pinMode(SENSOR_LEFT_PIN, INPUT);
+  pinMode(SENSOR_RIGHT_PIN, INPUT);
+  
+  unsigned long startTime = micros();
+
+  int detectLeft = 0;
+  int detectRight = 0;
+  unsigned long t = micros();
+
+  unsigned long leftTime = SENSOR_LEFT_READING;
+  unsigned long rightTime = SENSOR_RIGHT_READING;
+  
+  //time how long the input is HIGH, but quit after 3ms as nothing happens after that
+  while(t - startTime < 3000) {
+    
+    if (digitalRead(SENSOR_LEFT_PIN) == LOW && detectLeft == 0) {
+      leftTime = t - startTime;
+      detectLeft = 1;
+    }
+    if (digitalRead(SENSOR_RIGHT_PIN) == LOW && detectRight == 0) {
+      rightTime = t - startTime;
+      detectRight = 1;
+    }
+
+    if (detectLeft == 1 && detectRight == 1){
+      break;
+    }
+    t = micros();
+  }
+
+  leftSenseBuf[leftSenseHead] = leftTime;
+  leftSenseHead = (leftSenseHead + 1) % SENSOR_AVE_SIZE;
+
+  rightSenseBuf[rightSenseHead] = rightTime;
+  rightSenseHead = (rightSenseHead + 1) % SENSOR_AVE_SIZE;
+
+  int sum = 0;
+  for(int i = 0; i < SENSOR_AVE_SIZE; i++) {
+    sum += leftSenseBuf[i];
+  }
+  SENSOR_LEFT_READING = sum / SENSOR_AVE_SIZE;
+
+  sum = 0;
+  for(int i = 0; i < SENSOR_AVE_SIZE; i++) {
+    sum += rightSenseBuf[i];  
+  }
+  SENSOR_RIGHT_READING = sum / SENSOR_AVE_SIZE;
+
+//  Serial.print("Left: ");
+//  Serial.println(SENSOR_LEFT_READING);
+//  Serial.print("Right: ");
+//  Serial.println(SENSOR_RIGHT_READING);
+//  delay(200);
 }
