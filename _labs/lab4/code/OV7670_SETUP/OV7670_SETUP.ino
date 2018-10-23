@@ -1,7 +1,7 @@
 #include <Wire.h>
 
-#define OV7670_I2C_ADDRESS /*TODO: write this in hex (eg. 0xAB) */
-
+// decimal 42
+#define OV7670_I2C_ADDRESS 0x21
 
 ///////// Main Program //////////////
 void setup() {
@@ -9,6 +9,26 @@ void setup() {
   Serial.begin(9600);
   
   // TODO: READ KEY REGISTERS
+
+  // result = OV7670_write_register(0x0C, 0b00000000);
+
+  String result = OV7670_write_register(0x12, 0b10000000);
+  Serial.println(result);
+
+  result = OV7670_write_register(0x0C, 0b00001000);
+  Serial.println(result);
+
+  result = OV7670_write_register(0x11, 0b01000000);
+  Serial.println(result);
+
+  result = OV7670_write_register(0x70, 0b00000011);
+  Serial.println(result);
+
+  result = OV7670_write_register(0x71, 0b00000011);
+  Serial.println(result);
+
+  result = OV7670_write_register(0x71, 0b00000011);
+  Serial.println(result);
   
   delay(100);
   
@@ -24,6 +44,13 @@ void loop(){
 ///////// Function Definition //////////////
 void read_key_registers(){
   /*TODO: DEFINE THIS FUNCTION*/
+  byte data = read_register_value(0x0C);
+  Serial.print("0x0C = ");
+  Serial.println(data);
+
+  data = read_register_value(0x11);
+  Serial.print("0x11 = ");
+  Serial.println(data);
 }
 
 byte read_register_value(int register_address){
