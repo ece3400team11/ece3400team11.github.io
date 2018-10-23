@@ -15,15 +15,42 @@ First, we had to download the radio library and set it up for the Arduino IDE. W
 
 We had to decide on a data structure to store to store the contents of the maze in. For now, we have decided to implement an unsigned char array to store our data as this gives 8 bits to store information about every square. 4 bits are used to represent wall directions (North, East, South, and West, in that order), two bits for treasure shape (3 possible shapes plus no treasure), one bit for treasure color (red or blue), and one valid bit (has the robot explored this square yet?).
 
+![Image](labs/lab3/images/array_data.png)
+
 ### Robot Simulation
 
 First, we generated a maze similar to the 3x3 example given in the GUI release code using our unsigned char array data structure. Initially, we hard coded the movements of our simulated robot just to make sure the data from the array was being read properly. First, the robot put it’s current coordinates in a string. Based on the 4 wall bits, the robot then appended different messages to a string (ex: 1100 -> “North=true,East=true”) and printed it out via the serial port. The Python GUI code then reads the serial output and updates the GUI appropriately. Here is our code for taking the data received from the robot and generating the serial message:
 
-ADD CODE HEREe
+```cpp
+String convert(unsigned char x, unsigned char y, unsigned char curr){
+  String s = String(y)+","+String(x)+",north=false";
+  if(bitRead(curr,4)==1){s = s + ",west=true";}
+  if(bitRead(curr,5)==1){s = s + ",south=true";}
+  if(bitRead(curr,6)==1){s = s + ",east=true";}
+  if(bitRead(curr,7)==1){s = s + ",north=true";}
+  return s;
+}
+```
 
 Once we verified that this was working, we added a right-hand wall following algorithm to our simulated robot so that it could autonomously run through the entire programmed maze. Here is the code we wrote to achieve this:
 
-ADD CODE HERE
+```cpp
+// get the current position's maze data and perform Right hand following
+void follow(){
+  unsigned char curr = maze[y][x];
+  if((bitRead(curr, dir+4)==0) && (bitRead(curr, (dir+1)%4 + 4)==1)){
+    adv();
+  }
+  else if(bitRead(curr, (dir+1)%4 + 4)==0){
+    dir = (dir+1)%4;
+    adv();
+  }
+  else if((bitRead(curr, dir+4)==1) && (bitRead(curr, (dir+1)%4 + 4)==1) && (bitRead(curr, (dir+3)%4 + 4)==0)){
+    dir = (dir+3)%4;
+    adv();
+  }
+}
+```
 
 Based on the current walls in front of the simulated robot, the robot would either choose to turn left, right, or continue straight. To verify that the simulated robot was indeed right-hand wall following, we created a square maze and had the robot start on the edge. In theory, the robot should never explore the middle of the maze and that is what we observed.
 
@@ -181,6 +208,6 @@ You can find the full that we used for the lab [here](https://github.com/ece3400
 
 ## Future Improvements
 
-Currently, we moved all of our circuits on to one breadboard but it would be best if all of our circuits were a PCB so we can avoid having wires falling out. This would also allow us to stack the PCB directly on the arduino.
+Currently, we have moved all of our circuits on to one breadboard for compactness, but it would be best if all of our circuits were on a single PCB so that we can make our robot as compact and robust as possible by avoiding silly errors due to issues such as wires falling out. This would also allow us to stack the PCB directly on the arduino and prevent use from having to add a second level on our robot, thus further increasing its stability and robustness.
 
-As for the functionality of the robot, it would be better if there was a third distance sensor on the robot for better maze mapping. This will give a more accurate representation of the maze. On a similar note of accuracy, we plan to get multiple readings from the ATMega so that we can differentiate signals that are useful from those that are just noise (possibly through a debouncing state machine). Finally, we plan on adding a manual start button in case the robot doesn’t start on the 660 Hz tone.
+As for the maze-mapping capabilities of the robot, we would like to add a third short-range wall sensor to the side of our robot and a long-range wall sensor on the front of our robot in addition to the short-range sensor already present there, as mentioned in our milestone 2 report. This would allow us to more accurately map out the maze and do so with the least amount of errors. On a similar note, we plan on getting multiple readings from the ATMega microcontroller so that we can differentiate useful signals from the background noise picked up by the sensors (possibly through a debouncing state machine) in order to further increase the accuracy and robustness of our robot. Finally, we plan on adding a manual start button for redundancy in the case the our robot doesn’t start on the 660 Hz tone in actual competition.
