@@ -64,7 +64,7 @@ Dual_Port_RAM_M9K mem(
 	.r_addr(READ_ADDRESS),
 	.w_en(W_EN),
 	.clk_W(CLOCK_50),
-	.clk_R(CLOCK_25_PLL), // DO WE NEED TO READ SLOWER THAN WRITE??
+	.clk_R(CLOCK_25_PLL),
 	.output_data(MEM_OUTPUT)
 );
 
@@ -139,7 +139,84 @@ INSERT IMAGE HERE.
 
 ## Part 4 - Downsampling and Displaying Camera Output on the Screen
 
-The camera data was output in RGB 565 format, which meant that it took 2 PCLK cycles to get the data for a single pixel. 
+We had the camera set up to record pixel data in the RGB 565 format, which meant that each individual pixel consists of 16 bits. However, our M9K RAM could only allocate 8 bits per pixel, so it was necessary to downsample the input coming in from the camera to the RGB 332 format. We also had to take into account the fact the camera could only output 8 bits of a pixel at a time, so to completely read the 16 bit pixel data, we would need to read two consecutive inputs from the camera. For the most accurate color representations after downsampling, we took the most significant bits from each color and concatenated them together to form our RGB 332 value which we then wrote to the M9K RAM. 
+
+// Insert camera datasheet picture with HREF anf VSYNC
+
+Once we were happy with our downsampling, we had to figure out how and when to write to the buffer so that the image we see is properly synchronized with the camera. Initially we were only using the HREF signal output from the camera in order to tell when to change what line of the image we were writing. When we did this, we saw our image was skewed both horizontally and vertically. Also, our color bar would slowly shift to the side even though it should remain stationary. We were initially using the created 24 MHz clock on the FPGA to write to the buffer since that was the same clock we were sending to the camera, but when we compared the 24 MHz clock with the PCLOCK camera output using the oscilloscope, we realized that the PCLOCK was slightly slower than the 24 MHz it was receiving from the FPGA, so we decided to sync our buffer using this clock instead. Our image was now no longer shifting, but our colorbar was still vertically and horizontally skewed. After also incorporating the VSYNC camera output, which indicated when we were receiving a frame, with our memory buffer we finally got a steady image from the camera.
+
+On every valid input from the camera, we flipped a bit we labeled k, which allowed us to tell whether the input we were receiving from the camera was the first or second half of the 16-bit pixel data. On receiving the second half of the pixel data, we downsampled it to 8 bits by concatenating together bits [7:5] and [2:0] of the first byte with bits [4:3] of the second byte, updated our x position and wrote the data to the buffer. When HREF went high, we paused as the data from the camera was not valid. We updated our y position and reset our x position during this time. When VSYNC went low, we also paused as the data from the camera was not valid.  We reset both our x and y positions during this time so we would be ready to write the next frame to the buffer. The code for the downsampler is shown below:
+
+```cpp
+///////* Downsampler *///////
+reg[7:0] i = 0;
+reg[7:0] j = 0;
+reg      k = 0;
+
+reg      h_flag = 0;
+reg      v_flag = 0;
+
+reg  [7:0]	input_1 = 8'd0;
+reg  [7:0]	input_2 = 8'd0;
+wire [7:0]	CAMERA_INPUT;
+assign 		CAMERA_INPUT = {GPIO_1_D[23],GPIO_1_D[21],GPIO_1_D[19],GPIO_1_D[17],GPIO_1_D[15],GPIO_1_D[13],GPIO_1_D[11],GPIO_1_D[9]};
+wire			P_CLOCK;
+assign		P_CLOCK = GPIO_1_D[7];
+wire			HREF;
+assign		HREF = GPIO_1_D[5];
+wire			VSYNC;
+assign		VSYNC = GPIO_1_D[3];
+
+always @(posedge P_CLOCK) begin
+
+	if (VSYNC == 1'b1 && v_flag == 0) begin
+		i = 0;
+		j = 0;
+		v_flag = 1;
+	end
+	
+	else if (VSYNC == 1'b0) begin
+	
+		v_flag = 0;
+		
+		if (HREF == 1'b0 && h_flag == 0) begin
+			k = 0;
+			i = 0;
+			j = j+1;
+			h_flag = 1;
+		end
+		
+		else if (HREF == 1'b1) begin
+			h_flag = 0;
+			
+			X_ADDR = i;
+			Y_ADDR = j;
+			
+			if (k == 0) begin
+				input_1 = CAMERA_INPUT;
+				k = 1;
+				W_EN = 0;
+			end
+			
+			else begin
+				input_2 = CAMERA_INPUT;
+				pixel_data_RGB332 = {input_2[7:5], input_2[2:0], input_1[4:3]};
+				i = i+1;
+				k = 0;
+				W_EN = 1;
+			end
+		end
+	end		
+end
+```
+
+At this point our images were very clear, but our colors were entirely wrong. Instead of reading color, it appeared that our camera was only measuring light intensity. After comparing our register values with the TAs, we realized that we had addressed our COM15 register incorrectly. After we fixed this we finally received a color bar that was close to what we were expecting.
+
+// Insert color bar image
+
+We switched back to displaying our camera output and finally saw images that were properly colored. We messed with the automatic gain of the camera for a bit until we achieved a brightness level we were happy with.
+
+// Insert camera output image
 
 ## Part 5 - Color Detection
 
