@@ -165,3 +165,13 @@ if (nextAction == 0x0) {
   state = RIGHT_1;
 }
 ```
+
+## Demo
+
+In the demo we set up a 5x4 maze that had several challenging features for our algorithm. The first was a dead end that the robot had to backtrack out of. The second was that we had a section of the maze that the robot would miss since it always prefers to go forwards. This means it has to figure out a path to get back to the squares that it didn’t explore the first time. Our robot was able to solve both challenges as you can see from the demo below:
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/yVeZnlOtfTA" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+Here is the final image from the GUI, and you can see that it perfectly maps out the entire maze:
+
+
