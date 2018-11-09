@@ -132,3 +132,36 @@ void queueAdd(int x, int y, int* fromX, int* fromY, int advDirn, int moved) {
   }
 }
 ```
+
+## Integrating with Lab 3 Code
+
+After we had tested the maze exploration code on several simulated mazes, we had to integrate it with the code from Lab 3, which did maze exploration using the right hand rule. We refactored our code to call a function that figures out what the next action should be (forward, right, left) at each intersection. We then inserted our DFS algorithm into the function. We then added a state to our state machine to determine the next position and transition to the appropriate state:
+
+```cpp
+leftWheel.write(STOP_POS);
+rightWheel.write(STOP_POS);
+
+update_wall_sensor_values();
+
+// get 3 point wall information
+int isFrontWall = is_wall_in_front();
+int isRightWall = is_wall_on_right();
+int isLeftWall = is_wall_on_left();
+
+// set the maze for the current position
+set_maze(isFrontWall, isLeftWall, isRightWall);
+
+// send the current maze cell data back to the base station
+sendData();
+
+// get the next action to do and advance the current maze state
+// by that action
+int nextAction = get_next_action();
+if (nextAction == 0x0) {
+  state = FORWARD;
+} else if (nextAction == 0x1) {
+  state = LEFT_1;
+} else {
+  state = RIGHT_1;
+}
+```
