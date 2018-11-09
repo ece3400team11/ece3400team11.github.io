@@ -220,7 +220,46 @@ We switched back to displaying our camera output and finally saw images that wer
 
 ## Part 5 - Color Detection
 
-Blah Blah
+To test color detection, we decided to use three internal LEDs on the FPGA that would light up to show whether red, blue or neither color was detected. The actual color detection was performed in the Image Processor module.
+
+For every valid pixel, the image processor would first determine its RGB values, and then by comparing them against a certain threshold value, it would decide if the pixel was red, blue, or neither and increment the counter for the same. These threshold values were determined by trial and error and are dependent on the camera and how it is setup. This same procedure was repeated for every pixel in the frame.
+
+At the end of a frame, we compared the counter values for each color to a threshold value which determined whether the frame was majority red, majority blue, or neither. These threshold values were once again determined by trial and error and are dependent on the camera and how it is setup. The register res was assigned a value based on what color was seen. If there were enough blue pixels to detect blue, the res would be set to 0’b111. Likewise, res would be set to 0’b110 if red was detected. If neither color was detected, res would be set to 0’b000. The value of res was assigned to the output RESULT. The counters were then reset for the next frame.
+
+```cpp
+Include image processor code here
+```
+
+In the Deo Nano module, we took RESULT from the image processor and turned on the respective LEDs to indicate what the module had found. If the image processor determined that the frame was majority red, we turned on LED 7 on the FPGA.  If the image processor determined that the frame was majority blue, we turned on LED 6 on the FPGA.  Finally, if the image processor determined that the frame neither majority red nor majority blue, we turned on LED 0 on the FPGA.
+
+```cpp
+///////* Color Detection *///////
+reg     LED_7;
+reg     LED_6;
+reg     LED_0;
+
+assign   LED[7] = LED_7;
+assign   LED[6] = LED_6;
+assign   LED[0] = LED_0;
+
+always @(*) begin
+		if (RESULT == 3'b111) begin //turn on LED 7
+			LED_7 = 1; 
+			LED_6 = 1;
+			LED_0 = 1;
+		end
+		else if (RESULT == 3'b111) begin //turn on LED 6
+			LED_7 = 0;
+			LED_6 = 1;
+			LED_0 = 0;
+		end
+		else begin
+			LED_7 = 0;
+			LED_6 = 0;
+			LED_0 = 1;
+		end
+end
+```
 
 ## Part 6 - Communication with the Arduino
 
@@ -233,3 +272,6 @@ For ease of use and because we have enough pins left, we will go with a parallel
 - 101: Red square
 - 110: Red diamond
 - x11: Nothing
+
+## Part 7 - Future Improvements
+
