@@ -1,72 +1,54 @@
 #include <Wire.h>
-
-// decimal 42
 #define OV7670_I2C_ADDRESS 0x21
 #define COM7 0x12
 #define COM3 0x0C
 #define CLKRC 0x11
-#define SCALING_XSC 0x70
-#define SCALING_YSC 0x71
 #define COM17 0x42
 #define MVFP 0x1E
-#define COM8 0x13
-#define COM15 0xC0
+#define COM15 0x40
 #define COM9 0x14
-#define COM16 0x41
 
 ///////// Main Program //////////////
 void setup() {
   Wire.begin();
   Serial.begin(9600);
-  set_color_matrix();
   Serial.println("Starting");
-  
   // TODO: READ KEY REGISTERS
 
   // result = OV7670_write_register(0x0C, 0b00000000);
 
-  String result = OV7670_write_register(COM7, 0b10000000);
+  String result = OV7670_write_register(COM7, 0x80);
+  Serial.println(result);
+   
+  set_color_matrix();
+
+  //delay(200);
+
+  // 0x0E for color bar
+  result = OV7670_write_register(COM7, 0x0E);
   Serial.println(result);
 
-  delay(200);
-
-  result = OV7670_write_register(COM7, 0b00001110);
+  result = OV7670_write_register(COM3, 0x08);
   Serial.println(result);
 
-//  result = OV7670_write_register(COM3, 0b00001000);
-//  Serial.println(result);
-
-  result = OV7670_write_register(CLKRC, 0b11000000);
+  result = OV7670_write_register(CLKRC, 0xC0);
   Serial.println(result);
 
-  //result = OV7670_write_register(SCALING_XSC, 0b10000011);
-  //Serial.println(result);
-
-  //result = OV7670_write_register(SCALING_YSC, 0b00000011);
-  //Serial.println(result);
-
-  result = OV7670_write_register(COM17, 0b00001000);
+  result = OV7670_write_register(COM17, 0x08);
   Serial.println(result);
 
-  result = OV7670_write_register(COM15, 0b11010000);
+  result = OV7670_write_register(COM15, 0xD0);
   Serial.println(result);
 
-//  result = OV7670_write_register(COM9, 0b01101010);
-//  Serial.println(result);
+  result = OV7670_write_register(COM9, 0x1A);
+  Serial.println(result);
 
-//  result = OV7670_write_register(COM16, 0b00011000);
-//  Serial.println(result);
+  result = OV7670_write_register(MVFP, 0x30);
+  Serial.println(result);
 
-//  result = OV7670_write_register(MVFP, 0b0010000);
-//  Serial.println(result);
-  
-//  result = OV7670_write_register(COM8, 0b10000010);
-//  Serial.println(result);
-  
   delay(100);
   
   // TODO: WRITE KEY REGISTERS
-  
   read_key_registers();
 }
 
@@ -89,14 +71,6 @@ void read_key_registers(){
   Serial.print("0x12 = ");
   Serial.println(data);
 
-  data = read_register_value(SCALING_XSC);
-  Serial.print("0x70 = ");
-  Serial.println(data);
-
-  data = read_register_value(SCALING_YSC);
-  Serial.print("0x71 = ");
-  Serial.println(data);
-
   data = read_register_value(COM17);
   Serial.print("0x42 = ");
   Serial.println(data);  
@@ -104,11 +78,6 @@ void read_key_registers(){
   data = read_register_value(MVFP);
   Serial.print("0x1E = ");
   Serial.println(data);
-
-  data = read_register_value(COM8);
-  Serial.print("0x13 = ");
-  Serial.println(data);
-
 }
 
 byte read_register_value(int register_address){
