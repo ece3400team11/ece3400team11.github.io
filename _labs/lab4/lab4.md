@@ -17,8 +17,31 @@ In the prelab we made a few simple calculations in order to determine what our c
 
 Setting up the camera required inspecting the data sheet to figure out which of the camera registers we needed to write in order to output the test bar image from the camera. After we defined all of the registers addresses, we had to reset all of the registers to their default values, which we did by writing the msb of COM7. Then, we enabled the external clock by setting CLKRC. We then set the output format to QCIF RGB by writing COM7. We then wrote to COM15 to set the RGB output mode to RGB565 at full range. When enabling the color bar test we enabled the DSP color bar on COM17 and the color bar on COM7. The final code looks something like this:
 
+First we define the register addresses:
 ```cpp
+#define OV7670_I2C_ADDRESS 0x21
+#define COM7 0x12
+#define COM3 0x0C
+#define CLKRC 0x11
+#define COM17 0x42
+#define MVFP 0x1E
+#define COM15 0x40
+#define COM9 0x14
+```
 
+Then we set the values as specified above:
+```cpp
+OV7670_write_register(COM7, 0x80);
+   
+set_color_matrix();
+
+OV7670_write_register(COM7, 0x0E);
+OV7670_write_register(COM3, 0x08);
+OV7670_write_register(CLKRC, 0xC0);
+OV7670_write_register(COM17, 0x08);
+OV7670_write_register(COM15, 0xD0);
+OV7670_write_register(COM9, 0x1A);
+OV7670_write_register(MVFP, 0x30);
 ```
 
 ## Part 2 - Setting up the FPGA
