@@ -48,15 +48,90 @@ OV7670_write_register(MVFP, 0x30);
 
 The first thing we had to do to setup the FPGA was to generate all the clock signals that we would require to run our external devices (namely the camera and the VGA module). This was done by creating a PLL which would take the already provided 50 MHz clock signal as an input and use it to generate the 24 and 25 MHz clock signals. The 24 MHz clock signal was then assigned to a GPIO pin to allow it to be used by the camera. The 25 MHz clock signal was assigned to the clock for the VGA module and the read clock for the M9K module. The 50 MHz clock signal was assigned to the write clock for the M9K module. We used different clocks for the read and write ports of the memory module to make sure that we don’t read and write from the same address at the same time.
 
-// Include code with all the module assignments
+```cpp
+///////* INSTANTIATE YOUR PLL HERE *///////
+team11PLL	team11PLL_inst (
+	.inclk0 ( CLOCK_50 ),
+	.c0 ( CLOCK_24_PLL ),
+	.c1 ( CLOCK_25_PLL),
+	.c2 ( CLOCK_50_PLL )
+);
+
+///////* M9K Module *///////
+Dual_Port_RAM_M9K mem(
+	.input_data(pixel_data_RGB332),
+	.w_addr(WRITE_ADDRESS),
+	.r_addr(READ_ADDRESS),
+	.w_en(W_EN),
+	.clk_W(CLOCK_50),
+	.clk_R(CLOCK_25_PLL), // DO WE NEED TO READ SLOWER THAN WRITE??
+	.output_data(MEM_OUTPUT)
+);
+
+///////* VGA Module *///////
+VGA_DRIVER driver (
+	.RESET(VGA_RESET),
+	.CLOCK(CLOCK_25_PLL),
+	.PIXEL_COLOR_IN(VGA_READ_MEM_EN ? MEM_OUTPUT : BLUE),
+	.PIXEL_X(VGA_PIXEL_X),
+	.PIXEL_Y(VGA_PIXEL_Y),
+	.PIXEL_COLOR_OUT({GPIO_0_D[9],GPIO_0_D[11],GPIO_0_D[13],GPIO_0_D[15],GPIO_0_D[17],GPIO_0_D[19],GPIO_0_D[21],GPIO_0_D[23]}),
+   .H_SYNC_NEG(GPIO_0_D[7]),
+   .V_SYNC_NEG(VGA_VSYNC_NEG)
+);
+
+///////* Image Processor *///////
+IMAGE_PROCESSOR proc(
+	.PIXEL_IN(MEM_OUTPUT),
+	.CLK(CLOCK_25_PLL),
+	.VGA_PIXEL_X(VGA_PIXEL_X),
+	.VGA_PIXEL_Y(VGA_PIXEL_Y),
+	.VGA_VSYNC_NEG(VGA_VSYNC_NEG),
+	.VSYNC(VSYNC),
+	.HREF(HREF),
+	.RESULT(RESULT)
+);
+```
+
+Once we had the clocks all set up, we connected the VGA adapter to the specified GPIO pins on the FPGA (GPIO_0[5] -> GPIO_0[23]). The VGA adapter reads the pixel color information from the memory and outputs it as a VGA signal which can be displayed on the screen. 
 
 ## Part 3 - Displaying  a Test Pattern on the Screen
 
-Once we had the FPGA set up, we had to make sure we had the ability to write to the M9K buffer so that we could store the current frame from the camera. Before integrating the camera, we manually wrote a test pattern into the buffer to see if the correct image would be output to the monitor. We needed to write to the buffer at a faster rate than we read, so we decided to use our 50 MHz clock to write the data.
+After setting up the FPGA and VGA Adapter, we had to make sure we had the ability to write to the M9K buffer so that we could store the current frame from the camera. Before integrating the camera, we manually wrote a test pattern into the M9K RAM to make sure that the VGA Driver was connected properly and that the correct image would be output to the monitor.
 
-To test our buffer, we kept two counter variables: one that incremented on every clock cycle, and one that incremented for every line. When the first counter reached our image width, it reset to zero and we incremented our other counter. When this counter reached our image height, we reset both counters. We wrote a red line to the M9K buffer every 10 lines using a for loop. Here is our code to do this:
+To write out test pattern to the buffer, we used two counter variables: one that incremented on every clock cycle, and one that incremented for every row. When the first counter reached our image width, we incremented the second counter and reset the first one back to zero. When the second counter reached our image height, it meant that we were done writing the entire test pattern into memory, so we reset both the counters. 
 
-INSERT BUFFER WRITER CODE HERE
+For our test pattern, we simply wrote a red line to the M9K buffer every 10 lines using a for loop. Here is our code to do this:
+
+```cpp
+///////* Buffer Writer *///////
+
+integer i = 0;
+integer j = 0;
+
+always @(posedge CLOCK_24_PLL) begin
+		W_EN = 1;
+		
+		X_ADDR = i;
+		Y_ADDR = j;
+		
+		if (i < `SCREEN_WIDTH && (j % 10 == 0))
+			pixel_data_RGB332 = RED;
+		else
+			pixel_data_RGB332 = BLACK;
+			
+		i = i+1;
+			
+		if (i == `SCREEN_WIDTH) begin
+			i = 0;
+			j = j+1;
+			
+			if (j == `SCREEN_HEIGHT) begin
+				j = 0;
+			end
+		end
+end
+```
 
 Here is an image of our result:
 
