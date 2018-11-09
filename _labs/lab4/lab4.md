@@ -48,7 +48,7 @@ OV7670_write_register(MVFP, 0x30);
 
 The first thing we had to do to setup the FPGA was to generate all the clock signals that we would require to run our external devices (namely the camera and the VGA module). This was done by creating a PLL which would take the already provided 50 MHz clock signal as an input and use it to generate the 24 and 25 MHz clock signals. The 24 MHz clock signal was then assigned to a GPIO pin to allow it to be used by the camera. The 25 MHz clock signal was assigned to the clock for the VGA module and the read clock for the M9K module. The 50 MHz clock signal was assigned to the write clock for the M9K module. We used different clocks for the read and write ports of the memory module to make sure that we don’t read and write from the same address at the same time.
 
-```cpp
+```verilog
 ///////* INSTANTIATE YOUR PLL HERE *///////
 team11PLL	team11PLL_inst (
 	.inclk0 ( CLOCK_50 ),
@@ -104,7 +104,7 @@ To write out test pattern to the buffer, we used two counter variables: one that
 
 For our test pattern, we simply wrote a red line to the M9K buffer every 10 lines using a for loop. Here is our code to do this:
 
-```cpp
+```verilog
 ///////* Buffer Writer *///////
 
 integer i = 0;
@@ -148,7 +148,7 @@ Once we were happy with our downsampling, we had to figure out how and when to w
 
 On every valid input from the camera, we flipped a bit we labeled k, which allowed us to tell whether the input we were receiving from the camera was the first or second half of the 16-bit pixel data. On receiving the second half of the pixel data, we downsampled it to 8 bits by concatenating together bits [7:5] and [2:0] of the first byte with bits [4:3] of the second byte, updated our x position and wrote the data to the buffer. When HREF went high, we paused as the data from the camera was not valid. We updated our y position and reset our x position during this time. When VSYNC went low, we also paused as the data from the camera was not valid.  We reset both our x and y positions during this time so we would be ready to write the next frame to the buffer. The code for the downsampler is shown below:
 
-```cpp
+```verilog
 ///////* Downsampler *///////
 reg[7:0] i = 0;
 reg[7:0] j = 0;
@@ -228,13 +228,13 @@ For every valid pixel, the image processor would first determine its RGB values,
 
 At the end of a frame, we compared the counter values for each color to a threshold value which determined whether the frame was majority red, majority blue, or neither. These threshold values were once again determined by trial and error and are dependent on the camera and how it is setup. The register res was assigned a value based on what color was seen. If there were enough blue pixels to detect blue, the res would be set to 0’b111. Likewise, res would be set to 0’b110 if red was detected. If neither color was detected, res would be set to 0’b000. The value of res was assigned to the output RESULT. The counters were then reset for the next frame.
 
-```cpp
+```verilog
 Include image processor code here
 ```
 
 In the Deo Nano module, we took RESULT from the image processor and turned on the respective LEDs to indicate what the module had found. If the image processor determined that the frame was majority red, we turned on LED 7 on the FPGA.  If the image processor determined that the frame was majority blue, we turned on LED 6 on the FPGA.  Finally, if the image processor determined that the frame neither majority red nor majority blue, we turned on LED 0 on the FPGA.
 
-```cpp
+```verilog
 ///////* Color Detection *///////
 reg     LED_7;
 reg     LED_6;
