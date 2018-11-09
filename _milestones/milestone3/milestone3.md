@@ -174,4 +174,4 @@ In the demo we set up a 5x4 maze that had several challenging features for our a
 
 Here is the final image from the GUI, and you can see that it perfectly maps out the entire maze:
 
-
+![Image](milestones/milestone3/images/final_maze.png)
