@@ -1,14 +1,3 @@
-/*
- * How to use the QRE1113 Digital Line Sensor by SparkFun with hardware interrupts
- * https://www.sparkfun.com/products/9454
- *
- * Note: The Arduino Uno is limited to two pins for digital state interrupts: pins 2 and 3.
- * This means you will be limited to two digital line sensors.
- *
- * Refer to this for information on attachInterrupt():
- * https://www.arduino.cc/reference/en/language/functions/external-interrupts/attachinterrupt/
-  */
-
 #include <Servo.h>
 #define LEFT_WHEEL_PIN 5
 #define RIGHT_WHEEL_PIN 6
