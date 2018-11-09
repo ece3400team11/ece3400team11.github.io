@@ -135,7 +135,7 @@ end
 
 Here is an image of our result:
 
-INSERT IMAGE HERE.
+// Insert image of test pattern here
 
 ## Part 4 - Downsampling and Displaying Camera Output on the Screen
 
