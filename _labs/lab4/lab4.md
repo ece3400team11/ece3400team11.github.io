@@ -159,7 +159,8 @@ reg      v_flag = 0;
 reg  [7:0]	input_1 = 8'd0;
 reg  [7:0]	input_2 = 8'd0;
 wire [7:0]	CAMERA_INPUT;
-assign 		CAMERA_INPUT = {GPIO_1_D[23],GPIO_1_D[21],GPIO_1_D[19],GPIO_1_D[17],GPIO_1_D[15],GPIO_1_D[13],GPIO_1_D[11],GPIO_1_D[9]};
+assign 		CAMERA_INPUT = {GPIO_1_D[23],GPIO_1_D[21],GPIO_1_D[19],GPIO_1_D[17],
+				GPIO_1_D[15],GPIO_1_D[13],GPIO_1_D[11],GPIO_1_D[9]};
 wire			P_CLOCK;
 assign		P_CLOCK = GPIO_1_D[7];
 wire			HREF;
