@@ -1,5 +1,5 @@
-#define NUM_COLS 3
-#define NUM_ROWS 3
+#define NUM_COLS 9
+#define NUM_ROWS 9
 
 unsigned char maze[NUM_ROWS][NUM_COLS];
 
@@ -8,6 +8,7 @@ const int EAST  = 2;
 const int SOUTH = 1;
 const int WEST  = 0;
 
+// initial position and direction
 int robotX = 0;
 int robotY = 0;
 int robotDir = EAST;
@@ -19,20 +20,29 @@ typedef struct maze_exp_info {
   unsigned char iD : 2; // initial dirn (1 -> forward, 2 -> turn left, 3 -> right right)
   unsigned char v : 1; // visited this cell
 };
+// hold all of the BFS information for all of the nodes
 struct maze_exp_info maze_exp_info[NUM_ROWS][NUM_COLS];
 
+// return the turned left direction of the
+// given direction
 int turnDirnLeft(int dirn) {
   return (dirn+1)%4;
 }
 
+// return the turned right direction of the
+// given direction
 int turnDirnRight(int dirn) {
   return (dirn+3)%4;
 }
 
+// return true if our robot has visited maze position
+// (x,y)
 bool explored(int x, int y) {
   return maze[y][x] & 0x1 == 1 ? true : false;
 }
 
+// advance the values pointed to by x and y according
+// to the direction
 void adv(int* x, int* y, int dirn){
   switch(dirn){
       case NORTH:
@@ -173,12 +183,21 @@ int getNextDir() {
   return 0x3;
 }
 
+void init_maze() {
+  // assume starting with back to wall
+  maze[robotY][robotX] |= 1 << (robotDir + 2);
+  // assert that left sensor detects a wall
+}
+
 void set_maze(int front, int left, int right) {
   maze[robotY][robotX] |= front << (robotDir + 4);
   maze[robotY][robotX] |= left << (((robotDir+1)%4) + 4);
   maze[robotY][robotX] |= right << (((robotDir+3)%4) + 4);
 }
 
+// figure out what to do next, update the maze state for that
+// and update the robot state to that new state
+// return how to get to that new state
 // 0 -> forward, 1 -> turn left, else -> turn right
 int get_next_action() {
   // mark as explored
