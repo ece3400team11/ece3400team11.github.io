@@ -214,11 +214,11 @@ end
 
 At this point our images were very clear, but our colors were entirely wrong. Instead of reading color, it appeared that our camera was only measuring light intensity. After comparing our register values with the TAs, we realized that we had addressed our COM15 register incorrectly. After we fixed this we finally received a color bar that was close to what we were expecting.
 
-// Insert color bar image
+![Image](labs/lab4/images/img_20181108_184323.jpg)
 
 We switched back to displaying our camera output and finally saw images that were properly colored. We messed with the automatic gain of the camera for a bit until we achieved a brightness level we were happy with.
 
-// Insert camera output image
+![Image](labs/lab4/images/img_20181108_184955.jpg)
 
 ## Part 5 - Color Detection
 
