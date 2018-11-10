@@ -229,7 +229,33 @@ For every valid pixel, the image processor would first determine its RGB values,
 At the end of a frame, we compared the counter values for each color to a threshold value which determined whether the frame was majority red, majority blue, or neither. These threshold values were once again determined by trial and error and are dependent on the camera and how it is setup. The register res was assigned a value based on what color was seen. If there were enough blue pixels to detect blue, the res would be set to 0’b111. Likewise, res would be set to 0’b110 if red was detected. If neither color was detected, res would be set to 0’b000. The value of res was assigned to the output RESULT. The counters were then reset for the next frame.
 
 ```verilog
-Include image processor code here
+always @(posedge CLK) begin
+	
+	if (HREF) begin
+	   valR = PIXEL_IN[7:5];
+	   valG = PIXEL_IN[4:2];
+	   valB = {PIXEL_IN[1:0], 1'b0};
+		
+		if (valB > valR && valB > valG) numB = numB + 16'd1;
+		else if (valR > valB && valR > valG) numR = numR + 16'd1;
+		else numN = numN + 16'd1;
+	end
+	
+	if (VSYNC == 1'b1 && lastSync == 1'b0) begin //posedge VSYNC
+		if (numB > threshB) res = 3'b111;
+		else if (numR > threshR) res = 3'b110;
+		else res = 3'b000;
+	end
+	
+	if (VSYNC == 1'b0 && lastSync == 1'b1) begin //negedge VSYNC
+		numB = 0;
+		numR = 0;
+		numN = 0;
+	end
+	
+	lastSync = VSYNC;
+
+end
 ```
 
 In the Deo Nano module, we took RESULT from the image processor and turned on the respective LEDs to indicate what the module had found. If the image processor determined that the frame was majority red, we turned on LED 7 on the FPGA.  If the image processor determined that the frame was majority blue, we turned on LED 6 on the FPGA.  Finally, if the image processor determined that the frame neither majority red nor majority blue, we turned on LED 0 on the FPGA.
