@@ -301,5 +301,9 @@ For ease of use and because we have enough pins left, we will go with a parallel
 - 110: Red diamond
 - x11: Nothing
 
-## Part 7 - Future Improvements
+## Part 7 - Demo
+
+In this demo, we used the LEDs on the FPGA to distiguish different colors. One LED turns on if the camera doesn't detect a red or blue shape, another LED turns on if the camera detects a red shape, and a third LED turns on if the camera detects a blue shape:
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/XDHyCaLENZc" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
