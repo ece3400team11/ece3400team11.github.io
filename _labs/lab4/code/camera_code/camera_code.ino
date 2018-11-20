@@ -25,7 +25,7 @@ void setup() {
   //delay(200);
 
   // 0x0E for color bar
-  result = OV7670_write_register(COM7, 0x0E);
+  result = OV7670_write_register(COM7, 0x0C);
   Serial.println(result);
 
   result = OV7670_write_register(COM3, 0x08);
@@ -34,8 +34,8 @@ void setup() {
   result = OV7670_write_register(CLKRC, 0xC0);
   Serial.println(result);
 
-  result = OV7670_write_register(COM17, 0x08);
-  Serial.println(result);
+  //result = OV7670_write_register(COM17, 0x08);
+  //Serial.println(result);
 
   result = OV7670_write_register(COM15, 0xD0);
   Serial.println(result);
