@@ -48,27 +48,246 @@ OV7670_write_register(MVFP, 0x30);
 
 The first thing we had to do to setup the FPGA was to generate all the clock signals that we would require to run our external devices (namely the camera and the VGA module). This was done by creating a PLL which would take the already provided 50 MHz clock signal as an input and use it to generate the 24 and 25 MHz clock signals. The 24 MHz clock signal was then assigned to a GPIO pin to allow it to be used by the camera. The 25 MHz clock signal was assigned to the clock for the VGA module and the read clock for the M9K module. The 50 MHz clock signal was assigned to the write clock for the M9K module. We used different clocks for the read and write ports of the memory module to make sure that we don’t read and write from the same address at the same time.
 
-// Include code with all the module assignments
+```verilog
+///////* INSTANTIATE YOUR PLL HERE *///////
+team11PLL	team11PLL_inst (
+	.inclk0 ( CLOCK_50 ),
+	.c0 ( CLOCK_24_PLL ),
+	.c1 ( CLOCK_25_PLL),
+	.c2 ( CLOCK_50_PLL )
+);
+
+///////* M9K Module *///////
+Dual_Port_RAM_M9K mem(
+	.input_data(pixel_data_RGB332),
+	.w_addr(WRITE_ADDRESS),
+	.r_addr(READ_ADDRESS),
+	.w_en(W_EN),
+	.clk_W(CLOCK_50),
+	.clk_R(CLOCK_25_PLL),
+	.output_data(MEM_OUTPUT)
+);
+
+///////* VGA Module *///////
+VGA_DRIVER driver (
+	.RESET(VGA_RESET),
+	.CLOCK(CLOCK_25_PLL),
+	.PIXEL_COLOR_IN(VGA_READ_MEM_EN ? MEM_OUTPUT : BLUE),
+	.PIXEL_X(VGA_PIXEL_X),
+	.PIXEL_Y(VGA_PIXEL_Y),
+	.PIXEL_COLOR_OUT({GPIO_0_D[9], GPIO_0_D[11],GPIO_0_D[13],GPIO_0_D[15],
+			  GPIO_0_D[17],GPIO_0_D[19],GPIO_0_D[21],GPIO_0_D[23]}),
+   .H_SYNC_NEG(GPIO_0_D[7]),
+   .V_SYNC_NEG(VGA_VSYNC_NEG)
+);
+
+///////* Image Processor *///////
+IMAGE_PROCESSOR proc(
+	.PIXEL_IN(MEM_OUTPUT),
+	.CLK(CLOCK_25_PLL),
+	.VGA_PIXEL_X(VGA_PIXEL_X),
+	.VGA_PIXEL_Y(VGA_PIXEL_Y),
+	.VGA_VSYNC_NEG(VGA_VSYNC_NEG),
+	.VSYNC(VSYNC),
+	.HREF(HREF),
+	.RESULT(RESULT)
+);
+```
+
+Once we had the clocks all set up, we connected the VGA adapter to the specified GPIO pins on the FPGA (GPIO_0[5] -> GPIO_0[23]). The VGA adapter reads the pixel color information from the memory and outputs it as a VGA signal which can be displayed on the screen. 
 
 ## Part 3 - Displaying  a Test Pattern on the Screen
 
-Once we had the FPGA set up, we had to make sure we had the ability to write to the M9K buffer so that we could store the current frame from the camera. Before integrating the camera, we manually wrote a test pattern into the buffer to see if the correct image would be output to the monitor. We needed to write to the buffer at a faster rate than we read, so we decided to use our 50 MHz clock to write the data.
+After setting up the FPGA and VGA Adapter, we had to make sure we had the ability to write to the M9K buffer so that we could store the current frame from the camera. Before integrating the camera, we manually wrote a test pattern into the M9K RAM to make sure that the VGA Driver was connected properly and that the correct image would be output to the monitor.
 
-To test our buffer, we kept two counter variables: one that incremented on every clock cycle, and one that incremented for every line. When the first counter reached our image width, it reset to zero and we incremented our other counter. When this counter reached our image height, we reset both counters. We wrote a red line to the M9K buffer every 10 lines using a for loop. Here is our code to do this:
+To write out test pattern to the buffer, we used two counter variables: one that incremented on every clock cycle, and one that incremented for every row. When the first counter reached our image width, we incremented the second counter and reset the first one back to zero. When the second counter reached our image height, it meant that we were done writing the entire test pattern into memory, so we reset both the counters. 
 
-INSERT BUFFER WRITER CODE HERE
+For our test pattern, we simply wrote a red line to the M9K buffer every 10 lines using a for loop. Here is our code to do this:
+
+```verilog
+///////* Buffer Writer *///////
+
+integer i = 0;
+integer j = 0;
+
+always @(posedge CLOCK_24_PLL) begin
+		W_EN = 1;
+		
+		X_ADDR = i;
+		Y_ADDR = j;
+		
+		if (i < `SCREEN_WIDTH && (j % 10 == 0))
+			pixel_data_RGB332 = RED;
+		else
+			pixel_data_RGB332 = BLACK;
+			
+		i = i+1;
+			
+		if (i == `SCREEN_WIDTH) begin
+			i = 0;
+			j = j+1;
+			
+			if (j == `SCREEN_HEIGHT) begin
+				j = 0;
+			end
+		end
+end
+```
 
 Here is an image of our result:
 
-INSERT IMAGE HERE.
+// Insert image of test pattern here
 
 ## Part 4 - Downsampling and Displaying Camera Output on the Screen
 
-The camera data was output in RGB 565 format, which meant that it took 2 PCLK cycles to get the data for a single pixel. 
+We had the camera set up to record pixel data in the RGB 565 format, which meant that each individual pixel consists of 16 bits. However, our M9K RAM could only allocate 8 bits per pixel, so it was necessary to downsample the input coming in from the camera to the RGB 332 format. We also had to take into account the fact the camera could only output 8 bits of a pixel at a time, so to completely read the 16 bit pixel data, we would need to read two consecutive inputs from the camera. For the most accurate color representations after downsampling, we took the most significant bits from each color and concatenated them together to form our RGB 332 value which we then wrote to the M9K RAM. 
+
+![Image](labs/lab4/images/camera_signal.png)
+
+Once we were happy with our downsampling, we had to figure out how and when to write to the buffer so that the image we see is properly synchronized with the camera. Initially we were only using the HREF signal output from the camera in order to tell when to change what line of the image we were writing. When we did this, we saw our image was skewed both horizontally and vertically. Also, our color bar would slowly shift to the side even though it should remain stationary. We were initially using the created 24 MHz clock on the FPGA to write to the buffer since that was the same clock we were sending to the camera, but when we compared the 24 MHz clock with the PCLOCK camera output using the oscilloscope, we realized that the PCLOCK was slightly slower than the 24 MHz it was receiving from the FPGA, so we decided to sync our buffer using this clock instead. Our image was now no longer shifting, but our colorbar was still vertically and horizontally skewed. After also incorporating the VSYNC camera output, which indicated when we were receiving a frame, with our memory buffer we finally got a steady image from the camera.
+
+On every valid input from the camera, we flipped a bit we labeled k, which allowed us to tell whether the input we were receiving from the camera was the first or second half of the 16-bit pixel data. On receiving the second half of the pixel data, we downsampled it to 8 bits by concatenating together bits [7:5] and [2:0] of the first byte with bits [4:3] of the second byte, updated our x position and wrote the data to the buffer. When HREF went high, we paused as the data from the camera was not valid. We updated our y position and reset our x position during this time. When VSYNC went low, we also paused as the data from the camera was not valid.  We reset both our x and y positions during this time so we would be ready to write the next frame to the buffer. The code for the downsampler is shown below:
+
+```verilog
+///////* Downsampler *///////
+reg[7:0] i = 0;
+reg[7:0] j = 0;
+reg      k = 0;
+
+reg      h_flag = 0;
+reg      v_flag = 0;
+
+reg  [7:0]	input_1 = 8'd0;
+reg  [7:0]	input_2 = 8'd0;
+wire [7:0]	CAMERA_INPUT;
+assign 		CAMERA_INPUT = {GPIO_1_D[23],GPIO_1_D[21],GPIO_1_D[19],GPIO_1_D[17],
+				GPIO_1_D[15],GPIO_1_D[13],GPIO_1_D[11],GPIO_1_D[9]};
+wire			P_CLOCK;
+assign		P_CLOCK = GPIO_1_D[7];
+wire			HREF;
+assign		HREF = GPIO_1_D[5];
+wire			VSYNC;
+assign		VSYNC = GPIO_1_D[3];
+
+always @(posedge P_CLOCK) begin
+
+	if (VSYNC == 1'b1 && v_flag == 0) begin
+		i = 0;
+		j = 0;
+		v_flag = 1;
+	end
+	
+	else if (VSYNC == 1'b0) begin
+	
+		v_flag = 0;
+		
+		if (HREF == 1'b0 && h_flag == 0) begin
+			k = 0;
+			i = 0;
+			j = j+1;
+			h_flag = 1;
+		end
+		
+		else if (HREF == 1'b1) begin
+			h_flag = 0;
+			
+			X_ADDR = i;
+			Y_ADDR = j;
+			
+			if (k == 0) begin
+				input_1 = CAMERA_INPUT;
+				k = 1;
+				W_EN = 0;
+			end
+			
+			else begin
+				input_2 = CAMERA_INPUT;
+				pixel_data_RGB332 = {input_2[7:5], input_2[2:0], input_1[4:3]};
+				i = i+1;
+				k = 0;
+				W_EN = 1;
+			end
+		end
+	end		
+end
+```
+
+At this point our images were very clear, but our colors were entirely wrong. Instead of reading color, it appeared that our camera was only measuring light intensity. After comparing our register values with the TAs, we realized that we had addressed our COM15 register incorrectly. After we fixed this we finally received a color bar that was close to what we were expecting.
+
+![Image](labs/lab4/images/img_20181108_184323.jpg)
+
+We switched back to displaying our camera output and finally saw images that were properly colored. We messed with the automatic gain of the camera for a bit until we achieved a brightness level we were happy with.
+
+![Image](labs/lab4/images/img_20181108_184955.jpg)
 
 ## Part 5 - Color Detection
 
-Blah Blah
+To test color detection, we decided to use three internal LEDs on the FPGA that would light up to show whether red, blue or neither color was detected. The actual color detection was performed in the Image Processor module.
+
+For every valid pixel, the image processor would first determine its RGB values, and then by comparing them against a certain threshold value, it would decide if the pixel was red, blue, or neither and increment the counter for the same. These threshold values were determined by trial and error and are dependent on the camera and how it is setup. This same procedure was repeated for every pixel in the frame.
+
+At the end of a frame, we compared the counter values for each color to a threshold value which determined whether the frame was majority red, majority blue, or neither. These threshold values were once again determined by trial and error and are dependent on the camera and how it is setup. The register res was assigned a value based on what color was seen. If there were enough blue pixels to detect blue, the res would be set to 0’b111. Likewise, res would be set to 0’b110 if red was detected. If neither color was detected, res would be set to 0’b000. The value of res was assigned to the output RESULT. The counters were then reset for the next frame.
+
+```verilog
+always @(posedge CLK) begin
+	
+	if (HREF) begin
+	   valR = PIXEL_IN[7:5];
+	   valG = PIXEL_IN[4:2];
+	   valB = {PIXEL_IN[1:0], 1'b0};
+		
+		if (valB > valR && valB > valG) numB = numB + 16'd1;
+		else if (valR > valB && valR > valG) numR = numR + 16'd1;
+		else numN = numN + 16'd1;
+	end
+	
+	if (VSYNC == 1'b1 && lastSync == 1'b0) begin //posedge VSYNC
+		if (numB > threshB) res = 3'b111;
+		else if (numR > threshR) res = 3'b110;
+		else res = 3'b000;
+	end
+	
+	if (VSYNC == 1'b0 && lastSync == 1'b1) begin //negedge VSYNC
+		numB = 0;
+		numR = 0;
+		numN = 0;
+	end
+	
+	lastSync = VSYNC;
+
+end
+```
+
+In the Deo Nano module, we took RESULT from the image processor and turned on the respective LEDs to indicate what the module had found. If the image processor determined that the frame was majority red, we turned on LED 7 on the FPGA.  If the image processor determined that the frame was majority blue, we turned on LED 6 on the FPGA.  Finally, if the image processor determined that the frame neither majority red nor majority blue, we turned on LED 0 on the FPGA.
+
+```verilog
+///////* Color Detection *///////
+reg     LED_7;
+reg     LED_6;
+reg     LED_0;
+
+assign   LED[7] = LED_7;
+assign   LED[6] = LED_6;
+assign   LED[0] = LED_0;
+
+always @(*) begin
+		if (RESULT == 3'b111) begin //turn on LED 7
+			LED_7 = 1; 
+			LED_6 = 1;
+			LED_0 = 1;
+		end
+		else if (RESULT == 3'b111) begin //turn on LED 6
+			LED_7 = 0;
+			LED_6 = 1;
+			LED_0 = 0;
+		end
+		else begin
+			LED_7 = 0;
+			LED_6 = 0;
+			LED_0 = 1;
+		end
+end
+```
 
 ## Part 6 - Communication with the Arduino
 
@@ -81,3 +300,10 @@ For ease of use and because we have enough pins left, we will go with a parallel
 - 101: Red square
 - 110: Red diamond
 - x11: Nothing
+
+## Part 7 - Demo
+
+In this demo, we used the LEDs on the FPGA to distiguish different colors. One LED turns on if the camera doesn't detect a red or blue shape, another LED turns on if the camera detects a red shape, and a third LED turns on if the camera detects a blue shape:
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/XDHyCaLENZc" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+

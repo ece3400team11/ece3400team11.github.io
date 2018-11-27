@@ -7,6 +7,15 @@
 #define MVFP 0x1E
 #define COM15 0x40
 #define COM9 0x14
+#define WB_B 0x01
+#define WB_R 0x02
+#define WB_G 0x6A
+#define AEC  0x07
+#define G_LSB 0x00
+#define G_MSB 0x03
+#define COM8 0x13
+#define AEC_M 0x10
+
 
 ///////// Main Program //////////////
 void setup() {
@@ -46,6 +55,30 @@ void setup() {
   result = OV7670_write_register(MVFP, 0x30);
   Serial.println(result);
 
+  result = OV7670_write_register(COM8, 0x88);
+  Serial.println(result);
+
+  result = OV7670_write_register(WB_B, 0xEA);
+  Serial.println(result);
+
+  result = OV7670_write_register(WB_R, 0x2C);
+  Serial.println(result);
+
+  result = OV7670_write_register(WB_G, 0x44);
+  Serial.println(result);
+
+  result = OV7670_write_register(AEC, 0x40);
+  Serial.println(result);
+
+  result = OV7670_write_register(G_LSB, 0xA0);
+  Serial.println(result);
+
+  result = OV7670_write_register(G_MSB, 0x00);
+  Serial.println(result);
+
+  result = OV7670_write_register(AEC_M, 0x7F);
+  Serial.println(result);
+
   delay(100);
   
   // TODO: WRITE KEY REGISTERS
@@ -78,7 +111,39 @@ void read_key_registers(){
   data = read_register_value(MVFP);
   Serial.print("0x1E = ");
   Serial.println(data);
+
+  delay(7000);
+  
+  data = read_register_value(0x01);
+  Serial.print("0x01 = ");
+  Serial.println(data);
+
+  data = read_register_value(0x02);
+  Serial.print("0x02 = ");
+  Serial.println(data);
+
+  data = read_register_value(0x6A);
+  Serial.print("0x6A = ");
+  Serial.println(data);
+
+  data = read_register_value(0x07);
+  Serial.print("0x07 = ");
+  Serial.println(data);
+
+  data = read_register_value(0x00);
+  Serial.print("0x00 = ");
+  Serial.println(data);
+
+  data = read_register_value(0x03);
+  Serial.print("0x03 = ");
+  Serial.println(data);
+
+  data = read_register_value(0x10);
+  Serial.print("0x10 = ");
+  Serial.println(data);
 }
+
+
 
 byte read_register_value(int register_address){
   byte data = 0;
