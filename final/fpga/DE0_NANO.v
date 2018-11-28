@@ -208,10 +208,12 @@ reg [15:0] numRed;
 reg [15:0] numBlue;
 
 `define C_THRESH 17
-`define B_THRESH 7
+`define B_THRESH 12
 
+wire RES;
 reg          res;
-assign       RESULT = res;
+assign RES = res;
+assign       RES = GPIO_1_D[33];
 
 reg     LED_7;
 reg     LED_6;
@@ -234,9 +236,14 @@ assign   LED[0] = LED_0;
 always @(posedge P_CLOCK) begin
 
 	if (VSYNC == 1'b1 && v_flag == 0) begin
+		res = 1;
 		if (numRed >= 6) begin
+		LED_3 = 0;
+		LED_4 = 0;
+		LED_5 = 0;
 			if      ( numNeg >= 6 ) begin
 				LED_0 = 1;
+				res = 0;
 			end
 			else begin
 				LED_0 = 0;
@@ -255,6 +262,9 @@ always @(posedge P_CLOCK) begin
 			end
 		end
 		else if (numBlue >= 6) begin
+		LED_0 = 0;
+		LED_1 = 0;
+		LED_2 = 0;
 			if      ( numNeg >= 6 ) begin
 				LED_3 = 1;
 			end
@@ -407,12 +417,16 @@ always @(posedge P_CLOCK) begin
 					if (Y_ADDR % 12 == 1 && X_ADDR == prevXB - 20) begin
 						if (redRDif <  `C_THRESH && redRDif >  -`C_THRESH &&
 								redGDif <  `C_THRESH && redGDif >  -`C_THRESH &&
-								redBDif <  `C_THRESH && redBDif >  -`C_THRESH    )
+								redBDif <  `C_THRESH && redBDif >  -`C_THRESH    ) begin
+							pixel_data_RGB565 = 16'b1111100000000000;
 							numRed = numRed + 1;
+						end
 						else if (blueRDif <  `B_THRESH && blueRDif >  -`B_THRESH &&
 								blueGDif <  `B_THRESH && blueGDif >  -`B_THRESH &&
-								blueBDif <  `B_THRESH && blueBDif >  -`B_THRESH    )
+								blueBDif <  `B_THRESH && blueBDif >  -`B_THRESH    ) begin
+								pixel_data_RGB565 = 16'b0000000000011111;
 							numBlue = numBlue + 1;
+						end
 					end
 //				end
 				
