@@ -26,11 +26,11 @@ input 		    [14:0]		w_addr;
 input 		    [14:0]		r_addr;
 
 //////////// input/output data busses //////////
-input 		    [7:0]		input_data;
-output reg 		 [7:0]		output_data;
+input 		    [31:0]		input_data;
+output reg 		 [31:0]		output_data;
 
 //////////// memory array //////////
-(* ramstyle = "M9K" *) reg	[7:0]	 mem [(`SCREEN_WIDTH * `SCREEN_HEIGHT)-1:0];
+(* ramstyle = "M9K" *) reg	[31:0]	 mem [(`SCREEN_WIDTH * `SCREEN_HEIGHT)-1:0];
 reg				 [14:0]		r_addr_reg;
 
 

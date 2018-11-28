@@ -42,10 +42,10 @@ reg [15:0]	pixel_data_EDGE   = 16'd0;
 reg [31:0]	pixel_data_BOTH   = 32'd0;
 
 ///// READ/WRITE ADDRESS /////
-reg [14:0] X_ADDR;
-reg [14:0] Y_ADDR;
+reg  [14:0] X_ADDR;
+reg  [14:0] Y_ADDR;
 wire [14:0] WRITE_ADDRESS;
-reg [14:0] READ_ADDRESS; 
+reg  [14:0] READ_ADDRESS; 
 
 assign WRITE_ADDRESS = X_ADDR + Y_ADDR*(`SCREEN_WIDTH);
 
@@ -107,16 +107,16 @@ VGA_DRIVER driver (
 );
 
 ///////* Image Processor *///////
-IMAGE_PROCESSOR proc(
-	.PIXEL_IN(MEM_OUTPUT),
-	.CLK(CLOCK_25_PLL),
-	.VGA_PIXEL_X(VGA_PIXEL_X),
-	.VGA_PIXEL_Y(VGA_PIXEL_Y),
-	.VGA_VSYNC_NEG(VGA_VSYNC_NEG),
-	.VSYNC(VSYNC),
-	.HREF(HREF),
-	.RESULT(RESULT2)
-);
+//IMAGE_PROCESSOR proc(
+//	.PIXEL_IN(MEM_OUTPUT),
+//	.CLK(CLOCK_25_PLL),
+//	.VGA_PIXEL_X(VGA_PIXEL_X),
+//	.VGA_PIXEL_Y(VGA_PIXEL_Y),
+//	.VGA_VSYNC_NEG(VGA_VSYNC_NEG),
+//	.VSYNC(VSYNC),
+//	.HREF(HREF),
+//	.RESULT(RESULT2)
+//);
 
 
 ///////* Update Read Address *///////
@@ -132,44 +132,51 @@ end
 
 
 ///////* Buffer Writer *///////
-/*
-integer i = 0;
-integer j = 0;
+//integer i = 0;
+//integer j = 0;
+//
+//always @(posedge CLOCK_24_PLL) begin
+//		W_EN = 1;
+//		
+//		X_ADDR = i;
+//		Y_ADDR = j;
+//		
+//		if (i < `SCREEN_WIDTH && (j % 10 == 0))
+//			pixel_data_RGB332 = RED;
+//		else
+//			pixel_data_RGB332 = BLACK;
+//			
+//		i = i+1;
+//			
+//		if (i == `SCREEN_WIDTH) begin
+//			i = 0;
+//			j = j+1;
+//			
+//			if (j == `SCREEN_HEIGHT) begin
+//				j = 0;
+//			end
+//		end
+//end
 
-always @(posedge CLOCK_24_PLL) begin
-		W_EN = 1;
-		
-		X_ADDR = i;
-		Y_ADDR = j;
-		
-		if (i < `SCREEN_WIDTH && (j % 10 == 0))
-			pixel_data_RGB332 = RED;
-		else
-			pixel_data_RGB332 = BLACK;
-			
-		i = i+1;
-			
-		if (i == `SCREEN_WIDTH) begin
-			i = 0;
-			j = j+1;
-			
-			if (j == `SCREEN_HEIGHT) begin
-				j = 0;
-			end
-		end
-end
-*/
-
-///////* Downsampler *///////
+///////* Image Processor *///////
 reg[7:0] i = 0;
 reg[7:0] j = 0;
 reg      k = 0;
 
 reg      h_flag = 0;
 reg      v_flag = 0;
+wire	   P_CLOCK;
+assign	P_CLOCK = GPIO_1_D[7];
+wire		HREF;
+assign	HREF = GPIO_1_D[5];
+wire		VSYNC;
+assign	VSYNC = GPIO_1_D[3];
 
 reg  [7:0]	input_1 = 8'd0;
 reg  [7:0]	input_2 = 8'd0;
+wire [7:0]	CAMERA_INPUT;
+assign 		CAMERA_INPUT = {GPIO_1_D[23],GPIO_1_D[21],GPIO_1_D[19],GPIO_1_D[17],GPIO_1_D[15],GPIO_1_D[13],GPIO_1_D[11],GPIO_1_D[9]};
+
 reg signed [7:0]	grey  = 8'd0;
 reg signed [7:0]	grey_p = 8'd0;
 reg signed [7:0]	grey_pp = 8'd0;
@@ -179,14 +186,6 @@ reg signed [7:0]	tmp_1 = 8'd0;
 reg signed [7:0]	tmp_2 = 8'd0;
 reg signed [7:0]	grey_eg = 8'd0;
 reg signed [15:0]	grey_blur  = 16'd0;
-wire [7:0]	CAMERA_INPUT;
-assign 		CAMERA_INPUT = {GPIO_1_D[23],GPIO_1_D[21],GPIO_1_D[19],GPIO_1_D[17],GPIO_1_D[15],GPIO_1_D[13],GPIO_1_D[11],GPIO_1_D[9]};
-wire			P_CLOCK;
-assign		P_CLOCK = GPIO_1_D[7];
-wire			HREF;
-assign		HREF = GPIO_1_D[5];
-wire			VSYNC;
-assign		VSYNC = GPIO_1_D[3];
 
 reg signed [5:0] redRDif;
 reg signed [5:0] redGDif;
@@ -207,13 +206,13 @@ reg [15:0] numNeg;
 reg [15:0] numRed;
 reg [15:0] numBlue;
 
-`define C_THRESH 17
+`define R_THRESH 17
 `define B_THRESH 12
 
-wire RES;
-reg          res;
+wire   RES;
+reg    res;
 assign RES = res;
-assign       RES = GPIO_1_D[33];
+assign RES = GPIO_1_D[33];
 
 reg     LED_7;
 reg     LED_6;
@@ -284,9 +283,7 @@ always @(posedge P_CLOCK) begin
 				LED_5 = 0;
 			end
 		end
-//		else if      ( numPos > 4 )      res = 3'b010; 
-//		else if      ( numStraight > 4 )      res = 3'b100; 
-//		else res = 3'b000; // sees nothing 
+		
 		i = 0;
 		j = 0;
 		v_flag = 1;
@@ -333,9 +330,9 @@ always @(posedge P_CLOCK) begin
 				blueGDif = 5'b00001 - pixel_data_RGB565[10:6];
 				blueBDif = 5'b00101 - pixel_data_RGB565[4:0];
 				
-				if (redRDif <  `C_THRESH && redRDif >  -`C_THRESH &&
-				    redGDif <  `C_THRESH && redGDif >  -`C_THRESH &&
-				    redBDif <  `C_THRESH && redBDif >  -`C_THRESH    )
+				if (redRDif <  `R_THRESH && redRDif >  -`R_THRESH &&
+				    redGDif <  `R_THRESH && redGDif >  -`R_THRESH &&
+				    redBDif <  `R_THRESH && redBDif >  -`R_THRESH    )
 				  pixel_data_RGB565 = 16'b1111100000000000;
 				else if (blueRDif <  `B_THRESH && blueRDif >  -`B_THRESH &&
 				    blueGDif <  `B_THRESH && blueGDif >  -`B_THRESH &&
@@ -355,15 +352,15 @@ always @(posedge P_CLOCK) begin
 				grey_blur = grey_blur >> 1;
 				grey = grey_blur[7:0];
 				
-				/*
-				tmp_1 = (grey_pppp + grey_ppp);
-				tmp_2 = (grey_p + grey);
-				grey_eg = tmp_2 - tmp_1;
-				if (grey_eg[7]) begin
-					grey_eg = 0;
-				end
-				grey_eg = grey_eg << 2;
-				*/
+				
+//				tmp_1 = (grey_pppp + grey_ppp);
+//				tmp_2 = (grey_p + grey);
+//				grey_eg = tmp_2 - tmp_1;
+//				if (grey_eg[7]) begin
+//					grey_eg = 0;
+//				end
+//				grey_eg = grey_eg << 2;
+				
 				
 				tmp_1 = grey - grey_pppp;
 				if (tmp_1[7]) begin
@@ -376,13 +373,12 @@ always @(posedge P_CLOCK) begin
 				grey_eg = (tmp_1 + tmp_2) >> 1;
 				grey_eg = grey_eg << 2;
 				
-				/*
-				grey_eg = grey - grey_p;
-				if (grey_eg[7]) begin
-				  grey_eg = 0;
-				end
-				grey_eg = grey_eg << 2;
-				*/
+//				grey_eg = grey - grey_p;
+//				if (grey_eg[7]) begin
+//				  grey_eg = 0;
+//				end
+//				grey_eg = grey_eg << 2;
+				
 				pixel_data_RGB565 = 16'b0000000000000000;
 //				if (Y_ADDR > 20 && Y_ADDR < 130) begin
 					if (Y_ADDR % 12 == 0 && X_ADDR >= 30 && X_ADDR < 150) begin
@@ -415,9 +411,9 @@ always @(posedge P_CLOCK) begin
 						curBrightestVal = 0;
 					end
 					if (Y_ADDR % 12 == 1 && X_ADDR == prevXB - 20) begin
-						if (redRDif <  `C_THRESH && redRDif >  -`C_THRESH &&
-								redGDif <  `C_THRESH && redGDif >  -`C_THRESH &&
-								redBDif <  `C_THRESH && redBDif >  -`C_THRESH    ) begin
+						if (redRDif <  `R_THRESH && redRDif >  -`R_THRESH &&
+								redGDif <  `R_THRESH && redGDif >  -`R_THRESH &&
+								redBDif <  `R_THRESH && redBDif >  -`R_THRESH    ) begin
 							pixel_data_RGB565 = 16'b1111100000000000;
 							numRed = numRed + 1;
 						end
@@ -445,45 +441,6 @@ always @(posedge P_CLOCK) begin
 		end
 	end		
 end
-
-///////* Color Detection *///////
-//
-
-//
-//always @(*) begin
-//		/*
-//		if (RESULT[0]) LED_0 = 1;
-//      else LED_0 = 0;
-//		
-//		if (RESULT[1]) LED_1 = 1;
-//      else LED_1 = 0;
-//		
-//		if (RESULT[2]) LED_2 = 1;
-//      else LED_2 = 0;
-//		*/
-//		if (RESULT == 3'b001) begin
-//			LED_0 = 0;
-//			LED_1 = 1;
-//			LED_2 = 0;
-//			LED_3 = 0;
-//		end else if (RESULT == 3'b010) begin
-//			LED_0 = 0;
-//			LED_1 = 0;
-//			LED_2 = 1;
-//			LED_3 = 0;
-//		end else if (RESULT == 3'b100) begin
-//			LED_0 = 0;
-//			LED_1 = 0;
-//		   LED_2 = 0;
-//			LED_3 = 1;	
-//		end else begin
-//			LED_0 = 1;
-//			LED_1 = 0;
-//			LED_2 = 0;
-//			LED_3 = 0;
-//		end
-//		
-//end
 
 	
 endmodule 
