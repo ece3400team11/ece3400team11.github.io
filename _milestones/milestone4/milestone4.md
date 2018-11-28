@@ -7,3 +7,9 @@ preview: "assets/images/project-1.jpg"
 ---
 
 # Milestone 4
+
+## Shape detection
+
+## Color detection
+
+## FPGA comunication with the Ardunio
