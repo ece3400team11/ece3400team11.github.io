@@ -204,6 +204,8 @@ reg signed [10:0] xDiff;
 reg [15:0] numStraight;
 reg [15:0] numPos;
 reg [15:0] numNeg;
+reg [15:0] numRed;
+reg [15:0] numBlue;
 
 `define C_THRESH 17
 `define B_THRESH 7
@@ -232,23 +234,45 @@ assign   LED[0] = LED_0;
 always @(posedge P_CLOCK) begin
 
 	if (VSYNC == 1'b1 && v_flag == 0) begin
-		if      ( numNeg >= 6 ) begin
-			LED_0 = 1;
+		if (numRed >= 6) begin
+			if      ( numNeg >= 6 ) begin
+				LED_0 = 1;
+			end
+			else begin
+				LED_0 = 0;
+			end
+			if      ( numStraight >= 6 ) begin
+				LED_1 = 1;
+			end
+			else begin
+				LED_1 = 0;
+			end
+			if      ( numNeg >= 3 && numPos >= 3 ) begin
+				LED_2 = 1;
+			end
+			else begin
+				LED_2 = 0;
+			end
 		end
-		else begin
-			LED_0 = 0;
-		end
-		if      ( numStraight >= 6 ) begin
-			LED_1 = 1;
-		end
-		else begin
-			LED_1 = 0;
-		end
-		if      ( numNeg >= 3 && numPos >= 3 ) begin
-			LED_2 = 1;
-		end
-		else begin
-			LED_2 = 0;
+		else if (numBlue >= 6) begin
+			if      ( numNeg >= 6 ) begin
+				LED_3 = 1;
+			end
+			else begin
+				LED_3 = 0;
+			end
+			if      ( numStraight >= 6 ) begin
+				LED_4 = 1;
+			end
+			else begin
+				LED_4 = 0;
+			end
+			if      ( numNeg >= 3 && numPos >= 3 ) begin
+				LED_5 = 1;
+			end
+			else begin
+				LED_5 = 0;
+			end
 		end
 //		else if      ( numPos > 4 )      res = 3'b010; 
 //		else if      ( numStraight > 4 )      res = 3'b100; 
@@ -258,6 +282,8 @@ always @(posedge P_CLOCK) begin
 		v_flag = 1;
 		numNeg = 0;
 		numPos = 0;
+		numRed = 0;
+		numBlue = 0;
 		numStraight = 0;
 	end
 	
@@ -377,6 +403,16 @@ always @(posedge P_CLOCK) begin
 						end
 						prevXB = curXB;
 						curBrightestVal = 0;
+					end
+					if (Y_ADDR % 12 == 1 && X_ADDR == prevXB - 20) begin
+						if (redRDif <  `C_THRESH && redRDif >  -`C_THRESH &&
+								redGDif <  `C_THRESH && redGDif >  -`C_THRESH &&
+								redBDif <  `C_THRESH && redBDif >  -`C_THRESH    )
+							numRed = numRed + 1;
+						else if (blueRDif <  `B_THRESH && blueRDif >  -`B_THRESH &&
+								blueGDif <  `B_THRESH && blueGDif >  -`B_THRESH &&
+								blueBDif <  `B_THRESH && blueBDif >  -`B_THRESH    )
+							numBlue = numBlue + 1;
 					end
 //				end
 				
