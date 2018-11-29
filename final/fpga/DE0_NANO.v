@@ -25,14 +25,12 @@ localparam BLACK = 16'b00000_000000_00000;
 //////////// CLOCK - DON'T NEED TO CHANGE THIS //////////
 input 		          		CLOCK_50;
 
-
-////////////// LED ///////////////////////////////////////////
+////////////// LED //////////////////////////////////////
 output 		    [7:0]		LED;
 
-
-//////////// GPIO_0, GPIO_0 connect to GPIO Default //////////
+//////////// GPIO_0, GPIO_0 connect to GPIO Default /////
 output 		    [40:0]		GPIO_0_D;
-//////////// GPIO_0, GPIO_1 connect to GPIO Default //////////
+//////////// GPIO_0, GPIO_1 connect to GPIO Default /////
 input 		    [40:0]		GPIO_1_D;
 input 		     [1:0]		KEY;
 
@@ -55,25 +53,21 @@ wire [7:0]	VGA_COLOR_IN;
 wire [9:0]	VGA_PIXEL_X;
 wire [9:0]	VGA_PIXEL_Y;
 wire [31:0]	MEM_OUTPUT;
-wire			VGA_VSYNC_NEG;
-wire			VGA_HSYNC_NEG;
+wire		VGA_VSYNC_NEG;
+wire		VGA_HSYNC_NEG;
 reg			VGA_READ_MEM_EN;
 
 assign GPIO_0_D[5] = VGA_VSYNC_NEG;
 assign GPIO_0_D[0] = CLOCK_24_PLL;
 assign VGA_RESET = ~KEY[0];
 
-///// I/O for Img Proc /////
-wire [2:0] RESULT;
-wire [2:0] RESULT2;
-
 /* WRITE ENABLE */
 reg W_EN;
 
 ///////* CREATE ANY LOCAL WIRES YOU NEED FOR YOUR PLL *///////
-wire 			CLOCK_24_PLL;
-wire 			CLOCK_25_PLL;
-wire  		CLOCK_50_PLL;
+wire 	CLOCK_24_PLL;
+wire 	CLOCK_25_PLL;
+wire  	CLOCK_50_PLL;
 
 ///////* INSTANTIATE YOUR PLL HERE *///////
 team11PLL	team11PLL_inst (
@@ -158,6 +152,7 @@ end
 //		end
 //end
 
+
 ///////* Image Processor *///////
 reg[7:0] i = 0;
 reg[7:0] j = 0;
@@ -209,79 +204,68 @@ reg [15:0] numBlue;
 `define R_THRESH 17
 `define B_THRESH 12
 
-wire   RES;
-reg    res;
-assign RES = res;
-assign RES = GPIO_1_D[33];
+reg RES_2; 
+reg RES_1;
+reg RES_0;
 
-reg     LED_7;
-reg     LED_6;
-reg     LED_5;
-reg     LED_4;
-reg     LED_3;
+assign  GPIO_0_D[5] = RES_2;
+assign  GPIO_0_D[3] = RES_1;
+assign  GPIO_0_D[1] = RES_0;
+
 reg     LED_2;
 reg     LED_1;
 reg     LED_0;
 
-assign   LED[7] = LED_7;
-assign   LED[6] = LED_6;
-assign   LED[5] = LED_5;
-assign   LED[4] = LED_4;
-assign   LED[3] = LED_3;
 assign   LED[2] = LED_2;
 assign   LED[1] = LED_1;
 assign   LED[0] = LED_0;
 
 always @(posedge P_CLOCK) begin
 
+	
+
 	if (VSYNC == 1'b1 && v_flag == 0) begin
-		res = 1;
+
+		// x00: Nothing
+		// 001: Blue triangle
+		// 010: Blue square
+		// 011: Blue diamond
+		// 101: Red triangle
+		// 110: Red square
+		// 111: Red diamond
+
 		if (numRed >= 6) begin
-		LED_3 = 0;
-		LED_4 = 0;
-		LED_5 = 0;
-			if      ( numNeg >= 6 ) begin
-				LED_0 = 1;
-				res = 0;
-			end
-			else begin
-				LED_0 = 0;
-			end
-			if      ( numStraight >= 6 ) begin
-				LED_1 = 1;
-			end
-			else begin
-				LED_1 = 0;
-			end
-			if      ( numNeg >= 3 && numPos >= 3 ) begin
-				LED_2 = 1;
-			end
-			else begin
-				LED_2 = 0;
-			end
+			RES_2 = 1;
+			LED_2 = 1;
 		end
 		else if (numBlue >= 6) begin
-		LED_0 = 0;
-		LED_1 = 0;
-		LED_2 = 0;
-			if      ( numNeg >= 6 ) begin
-				LED_3 = 1;
-			end
-			else begin
-				LED_3 = 0;
-			end
-			if      ( numStraight >= 6 ) begin
-				LED_4 = 1;
-			end
-			else begin
-				LED_4 = 0;
-			end
-			if      ( numNeg >= 3 && numPos >= 3 ) begin
-				LED_5 = 1;
-			end
-			else begin
-				LED_5 = 0;
-			end
+			RES_2 = 0;
+			LED_2 = 0;
+		end
+
+		if      ( numNeg >= 6 ) begin
+			RES_1 = 0;
+			RES_0 = 1;
+			LED_1 = 0;
+			LED_0 = 1;
+		end
+		else if ( numStraight >= 6 ) begin
+			RES_1 = 1;
+			RES_0 = 0;
+			LED_1 = 1;
+			LED_0 = 0;
+		end
+		else if ( numNeg >= 3 && numPos >= 3 ) begin
+			RES_1 = 1;
+			RES_0 = 1;
+			LED_1 = 1;
+			LED_0 = 1;
+		end
+		else begin
+			RES_1 = 0;
+			RES_0 = 0;
+			LED_1 = 0;
+			LED_0 = 0;
 		end
 		
 		i = 0;
