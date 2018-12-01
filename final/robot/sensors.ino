@@ -1,6 +1,6 @@
 #define SENSOR_LEFT_PIN 2
 #define SENSOR_RIGHT_PIN 3
-#define SENSOR_CENTER_PIN A3
+#define SENSOR_CENTER_PIN XX
 #define FRONT_IR_SENSOR A1
 #define RIGHT_IR_SENSOR A0
 #define LEFT_IR_SENSOR A2
@@ -18,7 +18,7 @@ int rightSenseBuf[SENSOR_AVE_SIZE];
 int rightSenseHead = 0;
 int centerSenseBuf[SENSOR_AVE_SIZE];
 int centerSenseHead = 0;
-int updateCenterReading = 1;
+//int updateCenterReading = 1;
 
 unsigned long SENSOR_LEFT_READING = 1000;
 unsigned long SENSOR_RIGHT_READING = 1000;
@@ -75,20 +75,25 @@ void update_line_sensor_values() {
   // do line sensing
   pinMode(SENSOR_LEFT_PIN, OUTPUT);
   pinMode(SENSOR_RIGHT_PIN, OUTPUT);
+  pinMode(SENSOR_CENTER_PIN, OUTPUT);
   digitalWrite(SENSOR_LEFT_PIN, HIGH);
   digitalWrite(SENSOR_RIGHT_PIN, HIGH);
+  digitalWrite(SENSOR_CENTER_PIN, HIGH);
   delayMicroseconds(10);
   pinMode(SENSOR_LEFT_PIN, INPUT);
   pinMode(SENSOR_RIGHT_PIN, INPUT);
+  pinMode(SENSOR_CENTER_PIN, INPUT);
   
   unsigned long startTime = micros();
 
   int detectLeft = 0;
   int detectRight = 0;
+  int detectCenter = 0;
   unsigned long t = micros();
 
   unsigned long leftTime = SENSOR_LEFT_READING;
   unsigned long rightTime = SENSOR_RIGHT_READING;
+  unsigned long centerTime = SENSOR_CENTER_READING;
   
   //time how long the input is HIGH, but quit after 3ms as nothing happens after that
   while(t - startTime < 3000) {
@@ -101,25 +106,31 @@ void update_line_sensor_values() {
       rightTime = t - startTime;
       detectRight = 1;
     }
-
-    if (detectLeft == 1 && detectRight == 1){
+    if (digitalRead(SENSOR_CENTER_PIN) == LOW && detectCENTER == 0) {
+      centerTime = t - startTime;
+      detectCenter = 1;
+    }
+    if (detectLeft == 1 && detectRight == 1 && detectCenter == 1){
       break;
     }
     t = micros();
   }
 
-  unsigned long centerTime = analogRead(SENSOR_CENTER_PIN)/2;
+  // unsigned long centerTime = analogRead(SENSOR_CENTER_PIN)/2;
 
   leftSenseBuf[leftSenseHead] = leftTime;
   leftSenseHead = (leftSenseHead + 1) % SENSOR_AVE_SIZE;
 
   rightSenseBuf[rightSenseHead] = rightTime;
   rightSenseHead = (rightSenseHead + 1) % SENSOR_AVE_SIZE;
+  
+  centerSenseBuf[centerSenseHead] = centerTime;
+  centerSenseHead = (centerSenseHead + 1) % SENSOR_AVE_SIZE;
 
-  if (updateCenterReading && centerTime < 65) {
-    centerSenseBuf[centerSenseHead] = centerTime;
-    centerSenseHead = (centerSenseHead + 1) % SENSOR_AVE_SIZE; 
-  }
+  // if (updateCenterReading && centerTime < 65) {
+  //   centerSenseBuf[centerSenseHead] = centerTime;
+  //   centerSenseHead = (centerSenseHead + 1) % SENSOR_AVE_SIZE; 
+  // }
 
   int sum = 0;
   for(int i = 0; i < SENSOR_AVE_SIZE; i++) {
