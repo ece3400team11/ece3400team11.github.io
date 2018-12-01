@@ -98,7 +98,7 @@ Dual_Port_RAM_M9K mem(
 VGA_DRIVER driver (
 	.RESET(VGA_RESET),
 	.CLOCK(CLOCK_25_PLL),
-	.PIXEL_COLOR_IN(VGA_READ_MEM_EN ? MEM_OUTPUT : BLUE),
+	.PIXEL_COLOR_IN(VGA_READ_MEM_EN ? MEM_OUTPUT : {BLUE, 16'b0000000000000000}),
 	.PIXEL_X(VGA_PIXEL_X),
 	.PIXEL_Y(VGA_PIXEL_Y),
 	.PIXEL_COLOR_OUT({GPIO_0_D[9],GPIO_0_D[11],GPIO_0_D[13],GPIO_0_D[15],GPIO_0_D[17],GPIO_0_D[19],GPIO_0_D[21],GPIO_0_D[23]}),
@@ -210,8 +210,13 @@ reg [15:0] numBlue;
 `define C_THRESH 17
 `define B_THRESH 7
 
-reg          res;
-assign       RESULT = res;
+reg RES_2; 
+reg RES_1;
+reg RES_0;
+
+assign  GPIO_0_D[33] = RES_2;
+assign  GPIO_0_D[31] = RES_1;
+assign  GPIO_0_D[29] = RES_0;
 
 reg     LED_7;
 reg     LED_6;
@@ -234,20 +239,29 @@ assign   LED[0] = LED_0;
 always @(posedge P_CLOCK) begin
 
 	if (VSYNC == 1'b1 && v_flag == 0) begin
+	RES_1 = 0;
+	RES_0 = 0;
 		if (numRed >= 6) begin
+			RES_2 = 1;
 			if      ( numNeg >= 6 ) begin
 				LED_0 = 1;
+				RES_1 = 1;
+	RES_0 = 0;
 			end
 			else begin
 				LED_0 = 0;
 			end
 			if      ( numStraight >= 6 ) begin
+			RES_1 = 0;
+	RES_0 = 1;
 				LED_1 = 1;
 			end
 			else begin
 				LED_1 = 0;
 			end
 			if      ( numNeg >= 3 && numPos >= 3 ) begin
+			RES_1 = 1;
+	RES_0 = 1;
 				LED_2 = 1;
 			end
 			else begin
@@ -255,20 +269,27 @@ always @(posedge P_CLOCK) begin
 			end
 		end
 		else if (numBlue >= 6) begin
+			RES_2 = 0;
 			if      ( numNeg >= 6 ) begin
 				LED_3 = 1;
+				RES_1 = 1;
+	RES_0 = 0;
 			end
 			else begin
 				LED_3 = 0;
 			end
 			if      ( numStraight >= 6 ) begin
 				LED_4 = 1;
+				RES_1 = 0;
+	RES_0 = 1;
 			end
 			else begin
 				LED_4 = 0;
 			end
 			if      ( numNeg >= 3 && numPos >= 3 ) begin
 				LED_5 = 1;
+				RES_1 = 1;
+	RES_0 = 1;
 			end
 			else begin
 				LED_5 = 0;

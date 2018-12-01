@@ -92,68 +92,95 @@ Next, once it comes across the pixel directly below and 10 to the left of the br
 
 ```verilog
 if (Y_ADDR % 12 == 1 && X_ADDR == prevXB - 20) begin
-  if (redRDif <  `C_THRESH && redRDif >  -`C_THRESH &&
-      redGDif <  `C_THRESH && redGDif >  -`C_THRESH &&
-      redBDif <  `C_THRESH && redBDif >  -`C_THRESH    )
-      numRed = numRed + 1;
+	if (redRDif <  `R_THRESH && redRDif >  -`R_THRESH &&
+			redGDif <  `R_THRESH && redGDif >  -`R_THRESH &&
+			redBDif <  `R_THRESH && redBDif >  -`R_THRESH    ) begin
+		pixel_data_RGB565 = 16'b1111100000000000;
+	  numRed = numRed + 1;
+	end
   else if (blueRDif <  `B_THRESH && blueRDif >  -`B_THRESH &&
-           blueGDif <  `B_THRESH && blueGDif >  -`B_THRESH &&
-           blueBDif <  `B_THRESH && blueBDif >  -`B_THRESH    )
-      numBlue = numBlue + 1;
+	         blueGDif <  `B_THRESH && blueGDif >  -`B_THRESH &&
+		       blueBDif <  `B_THRESH && blueBDif >  -`B_THRESH    ) begin
+		pixel_data_RGB565 = 16'b0000000000011111;
+		numBlue = numBlue + 1;
+	end
 end
 ```
 
 ## FPGA comunication with the Ardunio
 
-It then sets 3 wires to the appropriate values to encode the 7 possible options according to the scheme envisioned in lab 4. The arduino periodically polls these signals and prints out the value to the serial monitor:
+It then sets 3 wires to the appropriate values to encode the 7 possible options according to the following scheme, which is modified from the one envisioned in lab 4. 
 
 ```verilog
-res = 3b'111;
+// x00: Nothing
+// 001: Blue triangle
+// 010: Blue square
+// 011: Blue diamond
+// 101: Red triangle
+// 110: Red square
+// 111: Red diamond
+
 if (numRed >= 6) begin
-  if      ( numNeg >= 6 ) begin
-    res = 3b'000;
-  end
-  if      ( numStraight >= 6 ) begin
-    res = 3b'001;
-  end
-  if      ( numNeg >= 3 && numPos >= 3 ) begin
-    res = 3b'010;
-  end
+		RES_2 = 1;
+		LED_2 = 1;
 end
 else if (numBlue >= 6) begin
-  if      ( numNeg >= 6 ) begin
-    res = 3b'100;
-  end
-  if      ( numStraight >= 6 ) begin
-    res = 3b'101;
-  end
-  if      ( numNeg >= 3 && numPos >= 3 ) begin
-    res = 3b'110;
-  end
+		RES_2 = 0;
+		LED_2 = 0;
+end
+
+if ( numNeg >= 6 ) begin
+		RES_1 = 0;
+		RES_0 = 1;
+		LED_1 = 0;
+		LED_0 = 1;
+end
+else if ( numStraight >= 6 ) begin
+		RES_1 = 1;
+		RES_0 = 0;
+		LED_1 = 1;
+		LED_0 = 0;
+end
+else if ( numNeg >= 3 && numPos >= 3 ) begin
+		RES_1 = 1;
+		RES_0 = 1;
+		LED_1 = 1;
+		LED_0 = 1;
+end
+else begin
+		RES_1 = 0;
+		RES_0 = 0;
+		LED_1 = 0;
+		LED_0 = 0;
 end
 ```
 
+The arduino periodically polls these signals and prints out the value to the serial monitor:
+
 ```cpp
-int w1 = digitalRead(4);
-int w2 = digitalRead(5);
-int w3 = digitalRead(6);
-if (w1 && w2) {
-  Serial.println("Nothing");
-} else if (!w1 && !w2 && !w3) {
+int w0 = digitalRead(4);
+int w1 = digitalRead(5);
+int w2 = digitalRead(6);
+
+if (!w2 && !w1 && w0) {
   Serial.println("Blue triangle");
-} else if (w1 && !w2 && !w3) {
+} else if (!w2 && w1 && !w0) {
   Serial.println("Blue square");
-} else if (!w1 && w2 && !w3) {
+} else if (!w2 && w1 && w0) {
   Serial.println("Blue diamond");
-} else if (!w1 && !w2 && w3) {
+} else if (w2 && !w1 && w0) {
   Serial.println("Red triangle");
-} else if (w1 && !w2 && w3) {
+} else if (w2 && w1 && !w0) {
   Serial.println("Red square");
-} else if (!w1 && w2 && w3) {
+} else if (w2 && w1 && w0) {
   Serial.println("Red diamond");
+} else if (!w1 && !w0) {
+  Serial.println("Nothing");
 }
 ```
 
 ## Demo:
 
 Here is a demo of the full code working as expected:
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/JvHyGGA29Yc" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
