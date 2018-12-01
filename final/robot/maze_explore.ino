@@ -11,7 +11,7 @@ const int WEST  = 0;
 // initial position and direction
 int robotX = 0;
 int robotY = 0;
-int robotDir = EAST;
+int robotDir = SOUTH;
 
 // BFs "queue" node
 typedef struct maze_exp_info {

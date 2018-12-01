@@ -9,6 +9,8 @@ int LEFT_SENSOR_THRESH = 145;
 int RIGHT_SENSOR_THRESH = 145;
 
 #define SENSOR_AVE_SIZE 4
+#define LEFT_DIFF 75
+#define RIGHT_DIFF 75
 
 int leftSenseBuf[SENSOR_AVE_SIZE];
 int leftSenseHead = 0;
@@ -20,7 +22,7 @@ int updateCenterReading = 1;
 
 unsigned long SENSOR_LEFT_READING = 1000;
 unsigned long SENSOR_RIGHT_READING = 1000;
-unsigned long SENSOR_CENTER_READING = 1000;
+unsigned long SENSOR_CENTER_READING = 0;
 
 unsigned long FRONT_WALL_READING = 0;
 unsigned long LEFT_WALL_READING = 0;
@@ -114,7 +116,7 @@ void update_line_sensor_values() {
   rightSenseBuf[rightSenseHead] = rightTime;
   rightSenseHead = (rightSenseHead + 1) % SENSOR_AVE_SIZE;
 
-  if (updateCenterReading) {
+  if (updateCenterReading && centerTime < 65) {
     centerSenseBuf[centerSenseHead] = centerTime;
     centerSenseHead = (centerSenseHead + 1) % SENSOR_AVE_SIZE; 
   }
@@ -137,13 +139,15 @@ void update_line_sensor_values() {
   }
   SENSOR_CENTER_READING = sum / SENSOR_AVE_SIZE;
 
-  LEFT_SENSOR_THRESH = SENSOR_CENTER_READING+75;
-  RIGHT_SENSOR_THRESH = SENSOR_CENTER_READING+75;
+  LEFT_SENSOR_THRESH = SENSOR_CENTER_READING+LEFT_DIFF;
+  RIGHT_SENSOR_THRESH = SENSOR_CENTER_READING+RIGHT_DIFF;
 
 //  Serial.print("Left: ");
 //  Serial.println(SENSOR_LEFT_READING);
 //  Serial.print("Right: ");
 //  Serial.println(SENSOR_RIGHT_READING);
+//  Serial.print("Center: ");
+//  Serial.println(SENSOR_CENTER_READING);
 //  delay(200);
 }
 

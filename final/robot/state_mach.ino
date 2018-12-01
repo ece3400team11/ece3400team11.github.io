@@ -8,11 +8,18 @@ enum RobotState {
   LEFT_2,
   LEFT_3,
   GET_NEXT_ACTION,
+  SAW_INTER,
 };
 
 RobotState state = LISTENING;
 
 int forwardWait = 0;
+
+unsigned long state_start_time = 0;
+#define FORWARD_TIME_THRESH 3500
+#define FORWARD_TIME_MIN 500
+#define LEFT_TIME_THRESH 2000
+#define RIGHT_TIME_THRESH 2000
 
 void update_state_mach() {
   Serial.println(state);
@@ -21,26 +28,44 @@ void update_state_mach() {
       delay(300);
       // debounce noise
       if (digitalRead(FFT_DATA_PIN) == HIGH) {
-        state = GET_NEXT_ACTION;  
-        // high = IR detection
-        digitalWrite(FFT_CTRL_PIN, HIGH); 
+        delay(300);
+        if (digitalRead(FFT_DATA_PIN) == HIGH) {
+          state = GET_NEXT_ACTION;
+          // high = IR detection
+          digitalWrite(FFT_CTRL_PIN, HIGH); 
+        }
+      }
+    }
+  } else if (state == SAW_INTER) {
+    if (forwardWait < 12) {
+      forwardWait++;
+    } else {
+      forwardWait = 0;
+      if (SENSOR_LEFT_READING < LEFT_SENSOR_THRESH && SENSOR_RIGHT_READING < RIGHT_SENSOR_THRESH) {
+        // go forward and center over line
+        leftWheel.write(FORWARD_LEFT);
+        rightWheel.write(FORWARD_RIGHT);
+        delay(150);
+
+        state = GET_NEXT_ACTION;
+      } else {
+        state = FORWARD;
       }
     }
   } else if (state == FORWARD) {
     // wait a few cycles for line sensors to settle
     if (forwardWait < 4) {
       forwardWait++;
+    } else if (millis() - state_start_time > FORWARD_TIME_THRESH) {
+      state = GET_NEXT_ACTION;
     } else {
       forwardWait = 0;
       //Centers and turns the robot in the appropriate direction if both line sensors
       //see a white line (come to an intersection)
       if (SENSOR_LEFT_READING < LEFT_SENSOR_THRESH && SENSOR_RIGHT_READING < RIGHT_SENSOR_THRESH) {
-        // go forward and center over line
-        leftWheel.write(FORWARD_LEFT);
-        rightWheel.write(FORWARD_RIGHT);
-        delay(200);
-  
-        state = GET_NEXT_ACTION;
+        if (millis() - state_start_time > FORWARD_TIME_MIN) {
+          state = SAW_INTER; 
+        }
       } else {
         //Stops left wheel to correct the robot if left line sensor sees the white line
         if (SENSOR_LEFT_READING < LEFT_SENSOR_THRESH) leftWheel.write(STOP_POS);
@@ -61,6 +86,8 @@ void update_state_mach() {
       state = RIGHT_2;
       // give a bit of time for measurement to settle
       delay(100);
+    } else if (millis() - state_start_time > RIGHT_TIME_THRESH) {
+      state = GET_NEXT_ACTION;
     }
   } else if (state == RIGHT_2) {
     // turn right step 2
@@ -69,6 +96,8 @@ void update_state_mach() {
       state = RIGHT_3;
       // give a bit of time for measurement to settle
       delay(100); 
+    } else if (millis() - state_start_time > RIGHT_TIME_THRESH) {
+      state = GET_NEXT_ACTION;
     }
   } else if (state == RIGHT_3) {
     // turn right step 3
@@ -80,6 +109,8 @@ void update_state_mach() {
       // start going forward again
       leftWheel.write(FORWARD_LEFT);
       rightWheel.write(FORWARD_RIGHT);
+    } else if (millis() - state_start_time > RIGHT_TIME_THRESH) {
+      state = GET_NEXT_ACTION;
     }
   }  else if (state == LEFT_1) {
     // turn left step 1
@@ -91,7 +122,9 @@ void update_state_mach() {
       state = LEFT_2;
       // give a bit of time for measurement to settle
       delay(100);
-    }    
+    } else if (millis() - state_start_time > LEFT_TIME_THRESH) {
+      state = GET_NEXT_ACTION;
+    }
   } else if (state == LEFT_2) {
     // turn left step 2
     // turn until see line
@@ -99,6 +132,8 @@ void update_state_mach() {
       state = LEFT_3;
       // give a bit of time for measurement to settle
       delay(100); 
+    } else if (millis() - state_start_time > LEFT_TIME_THRESH) {
+      state = GET_NEXT_ACTION;
     }
   } else if (state == LEFT_3) {
     // turn left step 3
@@ -106,10 +141,13 @@ void update_state_mach() {
     if (SENSOR_LEFT_READING > LEFT_SENSOR_THRESH) {
       state = GET_NEXT_ACTION;
       delay(100);
+    } else if (millis() - state_start_time > LEFT_TIME_THRESH) {
+      state = GET_NEXT_ACTION;
     }
   } else if (state == GET_NEXT_ACTION) {
     leftWheel.write(STOP_POS);
     rightWheel.write(STOP_POS);
+    delay(500);
 
     update_wall_sensor_values();
 
@@ -137,6 +175,7 @@ void update_state_mach() {
       state = RIGHT_1;
       updateCenterReading = 0;
     }
+    state_start_time = millis();
   }
 
   
@@ -150,7 +189,7 @@ void update_state_mach() {
       leftWheel.write(STOP_POS);
       rightWheel.write(STOP_POS);
       delay(1000);
-    }  
+    }
   }
 }
 
