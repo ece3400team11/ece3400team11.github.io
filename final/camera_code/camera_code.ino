@@ -99,9 +99,33 @@ void setup() {
   
   // TODO: WRITE KEY REGISTERS
   read_key_registers();
+
+  // put your setup code here, to run once:
+  pinMode(4, INPUT);
+  Serial.begin(9600);
+  Serial.println("Starting img detection");
 }
 
 void loop(){
+  int w0 = digitalRead(4);
+  int w1 = analogRead(A4) > 300;
+  int w2 = analogRead(A5) > 300;
+  
+  if (!w2 && !w1 && w0) {
+    Serial.println("Blue triangle");
+  } else if (!w2 && w1 && !w0) {
+    Serial.println("Blue square");
+  } else if (!w2 && w1 && w0) {
+    Serial.println("Blue diamond");
+  } else if (w2 && !w1 && w0) {
+    Serial.println("Red triangle");
+  } else if (w2 && w1 && !w0) {
+    Serial.println("Red square");
+  } else if (w2 && w1 && w0) {
+    Serial.println("Red diamond");
+  } else if (!w1 && !w0) {
+    Serial.println("Nothing");
+  }
  }
 
 
