@@ -16,7 +16,6 @@
 #define COM8 0x13
 #define AEC_M 0x10
 
-
 ///////// Main Program //////////////
 void setup() {
   Wire.begin();
@@ -107,25 +106,7 @@ void setup() {
 }
 
 void loop(){
-  int w0 = digitalRead(4);
-  int w1 = analogRead(A4) > 300;
-  int w2 = analogRead(A5) > 300;
-  
-  if (!w2 && !w1 && w0) {
-    Serial.println("Blue triangle");
-  } else if (!w2 && w1 && !w0) {
-    Serial.println("Blue square");
-  } else if (!w2 && w1 && w0) {
-    Serial.println("Blue diamond");
-  } else if (w2 && !w1 && w0) {
-    Serial.println("Red triangle");
-  } else if (w2 && w1 && !w0) {
-    Serial.println("Red square");
-  } else if (w2 && w1 && w0) {
-    Serial.println("Red diamond");
-  } else if (!w1 && !w0) {
-    Serial.println("Nothing");
-  }
+   read_result();
  }
 
 
@@ -183,8 +164,6 @@ void read_key_registers(){
   Serial.println(data);
 }
 
-
-
 byte read_register_value(int register_address){
   byte data = 0;
   Wire.beginTransmission(OV7670_I2C_ADDRESS);
@@ -241,4 +220,26 @@ void set_color_matrix(){
     OV7670_write_register(0x6e, 0x11);
     OV7670_write_register(0x6f, 0x9f);
     OV7670_write_register(0xb0, 0x84);
+}
+
+void read_result(){
+  int w0 = analogREAD(AX) > 300;
+  int w1 = analogRead(A4) > 300;
+  int w2 = analogRead(A5) > 300;
+  
+  if (!w2 && !w1 && w0) {
+    Serial.println("Blue triangle");
+  } else if (!w2 && w1 && !w0) {
+    Serial.println("Blue square");
+  } else if (!w2 && w1 && w0) {
+    Serial.println("Blue diamond");
+  } else if (w2 && !w1 && w0) {
+    Serial.println("Red triangle");
+  } else if (w2 && w1 && !w0) {
+    Serial.println("Red square");
+  } else if (w2 && w1 && w0) {
+    Serial.println("Red diamond");
+  } else if (!w1 && !w0) {
+    Serial.println("Nothing");
+  }
 }
