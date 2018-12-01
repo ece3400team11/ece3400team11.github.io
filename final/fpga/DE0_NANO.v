@@ -107,16 +107,16 @@ VGA_DRIVER driver (
 );
 
 ///////* Image Processor *///////
-IMAGE_PROCESSOR proc(
-	.PIXEL_IN(MEM_OUTPUT),
-	.CLK(CLOCK_25_PLL),
-	.VGA_PIXEL_X(VGA_PIXEL_X),
-	.VGA_PIXEL_Y(VGA_PIXEL_Y),
-	.VGA_VSYNC_NEG(VGA_VSYNC_NEG),
-	.VSYNC(VSYNC),
-	.HREF(HREF),
-	.RESULT(RESULT2)
-);
+//IMAGE_PROCESSOR proc(
+//	.PIXEL_IN(MEM_OUTPUT),
+//	.CLK(CLOCK_25_PLL),
+//	.VGA_PIXEL_X(VGA_PIXEL_X),
+//	.VGA_PIXEL_Y(VGA_PIXEL_Y),
+//	.VGA_VSYNC_NEG(VGA_VSYNC_NEG),
+//	.VSYNC(VSYNC),
+//	.HREF(HREF),
+//	.RESULT(RESULT2)
+//);
 
 
 ///////* Update Read Address *///////
@@ -243,6 +243,9 @@ always @(posedge P_CLOCK) begin
 	RES_0 = 0;
 		if (numRed >= 6) begin
 			RES_2 = 1;
+			LED_3 = 0;
+			LED_4 = 0;
+			LED_5 = 0;
 			if      ( numNeg >= 6 ) begin
 				LED_0 = 1;
 				RES_1 = 1;
@@ -270,6 +273,9 @@ always @(posedge P_CLOCK) begin
 		end
 		else if (numBlue >= 6) begin
 			RES_2 = 0;
+			LED_0 = 0;
+			LED_1 = 0;
+			LED_2 = 0;
 			if      ( numNeg >= 6 ) begin
 				LED_3 = 1;
 				RES_1 = 1;
@@ -344,16 +350,16 @@ always @(posedge P_CLOCK) begin
 				blueGDif = 5'b00001 - pixel_data_RGB565[10:6];
 				blueBDif = 5'b00101 - pixel_data_RGB565[4:0];
 				
-				if (redRDif <  `C_THRESH && redRDif >  -`C_THRESH &&
-				    redGDif <  `C_THRESH && redGDif >  -`C_THRESH &&
-				    redBDif <  `C_THRESH && redBDif >  -`C_THRESH    )
-				  pixel_data_RGB565 = 16'b1111100000000000;
-				else if (blueRDif <  `B_THRESH && blueRDif >  -`B_THRESH &&
-				    blueGDif <  `B_THRESH && blueGDif >  -`B_THRESH &&
-				    blueBDif <  `B_THRESH && blueBDif >  -`B_THRESH    )
-				  pixel_data_RGB565 = 16'b0000000000011111;
-				else
-				  pixel_data_RGB565 = 16'b0000000000000000;
+//				if (redRDif <  `C_THRESH && redRDif >  -`C_THRESH &&
+//				    redGDif <  `C_THRESH && redGDif >  -`C_THRESH &&
+//				    redBDif <  `C_THRESH && redBDif >  -`C_THRESH    )
+//				  pixel_data_RGB565 = 16'b1111100000000000;
+//				else if (blueRDif <  `B_THRESH && blueRDif >  -`B_THRESH &&
+//				    blueGDif <  `B_THRESH && blueGDif >  -`B_THRESH &&
+//				    blueBDif <  `B_THRESH && blueBDif >  -`B_THRESH    )
+//				  pixel_data_RGB565 = 16'b0000000000011111;
+//				else
+//				  pixel_data_RGB565 = 16'b0000000000000000;
 				  
 				
 				grey_pppp = grey_ppp;
@@ -394,7 +400,7 @@ always @(posedge P_CLOCK) begin
 				end
 				grey_eg = grey_eg << 2;
 				*/
-				pixel_data_RGB565 = 16'b0000000000000000;
+				//pixel_data_RGB565 = 16'b0000000000000000;
 //				if (Y_ADDR > 20 && Y_ADDR < 130) begin
 					if (Y_ADDR % 12 == 0 && X_ADDR >= 30 && X_ADDR < 150) begin
 						if (grey_eg[7:3] > curBrightestVal) begin
@@ -404,7 +410,7 @@ always @(posedge P_CLOCK) begin
 						end
 					end
 					if (Y_ADDR % 12 == 0 && X_ADDR == 150 ) begin
-						if (curBrightestVal >= 1) begin
+						if (curBrightestVal >= 1 && curXB > 50) begin
 							xDiff = curXB - prevXB;
 							if (xDiff > 3 && xDiff < 16) begin
 								pixel_data_RGB565 = 16'b1111100000000000;
