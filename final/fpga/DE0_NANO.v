@@ -184,9 +184,9 @@ assign 		CAMERA_INPUT = {GPIO_1_D[23],GPIO_1_D[21],GPIO_1_D[19],GPIO_1_D[17],GPI
 wire			P_CLOCK;
 assign		P_CLOCK = GPIO_1_D[7];
 wire			HREF;
-assign		HREF = GPIO_1_D[5];
+assign		HREF = GPIO_1_D[3];
 wire			VSYNC;
-assign		VSYNC = GPIO_1_D[3];
+assign		VSYNC = GPIO_1_D[5];
 
 reg signed [5:0] redRDif;
 reg signed [5:0] redGDif;
