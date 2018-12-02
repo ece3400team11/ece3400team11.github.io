@@ -1,6 +1,6 @@
 #define SENSOR_LEFT_PIN 2
 #define SENSOR_RIGHT_PIN 3
-#define SENSOR_CENTER_PIN XX
+#define SENSOR_CENTER_PIN 4
 #define FRONT_IR_SENSOR A1
 #define RIGHT_IR_SENSOR A0
 #define LEFT_IR_SENSOR A2
@@ -11,6 +11,7 @@ int RIGHT_SENSOR_THRESH = 145;
 #define SENSOR_AVE_SIZE 4
 #define LEFT_DIFF 75
 #define RIGHT_DIFF 75
+#define MAX_CENTER 65
 
 int leftSenseBuf[SENSOR_AVE_SIZE];
 int leftSenseHead = 0;
@@ -18,7 +19,7 @@ int rightSenseBuf[SENSOR_AVE_SIZE];
 int rightSenseHead = 0;
 int centerSenseBuf[SENSOR_AVE_SIZE];
 int centerSenseHead = 0;
-//int updateCenterReading = 1;
+int updateCenterReading = 1;
 
 unsigned long SENSOR_LEFT_READING = 1000;
 unsigned long SENSOR_RIGHT_READING = 1000;
@@ -106,7 +107,7 @@ void update_line_sensor_values() {
       rightTime = t - startTime;
       detectRight = 1;
     }
-    if (digitalRead(SENSOR_CENTER_PIN) == LOW && detectCENTER == 0) {
+    if (digitalRead(SENSOR_CENTER_PIN) == LOW && detectCenter == 0) {
       centerTime = t - startTime;
       detectCenter = 1;
     }
@@ -124,13 +125,13 @@ void update_line_sensor_values() {
   rightSenseBuf[rightSenseHead] = rightTime;
   rightSenseHead = (rightSenseHead + 1) % SENSOR_AVE_SIZE;
   
-  centerSenseBuf[centerSenseHead] = centerTime;
-  centerSenseHead = (centerSenseHead + 1) % SENSOR_AVE_SIZE;
+//  centerSenseBuf[centerSenseHead] = centerTime;
+//  centerSenseHead = (centerSenseHead + 1) % SENSOR_AVE_SIZE;
 
-  // if (updateCenterReading && centerTime < 65) {
-  //   centerSenseBuf[centerSenseHead] = centerTime;
-  //   centerSenseHead = (centerSenseHead + 1) % SENSOR_AVE_SIZE; 
-  // }
+   if (updateCenterReading && centerTime < MAX_CENTER) {
+     centerSenseBuf[centerSenseHead] = centerTime;
+     centerSenseHead = (centerSenseHead + 1) % SENSOR_AVE_SIZE; 
+   }
 
   int sum = 0;
   for(int i = 0; i < SENSOR_AVE_SIZE; i++) {

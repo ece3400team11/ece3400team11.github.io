@@ -1,7 +1,11 @@
 #define NUM_COLS 9
 #define NUM_ROWS 9
 
+// Wall N, Wall E, Wall S, Wall W, Shape 1, Shape 2, Color, Visited
 unsigned char maze[NUM_ROWS][NUM_COLS];
+// If shape 1 and shape 2 are 0 and 0:
+//  color = 0 means no treasure detected at this intersection
+//  color = 1 means there may be a treasure at this intersection (not all walls explored)
 
 const int NORTH = 3;
 const int EAST  = 2;
@@ -185,14 +189,29 @@ int getNextDir() {
 
 void init_maze() {
   // assume starting with back to wall
-  maze[robotY][robotX] |= 1 << (robotDir + 2);
-  // assert that left sensor detects a wall
+  maze[robotY][robotX] |= 1 << (NORTH + 4);
+  // assert that right sensor detects a wall
 }
 
 void set_maze(int front, int left, int right) {
   maze[robotY][robotX] |= front << (robotDir + 4);
   maze[robotY][robotX] |= left << (((robotDir+1)%4) + 4);
   maze[robotY][robotX] |= right << (((robotDir+3)%4) + 4);
+}
+
+// assume camera pointed at right wall
+void set_treasure(int shape1, int shape2, int color, int front, int left) {
+  if (shape1 == 0 && shape2 == 0 && front == 0 && left == 0) {
+    // definitely no shape
+    color = 0;
+  } else {
+    // may be a shape
+    color = 1;
+  }
+
+  maze[robotY][robotX] |= shape1 << 3;
+  maze[robotY][robotX] |= shape2 << 2;
+  maze[robotY][robotX] |= color << 1;
 }
 
 // figure out what to do next, update the maze state for that

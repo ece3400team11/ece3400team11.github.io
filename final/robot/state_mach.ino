@@ -15,6 +15,8 @@ RobotState state = LISTENING;
 
 int forwardWait = 0;
 
+int attempt_u_turn = 0;
+
 unsigned long state_start_time = 0;
 #define FORWARD_TIME_THRESH 3500
 #define FORWARD_TIME_MIN 500
@@ -76,6 +78,16 @@ void update_state_mach() {
         else rightWheel.write(FORWARD_RIGHT);
       } 
     }
+
+    // only look for robots if going forward
+    if(digitalRead(FFT_DATA_PIN) == HIGH) {
+      if (analogRead(FRONT_IR_SENSOR) < FRONT_WALL_THRESH) {
+        // turn around  
+        state = LEFT_1;
+        attempt_u_turn = 1;
+        state_start_time = millis();
+      }
+    }
   } else if (state == RIGHT_1) {
     // turn right step 1
     leftWheel.write(FORWARD_LEFT);
@@ -122,7 +134,7 @@ void update_state_mach() {
       state = LEFT_2;
       // give a bit of time for measurement to settle
       delay(100);
-    } else if (millis() - state_start_time > LEFT_TIME_THRESH) {
+    } else if (!attempt_u_turn && millis() - state_start_time > LEFT_TIME_THRESH) {
       state = GET_NEXT_ACTION;
     }
   } else if (state == LEFT_2) {
@@ -132,7 +144,7 @@ void update_state_mach() {
       state = LEFT_3;
       // give a bit of time for measurement to settle
       delay(100); 
-    } else if (millis() - state_start_time > LEFT_TIME_THRESH) {
+    } else if (!attempt_u_turn && millis() - state_start_time > LEFT_TIME_THRESH) {
       state = GET_NEXT_ACTION;
     }
   } else if (state == LEFT_3) {
@@ -141,54 +153,64 @@ void update_state_mach() {
     if (SENSOR_LEFT_READING > LEFT_SENSOR_THRESH) {
       state = GET_NEXT_ACTION;
       delay(100);
-    } else if (millis() - state_start_time > LEFT_TIME_THRESH) {
+    } else if (!attempt_u_turn && millis() - state_start_time > LEFT_TIME_THRESH) {
       state = GET_NEXT_ACTION;
     }
   } else if (state == GET_NEXT_ACTION) {
     leftWheel.write(STOP_POS);
     rightWheel.write(STOP_POS);
-    delay(500);
 
-    update_wall_sensor_values();
+    if (attempt_u_turn) {
+      // reset next value
+      maze[robotY][robotX] = 0;
 
-    // get 3 point wall information
-    int isFrontWall = is_wall_in_front();
-    int isRightWall = is_wall_on_right();
-    int isLeftWall = is_wall_on_left();
-
-    // set the maze for the current position
-    set_maze(isFrontWall, isLeftWall, isRightWall);
-
-    // send the current maze cell data back to the base station
-//    sendData();
-
-    // get the next action to do and advance the current maze state
-    // by that action
-    int nextAction = get_next_action();
-    if (nextAction == 0x0) {
-      state = FORWARD;
-      updateCenterReading = 1;
-    } else if (nextAction == 0x1) {
-      state = LEFT_1;
-      updateCenterReading = 0;
+      // move my position back
+      robotDir = (robotDir + 2) % 4;
+      adv(&robotX, &robotY, robotDir);
+      
+      if (millis() - state_start_time > 1500) {
+        // made u turn
+        state = FORWARD;
+        state_start_time = millis() + FORWARD_TIME_MIN;
+      } else {
+        // only turned 90 degrees to the left
+        state = GET_NEXT_ACTION;
+        // update direction by turning right once
+        robotDir = (robotDir + 3) % 4;  
+      }
+      attempt_u_turn = 0;
     } else {
-      state = RIGHT_1;
-      updateCenterReading = 0;
-    }
-    state_start_time = millis();
-  }
+      update_wall_sensor_values();
 
+      // get 3 point wall information
+      int isFrontWall = is_wall_in_front();
+      int isRightWall = is_wall_on_right();
+      int isLeftWall = is_wall_on_left();
   
-  if (state != LISTENING) {
-    // stop while we detect another robot
-    if(digitalRead(FFT_DATA_PIN) == HIGH) {
-//      if (analogRead(FRONT_IR_SENSOR) < FRONT_WALL_THRESH) {
-//        // turn around  
-//        //state = 3;
-//      }
-      leftWheel.write(STOP_POS);
-      rightWheel.write(STOP_POS);
-      delay(1000);
+      // set the maze for the current position
+      set_maze(isFrontWall, isLeftWall, isRightWall);
+  
+      // set the treasure data for current pos
+      set_treasure(0, 0, 0, isFrontWall, isLeftWall);
+  
+      // send the current maze cell data back to the base station
+//      sendData();
+      delay(500);
+  
+      // get the next action to do and advance the current maze state
+      // by that action
+      int nextAction = get_next_action();
+      if (nextAction == 0x0) {
+        state = FORWARD;
+        updateCenterReading = 1;
+      } else if (nextAction == 0x1) {
+        state = LEFT_1;
+        updateCenterReading = 0;
+      } else {
+        state = RIGHT_1;
+        updateCenterReading = 0;
+      }
+      state_start_time = millis(); 
     }
   }
 }

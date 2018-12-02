@@ -2,8 +2,8 @@
 #define LEFT_WHEEL_PIN 5
 #define RIGHT_WHEEL_PIN 6
 
-#define FFT_DATA_PIN 7
-#define FFT_CTRL_PIN 8
+#define FFT_DATA_PIN 8
+#define FFT_CTRL_PIN 7
 
 #define FORWARD_LEFT 180
 #define BACKWARD_LEFT 0
