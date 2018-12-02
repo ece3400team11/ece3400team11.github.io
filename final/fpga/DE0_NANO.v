@@ -241,11 +241,14 @@ always @(posedge P_CLOCK) begin
 	if (VSYNC == 1'b1 && v_flag == 0) begin
 	RES_1 = 0;
 	RES_0 = 0;
-		if (numRed >= 6) begin
-			RES_2 = 1;
-			LED_3 = 0;
+		LED_3 = 0;
 			LED_4 = 0;
 			LED_5 = 0;
+		LED_0 = 0;
+			LED_1 = 0;
+			LED_2 = 0;
+		if (numRed >= 6) begin
+			RES_2 = 1;
 			if      ( numNeg >= 6 ) begin
 				LED_0 = 1;
 				RES_1 = 1;
@@ -273,9 +276,6 @@ always @(posedge P_CLOCK) begin
 		end
 		else if (numBlue >= 6) begin
 			RES_2 = 0;
-			LED_0 = 0;
-			LED_1 = 0;
-			LED_2 = 0;
 			if      ( numNeg >= 6 ) begin
 				LED_3 = 1;
 				RES_1 = 1;
