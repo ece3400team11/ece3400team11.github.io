@@ -54,7 +54,7 @@ void setup() {
   result = OV7670_write_register(MVFP, 0x30);
   Serial.println(result);
 
-  result = OV7670_write_register(COM8, 0x85);
+  //result = OV7670_write_register(COM8, 0x85);
 
 //  delay(5000);
   
@@ -89,9 +89,9 @@ void setup() {
   result = OV7670_write_register(0x4C, 0xFF);
   Serial.println(result);
 
-  result = OV7670_write_register(0x55, 0x20);
+  result = OV7670_write_register(0x55, 0x60);
   Serial.println(result);
-//
+////
   result = OV7670_write_register(0x56, 0x80);
   Serial.println(result);
 
@@ -100,10 +100,10 @@ void setup() {
   // TODO: WRITE KEY REGISTERS
   read_key_registers();
 
-  // put your setup code here, to run once:
-  pinMode(4, INPUT);
-  Serial.begin(9600);
-  Serial.println("Starting img detection");
+//  // put your setup code here, to run once:
+//  pinMode(4, INPUT);
+//  Serial.begin(9600);
+//  Serial.println("Starting img detection");
 }
 
 void loop(){
@@ -224,9 +224,9 @@ void set_color_matrix(){
 }
 
 void read_result(){
-  int w0 = analogREAD(AX) > 300;
-  int w1 = analogRead(A4) > 300;
-  int w2 = analogRead(A5) > 300;
+  int w0 = analogRead(A1) > 500;
+  int w1 = analogRead(A2) > 500;
+  int w2 = analogRead(A3) > 500;
   
   if (!w2 && !w1 && w0) {
     Serial.println("Blue triangle");
