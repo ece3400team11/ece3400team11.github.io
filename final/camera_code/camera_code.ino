@@ -85,6 +85,7 @@ void setup() {
 //  result = OV7670_write_register(0x41, 0x18);
 //  Serial.println(result);
 
+  // https://github.com/dalmirdasilva/ArduinoCamera/blob/master/CameraAL422B/datasheet/OV7670%20Implementation%20Guide%20(V1.0).pdf
   result = OV7670_write_register(0x4C, 0xFF);
   Serial.println(result);
 
