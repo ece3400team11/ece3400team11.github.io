@@ -23,6 +23,10 @@ unsigned long state_start_time = 0;
 #define LEFT_TIME_THRESH 2000
 #define RIGHT_TIME_THRESH 2000
 
+#define SHAPE1_PIN A3
+#define SHAPE2_PIN A4
+#define COLOR_PIN A5
+
 void update_state_mach() {
   Serial.println(state);
   if (state == LISTENING) {
@@ -191,7 +195,10 @@ void update_state_mach() {
       set_maze(isFrontWall, isLeftWall, isRightWall);
   
       // set the treasure data for current pos
-      set_treasure(0, 0, 0, isFrontWall, isLeftWall);
+      int shape1 = analogRead(SHAPE1_PIN) > 300;
+      int shape2 = analogRead(SHAPE2_PIN) > 300;
+      int color = analogRead(COLOR_PIN) > 300;
+      set_treasure(shape1, shape2, color, isFrontWall, isLeftWall);
   
       // send the current maze cell data back to the base station
 //      sendData();
