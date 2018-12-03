@@ -66,7 +66,7 @@ void loop() {
     fft_mag_log(); // take the output of the fft
     sei();
 
-    int sum = 0;
+    int m = 0;
     int bin = 10;
     int thresh = 0;
 
@@ -79,10 +79,12 @@ void loop() {
     }
 
     for(int i = bin - window/2; i <= bin + window/2; i++) {
-      sum += fft_log_out[i];
+      if (fft_log_out[i] > m) {
+        m = fft_log_out[i];
+      }
     }
-    sum = sum / window;
-    if (sum > thresh) {
+//    sum = sum / window;
+    if (m > thresh) {
       digitalWrite(DATA_PIN, HIGH);
     } else {
       digitalWrite(DATA_PIN, LOW);  

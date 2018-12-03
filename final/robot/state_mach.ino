@@ -28,7 +28,7 @@ unsigned long state_start_time = 0;
 #define COLOR_PIN A5
 
 void update_state_mach() {
-//  Serial.println(state);
+  Serial.println(state);
 //  Serial.println(state_start_time);
 //  Serial.println(millis());
   if (state == LISTENING) {
@@ -45,7 +45,7 @@ void update_state_mach() {
       }
     }
   } else if (state == SAW_INTER) {
-    if (forwardWait < 12) {
+    if (forwardWait < 4) {
       forwardWait++;
     } else {
       forwardWait = 0;
@@ -89,14 +89,14 @@ void update_state_mach() {
     }
 
     // only look for robots if going forward
-    if(digitalRead(FFT_DATA_PIN) == HIGH) {
-     // if (analogRead(FRONT_IR_SENSOR) < FRONT_WALL_THRESH) {
-        // turn around  
-        state = LEFT_1;
-        attempt_u_turn = 1;
-        state_start_time = millis();
-      //}
-    }
+//    if(digitalRead(FFT_DATA_PIN) == HIGH) {
+//     // if (analogRead(FRONT_IR_SENSOR) < FRONT_WALL_THRESH) {
+//        // turn around  
+//        state = LEFT_1;
+//        attempt_u_turn = 1;
+//        state_start_time = millis();
+//      //}
+//    }
   } else if (state == RIGHT_1) {
     // turn right step 1
     leftWheel.write(FORWARD_LEFT);

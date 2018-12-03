@@ -16,9 +16,20 @@
 #define COM8 0x13
 #define AEC_M 0x10
 
+#include <SoftwareSerial.h>
+
+SoftwareSerial mySerial(12, 13);
+
 void init_camera() {
   Wire.begin();
-   String result = OV7670_write_register(COM7, 0x80);
+  mySerial.begin(9600);
+  mySerial.println("Starting");
+  // TODO: READ KEY REGISTERS
+
+  // result = OV7670_write_register(0x0C, 0b00000000);
+
+  String result = OV7670_write_register(COM7, 0x80);
+  mySerial.println(result);
    
   set_color_matrix();
 
@@ -26,53 +37,66 @@ void init_camera() {
 
   // 0x0E for color bar
   result = OV7670_write_register(COM7, 0x0C);
+  mySerial.println(result);
 
   result = OV7670_write_register(COM3, 0x08);
+  mySerial.println(result);
 
   result = OV7670_write_register(CLKRC, 0xC0);
+  mySerial.println(result);
+
+  //result = OV7670_write_register(COM17, 0x08);
+  //mySerial.println(result);
 
   result = OV7670_write_register(COM15, 0xD0);
-  
+  mySerial.println(result);
 
   result = OV7670_write_register(COM9, 0x6A);
-  
+  mySerial.println(result);
 
   result = OV7670_write_register(MVFP, 0x30);
+  mySerial.println(result);
+
+  //result = OV7670_write_register(COM8, 0x85);
+
+//  delay(5000);
   
   result = OV7670_write_register(COM8, 0x88);
-  
+  mySerial.println(result);
 
   result = OV7670_write_register(WB_B, 0x80);
-  
+  mySerial.println(result);
 
   result = OV7670_write_register(WB_R, 0x40);
-  
+  mySerial.println(result);
 
   result = OV7670_write_register(WB_G, 0x4E);
-  
+  mySerial.println(result);
 
   result = OV7670_write_register(AEC, 0x40);
-  
+  mySerial.println(result);
 
   result = OV7670_write_register(G_LSB, 0x0F);
-  
+  mySerial.println(result);
 
   result = OV7670_write_register(G_MSB, 0x00);
-  
+  mySerial.println(result);
 
   result = OV7670_write_register(AEC_M, 0x24);
-  
+  mySerial.println(result);
 
 //  result = OV7670_write_register(0x41, 0x18);
-//  Serial.println(result);
+//  mySerial.println(result);
 
   // https://github.com/dalmirdasilva/ArduinoCamera/blob/master/CameraAL422B/datasheet/OV7670%20Implementation%20Guide%20(V1.0).pdf
   result = OV7670_write_register(0x4C, 0xFF);
-  
+  mySerial.println(result);
 
   result = OV7670_write_register(0x55, 0x60);
-//
+  mySerial.println(result);
+////
   result = OV7670_write_register(0x56, 0x80);
+  mySerial.println(result);
 
 }
 
