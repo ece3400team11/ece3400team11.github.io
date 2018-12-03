@@ -2,16 +2,16 @@
 #define SENSOR_RIGHT_PIN 3
 #define SENSOR_CENTER_PIN 4
 #define FRONT_IR_SENSOR A1
-#define RIGHT_IR_SENSOR A0
-#define LEFT_IR_SENSOR A2
+#define RIGHT_IR_SENSOR A2
+#define LEFT_IR_SENSOR A0
 
 int LEFT_SENSOR_THRESH = 145;
 int RIGHT_SENSOR_THRESH = 145;
 
 #define SENSOR_AVE_SIZE 4
-#define LEFT_DIFF 75
-#define RIGHT_DIFF 75
-#define MAX_CENTER 65
+#define LEFT_DIFF 65
+#define RIGHT_DIFF 65
+#define MAX_CENTER 60
 
 int leftSenseBuf[SENSOR_AVE_SIZE];
 int leftSenseHead = 0;

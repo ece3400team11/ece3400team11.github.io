@@ -1,6 +1,6 @@
 #include <Servo.h>
-#define LEFT_WHEEL_PIN 5
-#define RIGHT_WHEEL_PIN 6
+#define LEFT_WHEEL_PIN 6
+#define RIGHT_WHEEL_PIN 5
 
 #define FFT_DATA_PIN 8
 #define FFT_CTRL_PIN 7

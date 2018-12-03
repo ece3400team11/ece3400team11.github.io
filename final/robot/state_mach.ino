@@ -28,7 +28,9 @@ unsigned long state_start_time = 0;
 #define COLOR_PIN A5
 
 void update_state_mach() {
-  Serial.println(state);
+//  Serial.println(state);
+//  Serial.println(state_start_time);
+//  Serial.println(millis());
   if (state == LISTENING) {
     if (digitalRead(FFT_DATA_PIN) == HIGH) {
       delay(300);
@@ -63,14 +65,17 @@ void update_state_mach() {
     if (forwardWait < 4) {
       forwardWait++;
     } else if (millis() - state_start_time > FORWARD_TIME_THRESH) {
+      Serial.println("Time up");
       state = GET_NEXT_ACTION;
     } else {
-      forwardWait = 0;
+//      forwardWait = 0;
       //Centers and turns the robot in the appropriate direction if both line sensors
       //see a white line (come to an intersection)
       if (SENSOR_LEFT_READING < LEFT_SENSOR_THRESH && SENSOR_RIGHT_READING < RIGHT_SENSOR_THRESH) {
         if (millis() - state_start_time > FORWARD_TIME_MIN) {
           state = SAW_INTER; 
+          Serial.println("Intersect");
+          forwardWait = 0;
         }
       } else {
         //Stops left wheel to correct the robot if left line sensor sees the white line
@@ -85,12 +90,12 @@ void update_state_mach() {
 
     // only look for robots if going forward
     if(digitalRead(FFT_DATA_PIN) == HIGH) {
-      if (analogRead(FRONT_IR_SENSOR) < FRONT_WALL_THRESH) {
+     // if (analogRead(FRONT_IR_SENSOR) < FRONT_WALL_THRESH) {
         // turn around  
         state = LEFT_1;
         attempt_u_turn = 1;
         state_start_time = millis();
-      }
+      //}
     }
   } else if (state == RIGHT_1) {
     // turn right step 1
@@ -171,17 +176,21 @@ void update_state_mach() {
       // move my position back
       robotDir = (robotDir + 2) % 4;
       adv(&robotX, &robotY, robotDir);
+      Serial.println("moving forward");
       
-      if (millis() - state_start_time > 1500) {
+      if (millis() - state_start_time > 1100) {
         // made u turn
         state = FORWARD;
-        state_start_time = millis() + FORWARD_TIME_MIN;
+        state_start_time = millis() - FORWARD_TIME_MIN;
       } else {
         // only turned 90 degrees to the left
         state = GET_NEXT_ACTION;
         // update direction by turning right once
         robotDir = (robotDir + 3) % 4;  
       }
+        forwardWait = 0;
+        leftWheel.write(FORWARD_LEFT);
+        rightWheel.write(FORWARD_RIGHT);
       attempt_u_turn = 0;
     } else {
       update_wall_sensor_values();
@@ -195,9 +204,9 @@ void update_state_mach() {
       set_maze(isFrontWall, isLeftWall, isRightWall);
   
       // set the treasure data for current pos
-      int shape1 = analogRead(SHAPE1_PIN) > 300;
-      int shape2 = analogRead(SHAPE2_PIN) > 300;
-      int color = analogRead(COLOR_PIN) > 300;
+      int shape1 = analogRead(SHAPE1_PIN) > 500;
+      int shape2 = analogRead(SHAPE2_PIN) > 500;
+      int color = analogRead(COLOR_PIN) > 500;
       set_treasure(shape1, shape2, color, isFrontWall, isLeftWall);
   
       // send the current maze cell data back to the base station
@@ -210,6 +219,9 @@ void update_state_mach() {
       if (nextAction == 0x0) {
         state = FORWARD;
         updateCenterReading = 1;
+        forwardWait = 0;
+        leftWheel.write(FORWARD_LEFT);
+        rightWheel.write(FORWARD_RIGHT);
       } else if (nextAction == 0x1) {
         state = LEFT_1;
         updateCenterReading = 0;

@@ -19,6 +19,8 @@ int mode = 0;
 #define MODE_PIN 12
 
 void setup() {
+  init_camera();
+  
   TIMSK0 = 0; // turn off timer0 for lower jitter
   ADCSRA = 0xe6; // set the adc to free running mode
   ADMUX = 0x41; // use adc1 for audio

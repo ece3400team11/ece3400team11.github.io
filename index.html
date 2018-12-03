@@ -100,6 +100,9 @@ layout: blank
 									{% endfor %}
 								</ul>
 							</li>
+							{% for final in site.final limit:1 %}
+								<li><a href="#" data-toggle="modal" data-target="#{{ final.title | replace: " ", "_"}}">{{ final.title }}</a></li>
+							{% endfor %}
 							<li><a href="#about">About Us</a></li>
 							<li><a href="#" data-toggle="modal" data-target="#contract">Contract</a></li>
 							<li><a href="https://github.com/ece3400team11/ece3400team11.github.io">Repository</a></li>
@@ -322,6 +325,18 @@ layout: blank
 				<div class="modal-content">
 					<div class="modal_body">
 						{{ milestone.output }}
+					</div>
+				</div>
+			</div>
+		</div>
+	{% endfor %}
+
+	{% for final in site.final limit:1 %}
+		<div class="modal fade" id="{{ final.title | replace: " ", "_"}}" tabindex="-1">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal_body">
+						{{ final.output }}
 					</div>
 				</div>
 			</div>
