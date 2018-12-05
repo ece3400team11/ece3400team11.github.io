@@ -1,10 +1,3 @@
----
-layout: blank
-title:  "Final"
-subtitle: "Competition Day"
-preview: "assets/images/lab1_img.png"
----
-
 # Final Robot Design
 
 ## Mechanical

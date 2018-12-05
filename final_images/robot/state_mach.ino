@@ -27,6 +27,8 @@ unsigned long state_start_time = 0;
 #define SHAPE2_PIN A4
 #define COLOR_PIN A5
 
+int num_states = 0;
+
 void update_state_mach() {
   Serial.println(state);
 //  Serial.println(state_start_time);
@@ -89,14 +91,20 @@ void update_state_mach() {
     }
 
     // only look for robots if going forward
-//    if(digitalRead(FFT_DATA_PIN) == HIGH) {
-//     // if (analogRead(FRONT_IR_SENSOR) < FRONT_WALL_THRESH) {
-//        // turn around  
-//        state = LEFT_1;
-//        attempt_u_turn = 1;
-//        state_start_time = millis();
-//      //}
-//    }
+    if(num_states > 1 && digitalRead(FFT_DATA_PIN) == HIGH) {
+      delay(30);
+      if (digitalRead(FFT_DATA_PIN) == HIGH) {
+       // if (analogRead(FRONT_IR_SENSOR) < FRONT_WALL_THRESH) {
+        // turn around  
+        Serial.println("IR detect");
+        state = LEFT_1;
+        attempt_u_turn = 1;
+        updateCenterReading = 0;
+        state_start_time = millis();
+//        delay(500);
+      //} 
+      }
+    }
   } else if (state == RIGHT_1) {
     // turn right step 1
     leftWheel.write(FORWARD_LEFT);
@@ -182,16 +190,18 @@ void update_state_mach() {
         // made u turn
         state = FORWARD;
         state_start_time = millis() - FORWARD_TIME_MIN;
-      } else {
-        // only turned 90 degrees to the left
-        state = GET_NEXT_ACTION;
-        // update direction by turning right once
-        robotDir = (robotDir + 3) % 4;  
-      }
+        updateCenterReading = 1;
         forwardWait = 0;
         leftWheel.write(FORWARD_LEFT);
         rightWheel.write(FORWARD_RIGHT);
-      attempt_u_turn = 0;
+        attempt_u_turn = 0;
+      } else {
+        // only turned 90 degrees to the left, finish 180 degree turn
+        state = LEFT_1;
+        attempt_u_turn = 0;
+        // update direction by turning right once
+//        robotDir = (robotDir + 3) % 4;  
+      }
     } else {
       update_wall_sensor_values();
 
@@ -207,15 +217,16 @@ void update_state_mach() {
       int shape1 = analogRead(SHAPE1_PIN) > 500;
       int shape2 = analogRead(SHAPE2_PIN) > 500;
       int color = analogRead(COLOR_PIN) > 500;
-      set_treasure(shape1, shape2, color, isFrontWall, isLeftWall);
+      set_treasure(0, 0, 0, isFrontWall, isLeftWall);
   
       // send the current maze cell data back to the base station
-//      sendData();
-      delay(500);
+      sendData();
+//      delay(500);
   
       // get the next action to do and advance the current maze state
       // by that action
       int nextAction = get_next_action();
+      num_states++;
       if (nextAction == 0x0) {
         state = FORWARD;
         updateCenterReading = 1;

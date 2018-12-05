@@ -33,23 +33,23 @@ String convert(unsigned char x, unsigned char y, unsigned char curr){
   if(bitRead(curr,6)==1){s = s + ",east=true";}
   if(bitRead(curr,7)==1){s = s + ",north=true";}
 
-  if (bitRead(curr,2)==0 && bitRead(curr,3)==0) {
-    // No treasure
-  } else {
-    if (bitRead(curr,1)==0) {
-      s = s + ",tcolor=blue";
-    } else {
-      s = s + ",tcolor=red";
-    }
-
-    if (bitRead(curr,2)==0 && bitRead(curr,3)==1) {
-      s = s + ",tshape=triangle";
-    } else if (bitRead(curr,2)==1 && bitRead(curr,3)==0) {
-      s = s + ",tshape=square";
-    } else if (bitRead(curr,2)==1 && bitRead(curr,3)==1) {
-      s = s + ",tshape=diamond";
-    }
-  }
+//  if (bitRead(curr,2)==0 && bitRead(curr,3)==0) {
+//    // No treasure
+//  } else {
+//    if (bitRead(curr,1)==0) {
+//      s = s + ",tcolor=blue";
+//    } else {
+//      s = s + ",tcolor=red";
+//    }
+//
+//    if (bitRead(curr,2)==0 && bitRead(curr,3)==1) {
+//      s = s + ",tshape=triangle";
+//    } else if (bitRead(curr,2)==1 && bitRead(curr,3)==0) {
+//      s = s + ",tshape=square";
+//    } else if (bitRead(curr,2)==1 && bitRead(curr,3)==1) {
+//      s = s + ",tshape=diamond";
+//    }
+//  }
   return s;
 }
 

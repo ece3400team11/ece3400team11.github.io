@@ -100,10 +100,9 @@ layout: blank
 									{% endfor %}
 								</ul>
 							</li>
-							{% for final in site.final limit:1 %}
-								<li><a href="#" data-toggle="modal" data-target="#{{ final.title | replace: " ", "_"}}">{{ final.title }}</a></li>
-							{% endfor %}
-							<li><a href="#about">About Us</a></li>
+							<li><a href="#" data-toggle="modal" data-target="#ethics">Ethics HW</a></li>
+							<li><a href="#" data-toggle="modal" data-target="#final">Final Writeup</a></li>
+							<!-- <li><a href="#about">About Us</a></li> -->
 							<li><a href="#" data-toggle="modal" data-target="#contract">Contract</a></li>
 							<li><a href="https://github.com/ece3400team11/ece3400team11.github.io">Repository</a></li>
 						</ul>
@@ -296,7 +295,7 @@ layout: blank
 
 
 	<!--CONTRACT-->
-	<div class="modal fade" id="contract">
+	<div class="modal fade" id="contract" tabindex="-1">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal_body">
@@ -331,17 +330,28 @@ layout: blank
 		</div>
 	{% endfor %}
 
-	{% for final in site.final limit:1 %}
-		<div class="modal fade" id="{{ final.title | replace: " ", "_"}}" tabindex="-1">
-			<div class="modal-dialog">
-				<div class="modal-content">
-					<div class="modal_body">
-						{{ final.output }}
-					</div>
+	<div class="modal fade" id="final" tabindex="-1">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal_body">
+					{% capture final %}{% include_relative final.md %}{% endcapture %}
+					{{ final | markdownify }}
 				</div>
 			</div>
 		</div>
-	{% endfor %}
+	</div>
+
+	<!-- Ethics -->
+	<div class="modal fade" id="ethics" tabindex="-1">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal_body">
+					{% capture ethics %}{% include_relative ethics.md %}{% endcapture %}
+					{{ ethics | markdownify }}
+				</div>
+			</div>
+		</div>
+	</div>
 	
 	</body>
 
