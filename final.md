@@ -99,11 +99,11 @@ Finally, we needed to add code to handle making U-turns due to detection of anot
 
 The maze exploration algorithm was mostly unchanged from milestone 3. The primary innovation that we made in our maze exploration code was the low number of bytes it required. The data structures that contained the maze information and the maze traversal algorithm took up 3 bytes per cell, giving 243 bytes for the whole algorithm. The image below shows the compile size of the maze code with some print statements through the serial monitor. The serial code takes up 192 bytes on its own, so the maze code takes up 498-192 = 306 bytes, which includes maze information and other miscellaneous information. 
 
-// image of code size
+![Image](images/maze_size.png)
 
 This efficiency was made possible by our implicit pointers in the maze traversal data structure. You can also see this efficiency in our final robot global variable size. Of course it also helped that the FFT code was on the atmega. However, even if we didn’t have the extra chip, we would have still been able to support the FFT library on the single arduino.
 
-// Image
+![Image](images/final_size.png)
 
 The final part of the code base was the radio code. This was also mostly unchanged from milestone 3. We did add support for sending the treasure information but after deciding not to add the camera to the robot we disabled this part of the code.
 
