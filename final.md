@@ -22,11 +22,11 @@ We had put off cleaning up the wiring of our robot for a while, but decided it n
 
 Here is the layout for our microphone and IR circuit:
 
-*INSERT PCB HERE*
+![Image](images/mic_ir.png)
 
 And here is the layout for our servos and sensors circuit:
 
-*INSERT PCB HERE*
+![Image](images/sensor_servo.png)
 
 Several important considerations were made when designing these boards. First, with our microphone and IR board, we needed our IR sensor to be positioned at the front of the board (lining up with the front of the robot) and our microphone needed to be exposed so as to get the best sound reception. Second—with our servos and sensors board—we needed the positions of the headers on the board to line up with where their respective sensor or servo would be located on the robot. We decided that this board needed to be on top as to give us easy access to all the header pins; a board on top of this would get in the way. Also, this board needed to be shorter than the bottom board so that the microphone could remain uncovered. 
 
@@ -34,13 +34,9 @@ With the top board we decided to add several additional features, including an o
 
 Unfortunately, we had technical difficulties getting our first board to mill properly. A PCB also would not have given us any flexibility if we decided to move any components around or add additional components (flexibility we would end up needing). Instead of PCBs, we decided to use perf boards. We wanted to keep the stacking design of the boards, so one side of the bottom board needed to be bent slightly as to line up correctly with the Arduino headers. As to not waste the layouts produced for the PCBs, we decided to lay out our perfboards in almost the same manner. 
 
-Here is an image of our final microphone and IR circuit:
+Here is an image of our final perf boards circuit:
 
-*INSERT PERF BOARD IMAGE HERE*
-
-And here is an image of our final servos and sensors circuit:
-
-*INSERT SERVO AND SENSOR CIRCUIT IMAGE HERE*
+![Image](images/perfboards.jpg)
 
 We also added an additional line sensor to our robot in an effort to make our line following more robust. Instead of using defined thresholds for white and black, our system would calibrate depending on the reading of the middle line sensor; this sensor was to always be on the line while the outside two off the line. This allowed our robot to function properly in many different lighting conditions, as the lighting on the day of the competition could not be predicted.
 
