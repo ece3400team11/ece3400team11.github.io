@@ -2,7 +2,7 @@
 layout: blank
 title:  "Lab 4"
 subtitle: "FPGA and Shape Detection"
-preview: "assets/images/lab1_img.png"
+preview: "assets/images/lab4.png"
 ---
 
 # Lab 4: FPGA and Shape Detection

@@ -2,7 +2,7 @@
 layout: blank
 title:  "Lab 3"
 subtitle: "Radio and Integrations"
-preview: "assets/images/lab1_img.png"
+preview: "assets/images/lab3.png"
 ---
 
 # Lab 3: Radio and Integrations

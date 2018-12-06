@@ -30,3 +30,29 @@ $padded_text_width: 660px;
     height: 24px;
   }
 }
+
+tr {
+  td {
+    padding: 6px;
+    border: 1px solid black
+  }
+}
+
+#fh5co-started .fh5co-heading p {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.row {
+  .col-md-3 {
+    text-shadow:
+   -1px -1px 0 #000,  
+    1px -1px 0 #000,
+    -1px 1px 0 #000,
+     1px 1px 0 #000;
+  }
+}
+
+.fh5co-nav ul li a {
+  color: rgba(255, 255, 255, 0.70);
+  text-decoration: underline;
+}
