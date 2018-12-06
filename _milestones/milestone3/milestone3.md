@@ -3,7 +3,7 @@ layout: blank
 title:  "Milestone 3"
 subtitle: "Algorithms"
 status: "complete" # disabled, active, complete
-preview: "assets/images/project-1.jpg"
+preview: "assets/images/milestone3.jpg"
 ---
 
 # Milestone 3
