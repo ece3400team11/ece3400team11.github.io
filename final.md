@@ -42,7 +42,7 @@ We also added an additional line sensor to our robot in an effort to make our li
 
 The final major hardware modification we made to our robot dealt with the position of our IR sensor. When testing our robot collision avoidance we ran into two major problems: our IR sensor would occasionally detect our own IR hat and also could not detect other robots until they were too close. To mediate both these problems, we decided to mount our IR sensor pointing down roughly 1.5 to 2 inches above our IR hat. We found through testing that most of the IR light emitted from the hats went upwards, no matter the placement of the hat. We believe this is because since the LEDs are surface mounted to the top of the hat, the light they emit is mostly blocked from going downward by the physical hat itself. If the hat was mounted upside down—as some teams did—then the light would go downwards, reflect off the ground, and then go back upwards. This positioning of our IR sensor gave us a consistent 5-7 inches of clearance before detecting another robot. This range could also be changed depending on the angle we bent the IR sensor at. This also coincidentally solved the problem of our robot detecting its own IR hat. It used to detect its own hat near walls, as the IR light would reflect off the walls and back into our own sensor. When we repositioned our sensor to above the IR hat it was now higher than the walls of the maze, so light could not be reflected back into the sensor. We also tested to make sure we could not detect a robot on the opposite side of a wall from us. Our robot detection was working correctly.
 
-*ADD IR TEST VIDEO HERE*
+[//]: # (*ADD IR TEST VIDEO HERE*)
 
 Here is an image of our final robot before the competition:
 
