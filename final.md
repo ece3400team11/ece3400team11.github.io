@@ -44,6 +44,10 @@ The final major hardware modification we made to our robot dealt with the positi
 
 *ADD IR TEST VIDEO HERE*
 
+Here is an image of our final robot before the competition:
+
+![Image](images/final_robot.jpg)
+
 ## Software
 
 We had several pieces of code split over a few microcontrollers: FPGA code that did treasure detection, base station code that received messages and updated the GUI, robot code that ran the maze exploration and primary sensor code, and the atmega code which ran the FFT code and set up the camera.
