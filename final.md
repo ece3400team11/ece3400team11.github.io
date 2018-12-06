@@ -83,11 +83,42 @@ The second part of the atmega code was the FFT code. This code remained mostly u
 The final code that we ran on was split into 4 main parts to keep everything the codebase cleaner. 
 The first part was the sensor code. The sensor code contained the code that we used to read the line sensors and distance sensors. We then applied some averaging and other algorithms to the data to make the data more useable. For the distance sensors, we made a function that took a few readings of each sensor and then averaged them. This helped smooth out any noise from the sensors:
 
-// insert update_wall_sensor code
+```cpp
+void update_wall_sensor(unsigned long* reading, int sensor_num) {
+  *reading = 0;
+  for(int i = 0; i < NUM_WALL_READINGS; i++) {
+    *reading += analogRead(sensor_num);
+  }
+  *reading = *reading / NUM_WALL_READINGS;
+}
+```
 
 The line sensing code was more complicated. We would first calculate the value that each of the digital line sensors was reading. Then, if the reading was valid we would update a ring buffer of previous values. This was to enable efficient averaging of the data. We then did something interesting: we used the center line sensor reading to calibrate the other 2 line sensors. Because the center line sensor is almost always over the center line and because all of the line sensors are approximately the same, we would be able to calibrate our thresholds for what counted as a line based on the center line sensor. We needed to be careful though: there are times when the middle line sensor is not on a white line. These are mostly when it is turning left or right. So we added support for disabling updates to the center line reading in those circumstances. We also set a threshold for the maximum value that the center line should read, so that even if it did go off the center line when not turning left or right, it wouldn’t mess up the thresholds.
 
-// insert relavant code here
+```cpp
+leftSenseBuf[leftSenseHead] = leftTime;
+leftSenseHead = (leftSenseHead + 1) % SENSOR_AVE_SIZE;
+
+if (updateCenterReading && centerTime < MAX_CENTER) {
+ centerSenseBuf[centerSenseHead] = centerTime;
+ centerSenseHead = (centerSenseHead + 1) % SENSOR_AVE_SIZE; 
+}
+   
+int sum = 0;
+for(int i = 0; i < SENSOR_AVE_SIZE; i++) {
+  sum += leftSenseBuf[i];
+}
+SENSOR_LEFT_READING = sum / SENSOR_AVE_SIZE;
+
+sum = 0;
+for(int i = 0; i < SENSOR_AVE_SIZE; i++) {
+  sum += centerSenseBuf[i];  
+}
+SENSOR_CENTER_READING = sum / SENSOR_AVE_SIZE;
+
+// Update the threshold value
+LEFT_SENSOR_THRESH = SENSOR_CENTER_READING+LEFT_DIFF;
+```
 
 The next piece of code was our state machine. We added a few states and variables for error detection and recovery to this code from milestone 3. We realized that we could time how long it takes to traverse 2 intersections and set a ceiling on the time it should take to traverse one intersection to approximately two-thirds of that value. Then, we can use the Arduino’s internal timer to periodically check how long its been since we have been at an intersection. If that time goes above some threshold, then our line detection must have messed up, and we stop and update our state, just like we would if we had detected an intersection. 
 
