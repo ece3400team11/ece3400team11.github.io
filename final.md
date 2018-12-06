@@ -311,13 +311,13 @@ Our robot ran into two different problems—one during each round—that hindere
 
 During the first round, our radios failed to synchronize, leading there to be no transmission of data from the robot to the base station. Unfortunately, this happened to be the round where our robot performed better in the maze. It appears as so our robot successfully navigated over half of the maze successfully during this run, which could have potentially put us in the running for the final round. Although we cannot verify how accurately our robot mapped out the maze without the GUI output, we do have a video of how our robot performed during round 1:
 
-<iframe width="560" height="315" src="https://www.youtube.com/watch?v=oG1nnlTRdGE" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/oG1nnlTRdGE" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 During the second round, our robot seemed to be performing very well at the beginning as it quickly began to explore the maze and reached the opposite quadrant within 30 or so seconds. But, in the opposite quadrant there seemed to be a particular location where our robot detected a false intersection and would get lost. This happened twice in the exact same location.
 
-<iframe width="560" height="315" src="https://www.youtube.com/watch?v=V3bIOu-QYhs" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/V3bIOu-QYhs" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
-<iframe width="560" height="315" src="https://www.youtube.com/watch?v=f5m7mTJ46uQ" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/f5m7mTJ46uQ" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 Even though our robot did not perform exactly how we wanted it to on competition day, we believe that the system we developed over the course of the semester had many interesting and unique ideas and we are proud of the work that we did.
 
