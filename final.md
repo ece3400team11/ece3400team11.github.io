@@ -8,7 +8,7 @@ The final mechanical design of our robot was similar to that of previous iterati
 
 Another major change that we made was that we increased the height of the line sensors and added a third line sensor in between the original two. We initially increased the height because we realized that the line sensors were too close to the ground and would sometimes get caught on the mat. However, we later realized that increasing the height of the line sensors gave better readings to the arduino and allowed us to do line sensing much better. The third line sensor was also added to help us increase the accuracy of our line detection.
 
-![Image](images/final_size.png)
+![Image](images/20181201_190137.jpg)
 
 The rest of the robot consists of the servos, the wall sensors on its perimeter and our functioning IR Hat. There are three wall sensors, two on the sides and one on the front of the robot, that were attached to the base plate using mounts. Our IR Hat was placed with the constraint that it has to be around 5.5 inches off the ground. To meet this requirement, we bolted it on top of a stand that used to support the second base plate.
 
