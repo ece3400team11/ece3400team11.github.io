@@ -122,11 +122,69 @@ LEFT_SENSOR_THRESH = SENSOR_CENTER_READING+LEFT_DIFF;
 
 The next piece of code was our state machine. We added a few states and variables for error detection and recovery to this code from milestone 3. We realized that we could time how long it takes to traverse 2 intersections and set a ceiling on the time it should take to traverse one intersection to approximately two-thirds of that value. Then, we can use the Arduino’s internal timer to periodically check how long its been since we have been at an intersection. If that time goes above some threshold, then our line detection must have messed up, and we stop and update our state, just like we would if we had detected an intersection. 
 
+```cpp
+if (state == FORWARD) {
+ if (millis() - state_start_time > FORWARD_TIME_THRESH) {
+    // Must have missed intersection. Get next action
+   state = GET_NEXT_ACTION;
+ } else {
+   // perform normal line following code
+   ...
+ }
+ ...
+}
+```
+
 During tests, we observed that the robot sometimes detected intersections where there were none. In order to make our robot more robust to small changes in tape color, we added a new state that the robot goes into when it thinks it detects and intersection. First it waits for a few cycles until it gets totally fresh sensors readings. Then, it reevaluates if it is still at an intersection and if it is, then it stops and figures out what to do next. This robustness code was difficult to test as the line sensor errors where difficult to reproduce. However, the code did seem to work in a toy environment with only a straight line.
 
-// Relavant state code here
+```cpp
+if (state == SAW_INTER) {
+  // wait for sensors to settle
+  if (forwardWait < 4) {
+    forwardWait++;
+  } else {
+    if (SENSOR_LEFT_READING < LEFT_SENSOR_THRESH && SENSOR_RIGHT_READING < RIGHT_SENSOR_THRESH) {
+      // go forward and center over line
+      leftWheel.write(FORWARD_LEFT);
+      rightWheel.write(FORWARD_RIGHT);
+      delay(150);
+
+      state = GET_NEXT_ACTION;
+    } else {
+      // false intersection
+      state = FORWARD;
+    }
+  }
+} 
+```
 
 Finally, we needed to add code to handle making U-turns due to detection of another robot by the IR sensor. When we detect an IR hat while going forward we transition into the turn left state. Once we finish the left turn there are 2 possibilities: either we turned 90 degrees or 180 degrees. In order to tell the difference we again measured the average time to turn 135 degrees and coded that number in as a threshold. Then, once we have finished attempting the U-turn, we check how long the turn took and make adjustments to the maze exploration algorithm to fix our position.
+
+```cpp
+if(digitalRead(FFT_DATA_PIN) == HIGH) {
+  state = LEFT_1;
+  attempt_u_turn = 1;
+}
+...
+if (attempt_u_turn) {
+  // reset next value
+  maze[robotY][robotX] = 0;
+
+  // move my position back
+  robotDir = (robotDir + 2) % 4;
+  adv(&robotX, &robotY, robotDir);
+
+  if (millis() - state_start_time > 1100) {
+    // made u turn
+    state = FORWARD;
+    attempt_u_turn = 0;
+  } else {
+    // only turned 90 degrees to the left, finish 180 degree turn
+    state = LEFT_1;
+    attempt_u_turn = 0;
+  }
+}
+```
 
 The maze exploration algorithm was mostly unchanged from milestone 3. The primary innovation that we made in our maze exploration code was the low number of bytes it required. The data structures that contained the maze information and the maze traversal algorithm took up 3 bytes per cell, giving 243 bytes for the whole algorithm. The image below shows the compile size of the maze code with some print statements through the serial monitor. The serial code takes up 192 bytes on its own, so the maze code takes up 498-192 = 306 bytes, which includes maze information and other miscellaneous information. 
 
