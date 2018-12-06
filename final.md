@@ -71,10 +71,67 @@ After the changes mentioned above, and once we were happy with all of our thresh
 
 The first section of the Atmega code was for setting up the camera. The code for the camera was adjusted from milestone 4 by writing to more registers to improve the image from the camera and by changing the pins used to communicate with the FPGA. Now, the arduino uses three analog pins to read values from the FPGA rather than the digital pins. For the registers, we first enabled the fast AEC/AGC algorithm by writing 0x88 to address 0x13 (COM8) and to disable to auto white balance. This is so we can set the gain for blue, red and green by writing 0x80, 0x40 and 0x4E to addresses 0x01, 0x02 and 0x6A respectively. These values were chosen arbitrarily but they will matter based on the environment you are in. The exposure time for automatic exposure control was set by writing 0x40 to 0x07, which was also arbitrarily chosen and will also depend on the environment, giving a window for the camera to adjust properly. However, 0x40 only represents the first 6 bits of AEC. The middle 8 bits are determined by register 0x10 and it also helps determine the exposure time. In our case, 0x24 was written to 0x10.
 
-The gain setting was adjusted by writing to addresses 0x00 and 0x03. This was done because we disabled the AGC when writing to COM8. GAIN (0x00) represents the least significant bits of the gain and VREF (0x03) represents the most significant bits of the gain. These registers were set to 0x0F and 0x00. Along with the gain, we could adjust the noise so that we could reduce the SNR and enhance our image quality. Register 0x4C sets the denoise threshold, which we set to 0xFF. 
+The gain setting was adjusted by writing to addresses 0x00 and 0x03. This was done because we disabled the AGC when writing to COM8. GAIN (0x00) represents the least significant bits of the gain and VREF (0x03) represents the most significant bits of the gain. These registers were set to 0x0F and 0x00. Along with the gain, we could adjust the noise so that we could reduce the SNR and enhance our image quality. Register 0x4C sets the denoise threshold, which we set to 0xFF.
 
-Finally, the brightness and contrast of the camera could be adjusted with registers 0x55 and 0x56 respectively. The values for them were 0x60 and 0x80, but these depend on your surroundings. For all of the registers mentioned above, they were set to values near their default ones. We first read the values of all of the registers and then tweaked with the register values until we got an image that worked well.
-// Insert code
+Finally, the brightness and contrast of the camera could be adjusted with registers 0x55 and 0x56 respectively. The values for them were 0x60 and 0x80, but these depend on your surroundings. For all of the registers mentioned above, they were set to values near their default ones. We first read the values of all of the registers and then tweaked with the register values until we got an image that worked well. We used [this](https://github.com/dalmirdasilva/ArduinoCamera/blob/master/CameraAL422B/datasheet/OV7670%20Implementation%20Guide%20(V1.0).pdf) document to get a better idea for what each register did.
+
+```cpp
+// reset registers
+OV7670_write_register(COM7, 0x80);
+
+set_color_matrix();
+
+// QCIF (176x156) RGB output format
+OV7670_write_register(COM7, 0x0C);
+
+// enable scaling for QCIF
+OV7670_write_register(COM3, 0x08);
+
+// Use external clock
+OV7670_write_register(CLKRC, 0xC0);
+
+// set to RGB 565 mode
+OV7670_write_register(COM15, 0xD0);
+
+// adjust the gain ceiling
+OV7670_write_register(COM9, 0x6A);
+
+// mirror the image
+OV7670_write_register(MVFP, 0x30);
+
+// freeze the automatic settings
+OV7670_write_register(COM8, 0x88);
+
+// set white balance blue
+OV7670_write_register(WB_B, 0x80);
+
+// set white balance red
+OV7670_write_register(WB_R, 0x40);
+
+// set white balance green
+OV7670_write_register(WB_G, 0x4E);
+
+// set exposure upper bits
+OV7670_write_register(AEC, 0x40);
+
+// set exposure lower bits
+OV7670_write_register(AEC_M, 0x24);
+
+// set gain lower bits
+OV7670_write_register(G_LSB, 0x0F);
+
+// set gain upper bits
+OV7670_write_register(G_MSB, 0x00);
+
+// set denoise threshold
+OV7670_write_register(0x4C, 0xFF);
+
+// set brightness
+OV7670_write_register(0x55, 0x60);
+
+// set contrast
+OV7670_write_register(0x56, 0x80);
+```
 
 The second part of the atmega code was the FFT code. This code remained mostly unchanged from milestone 3, although we did adjust the threshold values slightly. We realized that our IR hat was too sensitive and was detecting our own IR hat or reflections of our IR hat off the wall. We were also able to mitigate this problem by changing the positioning of the IR LED, as described above.
 
