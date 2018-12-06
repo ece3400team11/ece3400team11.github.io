@@ -321,7 +321,7 @@ During the second round, our robot seemed to be performing very well at the begi
 
 *INSERT ROUND 2 VIDEO HERE*
 
-Even though our robot did not perform exactly how we wanted it to on competition day, we believe that the system we developed over the course of the semester
+Even though our robot did not perform exactly how we wanted it to on competition day, we believe that the system we developed over the course of the semester had many interesting and unique ideas and we are proud of the work that we did.
 
 # Budget
 
