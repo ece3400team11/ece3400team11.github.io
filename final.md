@@ -315,7 +315,7 @@ Our robot ran into two different problems—one during each round—that hindere
 
 During the first round, our radios failed to synchronize, leading there to be no transmission of data from the robot to the base station. Unfortunately, this happened to be the round where our robot performed better in the maze. It appears as so our robot successfully navigated over half of the maze successfully during this run, which could have potentially put us in the running for the final round. Although we cannot verify how accurately our robot mapped out the maze without the GUI output, we do have a video of how our robot performed during round 1:
 
-*INSERT ROUND 1 VIDEO HERE*
+<iframe width="560" height="315" src="https://www.youtube.com/watch?v=oG1nnlTRdGE" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 During the second round, our robot seemed to be performing very well at the beginning as it quickly began to explore the maze and reached the opposite quadrant within 30 or so seconds. But, in the opposite quadrant there seemed to be a particular location where our robot detected a false intersection and would get lost. This happened twice in the exact same location.
 
