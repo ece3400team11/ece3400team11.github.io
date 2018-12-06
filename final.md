@@ -4,15 +4,15 @@
 
 The final mechanical design of our robot was similar to that of previous iterations. The biggest difference was that we got rid of the second base that was on top because we transitioned from breadboards to stacking perfboards. We also had to move the location of the battery because since we added an additional line sensor between the existing ones, it became difficult to access the battery underneath. To fix this, we added velcro to the base of the robot and the stands that used to hold the second base so that the battery could be attached there and be easily accessed.
 
-// Image here
+![Image](images/20181203_231246.jpg)
 
 Another major change that we made was that we increased the height of the line sensors and added a third line sensor in between the original two. We initially increased the height because we realized that the line sensors were too close to the ground and would sometimes get caught on the mat. However, we later realized that increasing the height of the line sensors gave better readings to the arduino and allowed us to do line sensing much better. The third line sensor was also added to help us increase the accuracy of our line detection.
 
-// Image here
+![Image](images/final_size.png)
 
 The rest of the robot consists of the servos, the wall sensors on its perimeter and our functioning IR Hat. There are three wall sensors, two on the sides and one on the front of the robot, that were attached to the base plate using mounts. Our IR Hat was placed with the constraint that it has to be around 5.5 inches off the ground. To meet this requirement, we bolted it on top of a stand that used to support the second base plate.
 
-// Image here
+![Image](images/20181201_190132.jpg)
 
 ## Hardware
 
@@ -54,17 +54,73 @@ We had several pieces of code split over a few microcontrollers: FPGA code that 
 
 ### FPGA
 
-// talk about removing image processor
-// talk about using 32 bits per pixel
 Although the basic ideas behind our color and shape detection didn’t change much from what we had in our FPGA code in milestone 4, we spent a lot of time post milestone 4 adjusting the threshold values for the color and shape detection to get the most consistent results possible.
 
 Before that however, we would like to mention some major changes we had made to the provided FPGA code for milestone 4, but had neglected to touch upon in our writeup for the same. One of these changes was to increase the width of the pixel data stored in the FPGA memory from 8-bits per pixel all the way to 32-bits per pixel. This allowed us to store both the 16-bit RGB565 color data as well as the 16-bit greyscale data for each pixel, which in turn allowed us to increase the accuracy of both our color and shape detections. At first we were afraid that the FPGA board would not have enough memory to store this much data, but after testing we discovered that we were able to store the 32-bit pixel data just fine. We did realize, however, that the VGA driver we were using was only able to output the pixel data to the monitor in the RGB332 format, so we moved the downsampling code we had written in lab 4 to the VGA_DRIVER file and downsampled both the color and greyscale pixel data, before choosing one of them to be output to the monitor.
 
-*INSERT DOWNSAMPLING CODE*
+```verilog
+assign PIXEL_COLOR_EDGE  = {PIXEL_COLOR_IN[15:13], PIXEL_COLOR_IN[10:8], PIXEL_COLOR_IN[4:3]};
+assign PIXEL_COLOR_DSAMP = {PIXEL_COLOR_IN[31:29], PIXEL_COLOR_IN[26:24], PIXEL_COLOR_IN[20:19]};
+
+assign PIXEL_COLOR_OUT = (pixel_count<(`VISIBLE_SCREEN_WIDTH) ? (PIXEL_COLOR_DSAMP) : (8'b00000000) ;
+```
 
 Another major change we had made in milestone 4 was to move all the functionality of the IMAGE_PROCESSOR module into the main DE0_NANO file. This was because we found that, although the color and shape detection was working fine in the IMAGE_PROCESSOR module, we were having a lot of difficulty transferring over the correct result into the DE0_NANO file to be sent back to the Arduino. Another problem we were facing while using the IMAGE_PROCESSOR file was that sometimes the program would not compile properly due to insufficient memory on the FPGA, but only sometimes. Moving all of the image processing code from the IMAGE_PROCESSOR file to the main DE0_NANO file fixed both of these issues.
 
-*INSERT IMAGE DETECTION CODE*
+```verilog
+// get camera input
+input_1 = CAMERA_INPUT;
+...
+input_2 = CAMERA_INPUT;
+pixel_data_RGB565 = {input_2, input_1};
+
+redRDif = 5'b11111 - pixel_data_RGB565[15:11];
+redGDif = 5'b01000 - pixel_data_RGB565[10:6];
+redBDif = 5'b01000 - pixel_data_RGB565[4:0];
+
+blueRDif = 5'b00001 - pixel_data_RGB565[15:11];
+blueGDif = 5'b00001 - pixel_data_RGB565[10:6];
+blueBDif = 5'b00101 - pixel_data_RGB565[4:0];
+
+grey = input_2[7:3] + {input_2[2:0], input_1[7:6]} + input_1[4:0];
+
+// edge detection
+if (Y_ADDR % 12 == 0 && X_ADDR >= 30 && X_ADDR < 150) begin
+  if (grey_eg[7:3] > curBrightestVal) begin
+    curBrightestVal = grey_eg[7:3];
+    pixel_data_RGB565 = 16'b1111111111111111;
+    curXB = X_ADDR;
+  end
+end
+
+// color detection
+if (Y_ADDR % 12 == 1 && X_ADDR == prevXB - 20) begin
+  if (redRDif <  `C_THRESH && redRDif >  -`C_THRESH &&
+      redGDif <  `C_THRESH && redGDif >  -`C_THRESH &&
+      redBDif <  `C_THRESH && redBDif >  -`C_THRESH    )
+    numRed = numRed + 1;
+  else if (blueRDif <  `B_THRESH && blueRDif >  -`B_THRESH &&
+      blueGDif <  `B_THRESH && blueGDif >  -`B_THRESH &&
+      blueBDif <  `B_THRESH && blueBDif >  -`B_THRESH    )
+    numBlue = numBlue + 1;
+end
+
+// detecting as red triangle
+if (VSYNC == 1'b1 && v_flag == 0) begin
+  RES_1 = 0;
+  RES_0 = 0;
+  if (numRed >= 6) begin
+    RES_2 = 1;
+    if ( numNeg >= 6 ) begin
+      RES_1 = 1;
+      RES_0 = 0;
+    end
+    ...
+  end
+  ...
+end
+```
+
 After the changes mentioned above, and once we were happy with all of our threshold values, we attached the camera to the robot and tested out whether we would be able to successfully detect the treasures in an actual maze. Unfortunately, our testing showed that although our camera was definitely able to detect the treasures in most of the cases, it was also giving us a lot of false positives, and the extremely strict point criteria for detecting false treasures or mistaking one or more of the aspects of the treasures made it so that doing treasure detection in the competition was not worth the risk, so we scrapped the camera and FPGA from our final robot.
 
 ### Atmega
